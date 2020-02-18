@@ -20,6 +20,10 @@
 #include <unistd.h>
 #include <string>
 #include <sys/stat.h>
+#include <cstdlib>
+#include <iostream>
+#include <sstream>
+#include <map>
 
 using namespace std;
 
