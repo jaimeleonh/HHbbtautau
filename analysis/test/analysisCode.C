@@ -38,10 +38,16 @@ void analysisCode::Loop()
    if (fChain == 0) return;
    Book();
    Long64_t nentries = fChain->GetEntriesFast();
+   std::cout << "Total entries = " << nentries << endl;
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
+      if (jentry > 100000) break;
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
+      if(jentry % 100 == 0)
+        std::cout << "[analysisCode::Loop] processed : "
+        << jentry << " entries\r" << std::flush;
+        std::endl;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
       Fill();
    }
