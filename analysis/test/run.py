@@ -46,8 +46,7 @@ for fil in files :
     analysis.Loop()
 
 
-#whatToPlot = ["tauH_mass"]
-whatToPlot = ["bH_mass"]
+whatToPlot = ["tauH_eta", "bH_eta", "tauH_pt", "bH_pt" ]
 plottingStuff = { 'lowlimityaxis' : 0,
             'highlimityaxis' : 1,
             'markersize': 1,
