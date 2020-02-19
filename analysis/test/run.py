@@ -24,6 +24,7 @@ else :
   time.sleep(2)
 
 path = '/eos/home-c/camendol/SKIMS_Legacy2018/SKIMS_30Jan2020/'
+eosPath = '/eos/home-j/jleonhol/HHbbtautau/'
 plotPath = './plots/'
 
 rc = call('mkdir ' + plotPath, shell=True)
@@ -41,7 +42,7 @@ for fil in files :
   if my_namespace.ntuples == True :
     print ('Obtaining plot ntuples for ' + fil)
     time.sleep(2) 
-    analysis = analysisCode(path + fil, fil + '.root')
+    analysis = analysisCode(path + fil, eosPath + fil + '.root')
     analysis.Loop()
 
 
@@ -63,7 +64,7 @@ plottingStuff = { 'lowlimityaxis' : 0,
 for plot in whatToPlot : 
   listOfPlots = []
   for fil in files : 
-    plotTools.makePlot(listOfPlots, fil + '.root', plot)
+    plotTools.makePlot(listOfPlots, eosPath + fil + '.root', plot)
   plotTools.combinePlots (listOfPlots, files, plottingStuff, plotPath, plot) 
 
 
