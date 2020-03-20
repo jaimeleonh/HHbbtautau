@@ -31,7 +31,8 @@ rc = call('mkdir ' + plotPath, shell=True)
 
 files = []
 files.append("SKIM_VBFSM")
-files.append("SKIM_TTWW")
+files.append("SKIM_GGHSM")
+files.append("SKIM_TT_fullyHad")
 #files.append("SKIM_Tau2018A")
 #files.append( samples[0] )
 
@@ -46,7 +47,9 @@ for fil in files :
     analysis.Loop()
 
 
-whatToPlot = ["tauH_eta", "bH_eta", "tauH_pt", "bH_pt" ]
+whatToPlot = ["HH_mass","HH_eta", "tauH_mass", "tauH_pt", "tauH_eta", "tauH_SVFIT_eta", "bH_eta", "tauH_SVFIT_pt", "tauH_SVFIT_mass" , "bH_pt", "bH_mass" ]
+#whatToPlot = ["VBFjj_mass","VBFjj_HT", "VBFjj_deltaEta"]
+#whatToPlot = ["tauH_eta", "bH_eta", "tauH_pt", "bH_pt" ]
 plottingStuff = { 'lowlimityaxis' : 0,
             'highlimityaxis' : 1,
             'markersize': 1,
