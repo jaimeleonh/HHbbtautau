@@ -1099,27 +1099,48 @@ void analysisCode::Init(TTree *tree)
    fCurrent = -1;
    fChain->SetMakeClass(1);
 
-   fChain->SetBranchAddress("MC_weight", &MC_weight, &b_MC_weight);
-   fChain->SetBranchAddress("totalWeight", &totalWeight, &b_totalWeight);
-   fChain->SetBranchAddress("prescaleWeight", &prescaleWeight, &b_prescaleWeight);
-   fChain->SetBranchAddress("L1pref_weight", &L1pref_weight, &b_L1pref_weight);
-   fChain->SetBranchAddress("PUReweight", &PUReweight, &b_PUReweight);
-   fChain->SetBranchAddress("bTagweightL", &bTagweightL, &b_bTagweightL);
-   fChain->SetBranchAddress("bTagweightM", &bTagweightM, &b_bTagweightM);
-   fChain->SetBranchAddress("bTagweightT", &bTagweightT, &b_bTagweightT);
-   fChain->SetBranchAddress("TTtopPtreweight", &TTtopPtreweight, &b_TTtopPtreweight);
-   fChain->SetBranchAddress("TTtopPtreweight_up", &TTtopPtreweight_up, &b_TTtopPtreweight_up);
-   fChain->SetBranchAddress("TTtopPtreweight_down", &TTtopPtreweight_down, &b_TTtopPtreweight_down);
-   fChain->SetBranchAddress("trigSF", &trigSF, &b_trigSF);
-   fChain->SetBranchAddress("trigSF_single", &trigSF_single, &b_trigSF_single);
-   fChain->SetBranchAddress("trigSF_cross", &trigSF_cross, &b_trigSF_cross);
-   fChain->SetBranchAddress("VBFtrigSF", &VBFtrigSF, &b_VBFtrigSF);
-   fChain->SetBranchAddress("FakeRateSF", &FakeRateSF, &b_FakeRateSF);
-   fChain->SetBranchAddress("jetFakeSF", &jetFakeSF, &b_jetFakeSF);
-   fChain->SetBranchAddress("IdAndIsoSF_MVA", &IdAndIsoSF_MVA, &b_IdAndIsoSF_MVA);
-   fChain->SetBranchAddress("IdAndIsoSF_deep", &IdAndIsoSF_deep, &b_IdAndIsoSF_deep);
-   fChain->SetBranchAddress("IdAndIsoAndFakeSF_MVA", &IdAndIsoAndFakeSF_MVA, &b_IdAndIsoAndFakeSF_MVA);
-   fChain->SetBranchAddress("IdAndIsoAndFakeSF_deep", &IdAndIsoAndFakeSF_deep, &b_IdAndIsoAndFakeSF_deep);
+   if (fChain->GetListOfBranches()->FindObject("MC_weight"))
+     fChain->SetBranchAddress("MC_weight", &MC_weight, &b_MC_weight);
+   if (fChain->GetListOfBranches()->FindObject("totalWeight"))
+     fChain->SetBranchAddress("totalWeight", &totalWeight, &b_totalWeight);
+   if (fChain->GetListOfBranches()->FindObject("prescaleWeight"))
+     fChain->SetBranchAddress("prescaleWeight", &prescaleWeight, &b_prescaleWeight);
+   if (fChain->GetListOfBranches()->FindObject("L1pref_weight"))
+     fChain->SetBranchAddress("L1pref_weight", &L1pref_weight, &b_L1pref_weight);
+   if (fChain->GetListOfBranches()->FindObject("PURweight"))
+     fChain->SetBranchAddress("PUReweight", &PUReweight, &b_PUReweight);
+   if (fChain->GetListOfBranches()->FindObject("bTagweightL"))
+     fChain->SetBranchAddress("bTagweightL", &bTagweightL, &b_bTagweightL);
+   if (fChain->GetListOfBranches()->FindObject("bTagweightM"))
+     fChain->SetBranchAddress("bTagweightM", &bTagweightM, &b_bTagweightM);
+   if (fChain->GetListOfBranches()->FindObject("bTagweightT"))
+     fChain->SetBranchAddress("bTagweightT", &bTagweightT, &b_bTagweightT);
+   if (fChain->GetListOfBranches()->FindObject("TTtopPtreweight"))
+     fChain->SetBranchAddress("TTtopPtreweight", &TTtopPtreweight, &b_TTtopPtreweight);
+   if (fChain->GetListOfBranches()->FindObject("TTtopPtreweight_up"))
+     fChain->SetBranchAddress("TTtopPtreweight_up", &TTtopPtreweight_up, &b_TTtopPtreweight_up);
+   if (fChain->GetListOfBranches()->FindObject("TTtopPtreweight_down"))
+     fChain->SetBranchAddress("TTtopPtreweight_down", &TTtopPtreweight_down, &b_TTtopPtreweight_down);
+   if (fChain->GetListOfBranches()->FindObject("trigSF"))
+     fChain->SetBranchAddress("trigSF", &trigSF, &b_trigSF);
+   if (fChain->GetListOfBranches()->FindObject("trigSF_single"))
+     fChain->SetBranchAddress("trigSF_single", &trigSF_single, &b_trigSF_single);
+   if (fChain->GetListOfBranches()->FindObject("trigSF_cross"))
+     fChain->SetBranchAddress("trigSF_cross", &trigSF_cross, &b_trigSF_cross);
+   if (fChain->GetListOfBranches()->FindObject("VBFtrigSF"))
+     fChain->SetBranchAddress("VBFtrigSF", &VBFtrigSF, &b_VBFtrigSF);
+   if (fChain->GetListOfBranches()->FindObject("FakeRateSF"))
+     fChain->SetBranchAddress("FakeRateSF", &FakeRateSF, &b_FakeRateSF);
+   if (fChain->GetListOfBranches()->FindObject("jetFakeSF"))
+     fChain->SetBranchAddress("jetFakeSF", &jetFakeSF, &b_jetFakeSF);
+   if (fChain->GetListOfBranches()->FindObject("IdAndIsoSF_MVA"))
+     fChain->SetBranchAddress("IdAndIsoSF_MVA", &IdAndIsoSF_MVA, &b_IdAndIsoSF_MVA);
+   if (fChain->GetListOfBranches()->FindObject("IdAndIsoSF_deep"))
+     fChain->SetBranchAddress("IdAndIsoSF_deep", &IdAndIsoSF_deep, &b_IdAndIsoSF_deep);
+   if (fChain->GetListOfBranches()->FindObject("IdAndIsoAndFakeSF_MVA"))
+     fChain->SetBranchAddress("IdAndIsoAndFakeSF_MVA", &IdAndIsoAndFakeSF_MVA, &b_IdAndIsoAndFakeSF_MVA);
+   if (fChain->GetListOfBranches()->FindObject("IdAndIsoAndFakeSF_deep"))
+     fChain->SetBranchAddress("IdAndIsoAndFakeSF_deep", &IdAndIsoAndFakeSF_deep, &b_IdAndIsoAndFakeSF_deep);
    if (fChain->GetListOfBranches()->FindObject("DYscale_LL"))
      fChain->SetBranchAddress("DYscale_LL", &DYscale_LL, &b_DYscale_LL);
    if (fChain->GetListOfBranches()->FindObject("DYscale_MM"))
@@ -1166,10 +1187,14 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("met_et_tauup", &met_et_tauup, &b_met_et_tauup);
    fChain->SetBranchAddress("met_phi_taudown", &met_phi_taudown, &b_met_phi_taudown);
    fChain->SetBranchAddress("met_et_taudown", &met_et_taudown, &b_met_et_taudown);
-   fChain->SetBranchAddress("met_phi_eleup", &met_phi_eleup, &b_met_phi_eleup);
-   fChain->SetBranchAddress("met_et_eleup", &met_et_eleup, &b_met_et_eleup);
-   fChain->SetBranchAddress("met_phi_eledown", &met_phi_eledown, &b_met_phi_eledown);
-   fChain->SetBranchAddress("met_et_eledown", &met_et_eledown, &b_met_et_eledown);
+   if (fChain->GetListOfBranches()->FindObject("met_phi_eleup"))
+     fChain->SetBranchAddress("met_phi_eleup", &met_phi_eleup, &b_met_phi_eleup);
+   if (fChain->GetListOfBranches()->FindObject("met_et_eleup"))
+     fChain->SetBranchAddress("met_et_eleup", &met_et_eleup, &b_met_et_eleup);
+   if (fChain->GetListOfBranches()->FindObject("met_phi_eledown"))
+     fChain->SetBranchAddress("met_phi_eledown", &met_phi_eledown, &b_met_phi_eledown);
+   if (fChain->GetListOfBranches()->FindObject("met_et_eledown"))
+     fChain->SetBranchAddress("met_et_eledown", &met_et_eledown, &b_met_et_eledown);
    fChain->SetBranchAddress("met_et_corr", &met_et_corr, &b_met_et_corr);
    fChain->SetBranchAddress("met_cov00", &met_cov00, &b_met_cov00);
    fChain->SetBranchAddress("met_cov01", &met_cov01, &b_met_cov01);
@@ -1186,9 +1211,12 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("dau1_CUTiso", &dau1_CUTiso, &b_dau1_CUTiso);
    fChain->SetBranchAddress("dau1_antiele", &dau1_antiele, &b_dau1_antiele);
    fChain->SetBranchAddress("dau1_antimu", &dau1_antimu, &b_dau1_antimu);
-   fChain->SetBranchAddress("dau1_deepTauVsJet", &dau1_deepTauVsJet, &b_dau1_deepTauVsJet);
-   fChain->SetBranchAddress("dau1_deepTauVsEle", &dau1_deepTauVsEle, &b_dau1_deepTauVsEle);
-   fChain->SetBranchAddress("dau1_deepTauVsMu", &dau1_deepTauVsMu, &b_dau1_deepTauVsMu);
+   if (fChain->GetListOfBranches()->FindObject("dau1_deepTauVsJet"))
+     fChain->SetBranchAddress("dau1_deepTauVsJet", &dau1_deepTauVsJet, &b_dau1_deepTauVsJet);
+   if (fChain->GetListOfBranches()->FindObject("dau1_deepTauVsEle"))
+     fChain->SetBranchAddress("dau1_deepTauVsEle", &dau1_deepTauVsEle, &b_dau1_deepTauVsEle);
+   if (fChain->GetListOfBranches()->FindObject("dau1_deepTauVsMu"))
+     fChain->SetBranchAddress("dau1_deepTauVsMu", &dau1_deepTauVsMu, &b_dau1_deepTauVsMu);
    fChain->SetBranchAddress("dau1_photonPtSumOutsideSignalCone", &dau1_photonPtSumOutsideSignalCone, &b_dau1_photonPtSumOutsideSignalCone);
    fChain->SetBranchAddress("dau1_byLooseCombinedIsolationDeltaBetaCorr3Hits", &dau1_byLooseCombinedIsolationDeltaBetaCorr3Hits, &b_dau1_byLooseCombinedIsolationDeltaBetaCorr3Hits);
    fChain->SetBranchAddress("dau1_byMediumCombinedIsolationDeltaBetaCorr3Hits", &dau1_byMediumCombinedIsolationDeltaBetaCorr3Hits, &b_dau1_byMediumCombinedIsolationDeltaBetaCorr3Hits);
@@ -1196,8 +1224,10 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("dau1_pt", &dau1_pt, &b_dau1_pt);
    fChain->SetBranchAddress("dau1_pt_tauup", &dau1_pt_tauup, &b_dau1_pt_tauup);
    fChain->SetBranchAddress("dau1_pt_taudown", &dau1_pt_taudown, &b_dau1_pt_taudown);
-   fChain->SetBranchAddress("dau1_pt_eleup", &dau1_pt_eleup, &b_dau1_pt_eleup);
-   fChain->SetBranchAddress("dau1_pt_eledown", &dau1_pt_eledown, &b_dau1_pt_eledown);
+   if (fChain->GetListOfBranches()->FindObject("dau1_pt_eleup"))
+     fChain->SetBranchAddress("dau1_pt_eleup", &dau1_pt_eleup, &b_dau1_pt_eleup);
+   if (fChain->GetListOfBranches()->FindObject("dau1_pt_eledown"))
+     fChain->SetBranchAddress("dau1_pt_eledown", &dau1_pt_eledown, &b_dau1_pt_eledown);
    fChain->SetBranchAddress("dau1_eta", &dau1_eta, &b_dau1_eta);
    fChain->SetBranchAddress("dau1_phi", &dau1_phi, &b_dau1_phi);
    fChain->SetBranchAddress("dau1_e", &dau1_e, &b_dau1_e);
@@ -1222,9 +1252,12 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("dau2_CUTiso", &dau2_CUTiso, &b_dau2_CUTiso);
    fChain->SetBranchAddress("dau2_antiele", &dau2_antiele, &b_dau2_antiele);
    fChain->SetBranchAddress("dau2_antimu", &dau2_antimu, &b_dau2_antimu);
-   fChain->SetBranchAddress("dau2_deepTauVsJet", &dau2_deepTauVsJet, &b_dau2_deepTauVsJet);
-   fChain->SetBranchAddress("dau2_deepTauVsEle", &dau2_deepTauVsEle, &b_dau2_deepTauVsEle);
-   fChain->SetBranchAddress("dau2_deepTauVsMu", &dau2_deepTauVsMu, &b_dau2_deepTauVsMu);
+   if (fChain->GetListOfBranches()->FindObject("dau2_deepTauVsJet"))
+     fChain->SetBranchAddress("dau2_deepTauVsJet", &dau2_deepTauVsJet, &b_dau2_deepTauVsJet);
+   if (fChain->GetListOfBranches()->FindObject("dau2_deepTauVsEle"))
+     fChain->SetBranchAddress("dau2_deepTauVsEle", &dau2_deepTauVsEle, &b_dau2_deepTauVsEle);
+   if (fChain->GetListOfBranches()->FindObject("dau2_deepTauVsMu"))
+     fChain->SetBranchAddress("dau2_deepTauVsMu", &dau2_deepTauVsMu, &b_dau2_deepTauVsMu);
    fChain->SetBranchAddress("dau2_photonPtSumOutsideSignalCone", &dau2_photonPtSumOutsideSignalCone, &b_dau2_photonPtSumOutsideSignalCone);
    fChain->SetBranchAddress("dau2_byLooseCombinedIsolationDeltaBetaCorr3Hits", &dau2_byLooseCombinedIsolationDeltaBetaCorr3Hits, &b_dau2_byLooseCombinedIsolationDeltaBetaCorr3Hits);
    fChain->SetBranchAddress("dau2_byMediumCombinedIsolationDeltaBetaCorr3Hits", &dau2_byMediumCombinedIsolationDeltaBetaCorr3Hits, &b_dau2_byMediumCombinedIsolationDeltaBetaCorr3Hits);
@@ -1232,8 +1265,10 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("dau2_pt", &dau2_pt, &b_dau2_pt);
    fChain->SetBranchAddress("dau2_pt_tauup", &dau2_pt_tauup, &b_dau2_pt_tauup);
    fChain->SetBranchAddress("dau2_pt_taudown", &dau2_pt_taudown, &b_dau2_pt_taudown);
-   fChain->SetBranchAddress("dau2_pt_eleup", &dau2_pt_eleup, &b_dau2_pt_eleup);
-   fChain->SetBranchAddress("dau2_pt_eledown", &dau2_pt_eledown, &b_dau2_pt_eledown);
+   if (fChain->GetListOfBranches()->FindObject("dau2_pt_eleup"))
+     fChain->SetBranchAddress("dau2_pt_eleup", &dau2_pt_eleup, &b_dau2_pt_eleup);
+   if (fChain->GetListOfBranches()->FindObject("dau2_pt_eledown"))
+     fChain->SetBranchAddress("dau2_pt_eledown", &dau2_pt_eledown, &b_dau2_pt_eledown);
    fChain->SetBranchAddress("dau2_eta", &dau2_eta, &b_dau2_eta);
    fChain->SetBranchAddress("dau2_phi", &dau2_phi, &b_dau2_phi);
    fChain->SetBranchAddress("dau2_e", &dau2_e, &b_dau2_e);
@@ -1247,7 +1282,8 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("bjet1_e", &bjet1_e, &b_bjet1_e);
    fChain->SetBranchAddress("bjet1_bID", &bjet1_bID, &b_bjet1_bID);
    fChain->SetBranchAddress("bjet1_bID_deepCSV", &bjet1_bID_deepCSV, &b_bjet1_bID_deepCSV);
-   fChain->SetBranchAddress("bjet1_bID_deepFlavor", &bjet1_bID_deepFlavor, &b_bjet1_bID_deepFlavor);
+   if (fChain->GetListOfBranches()->FindObject("bjet1_bID_deepFlavor"))
+     fChain->SetBranchAddress("bjet1_bID_deepFlavor", &bjet1_bID_deepFlavor, &b_bjet1_bID_deepFlavor);
    fChain->SetBranchAddress("bjet1_bMVAID", &bjet1_bMVAID, &b_bjet1_bMVAID);
    fChain->SetBranchAddress("bjet1_flav", &bjet1_flav, &b_bjet1_flav);
    fChain->SetBranchAddress("bjet1_pt_raw", &bjet1_pt_raw, &b_bjet1_pt_raw);
@@ -1255,14 +1291,16 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("bjet1_pt_raw_jetdown", &bjet1_pt_raw_jetdown, &b_bjet1_pt_raw_jetdown);
    fChain->SetBranchAddress("bjet1_hasgenjet", &bjet1_hasgenjet, &b_bjet1_hasgenjet);
    fChain->SetBranchAddress("bjet1_JER", &bjet1_JER, &b_bjet1_JER);
-   fChain->SetBranchAddress("bjet1_gen_matched", &bjet1_gen_matched, &b_bjet1_gen_matched);
+   if (fChain->GetListOfBranches()->FindObject("bjet1_gen_matched"))
+     fChain->SetBranchAddress("bjet1_gen_matched", &bjet1_gen_matched, &b_bjet1_gen_matched);
    fChain->SetBranchAddress("bjet2_pt", &bjet2_pt, &b_bjet2_pt);
    fChain->SetBranchAddress("bjet2_eta", &bjet2_eta, &b_bjet2_eta);
    fChain->SetBranchAddress("bjet2_phi", &bjet2_phi, &b_bjet2_phi);
    fChain->SetBranchAddress("bjet2_e", &bjet2_e, &b_bjet2_e);
    fChain->SetBranchAddress("bjet2_bID", &bjet2_bID, &b_bjet2m_bID);
    fChain->SetBranchAddress("bjet2_bID_deepCSV", &bjet2_bID_deepCSV, &b_bjet2_bID_deepCSV);
-   fChain->SetBranchAddress("bjet2_bID_deepFlavor", &bjet2_bID_deepFlavor, &b_bjet2_bID_deepFlavor);
+   if (fChain->GetListOfBranches()->FindObject("bjet2_bID_deepFlavor"))
+     fChain->SetBranchAddress("bjet2_bID_deepFlavor", &bjet2_bID_deepFlavor, &b_bjet2_bID_deepFlavor);
    fChain->SetBranchAddress("bjet2_bMVAID", &bjet2_bMVAID, &b_bjet2m_bMVAID);
    fChain->SetBranchAddress("bjet2_flav", &bjet2_flav, &b_bjet2_flav);
    fChain->SetBranchAddress("bjet2_pt_raw", &bjet2_pt_raw, &b_bjet2_pt_raw);
@@ -1270,10 +1308,13 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("bjet2_pt_raw_jetdown", &bjet2_pt_raw_jetdown, &b_bjet2_pt_raw_jetdown);
    fChain->SetBranchAddress("bjet2_hasgenjet", &bjet2_hasgenjet, &b_bjet2_hasgenjet);
    fChain->SetBranchAddress("bjet2_JER", &bjet2_JER, &b_bjet2_JER);
-   fChain->SetBranchAddress("bjet2_gen_matched", &bjet2_gen_matched, &b_bjet2_gen_matched);
+   if (fChain->GetListOfBranches()->FindObject("bjet2_gen_matched"))
+     fChain->SetBranchAddress("bjet2_gen_matched", &bjet2_gen_matched, &b_bjet2_gen_matched);
    fChain->SetBranchAddress("bjets_bID", &bjets_bID, &b_bjets_bID);
    fChain->SetBranchAddress("bjets_bID_deepCSV", &bjets_bID_deepCSV, &b_bjets_bID_deepCSV);
-   fChain->SetBranchAddress("bjets_bID_deepFlavor", &bjets_bID_deepFlavor, &b_bjets_bID_deepFlavor);
+   if (fChain->GetListOfBranches()->FindObject("bjets_bID_deepFlavor"))
+     fChain->SetBranchAddress("bjets_bID_deepFlavor", &bjets_bID_deepFlavor, &b_bjets_bID_deepFlavor);
+   if (fChain->GetListOfBranches()->FindObject("bjets_gen_matched"))
    fChain->SetBranchAddress("bjets_gen_matched", &bjets_gen_matched, &b_bjets_gen_matched);
    fChain->SetBranchAddress("nfatjets", &nfatjets, &b_nfatjets);
    fChain->SetBranchAddress("fatjet_pt", &fatjet_pt, &b_fatjet_pt);
@@ -1282,7 +1323,8 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("fatjet_e", &fatjet_e, &b_fatjet_e);
    fChain->SetBranchAddress("fatjet_bID", &fatjet_bID, &b_fatjet_bID);
    fChain->SetBranchAddress("fatjet_bID_deepCSV", &fatjet_bID_deepCSV, &b_fatjet_bID_deepCSV);
-   fChain->SetBranchAddress("fatjet_bID_deepFlavor", &fatjet_bID_deepFlavor, &b_fatjet_bID_deepFlavor);
+   if (fChain->GetListOfBranches()->FindObject("fatjet_bID_deepFlavor"))
+     fChain->SetBranchAddress("fatjet_bID_deepFlavor", &fatjet_bID_deepFlavor, &b_fatjet_bID_deepFlavor);
    fChain->SetBranchAddress("fatjet_filteredMass", &fatjet_filteredMass, &b_fatjet_filteredMass);
    fChain->SetBranchAddress("fatjet_prunedMass", &fatjet_prunedMass, &b_fatjet_prunedMass);
    fChain->SetBranchAddress("fatjet_trimmedMass", &fatjet_trimmedMass, &b_fatjet_trimmedMass);
@@ -1298,6 +1340,7 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("subjetjet1_e", &subjetjet1_e, &b_subjetjet1_e);
    fChain->SetBranchAddress("subjetjet1_bID", &subjetjet1_bID, &b_subjetjet1_bID);
    fChain->SetBranchAddress("subjetjet1_bID_deepCSV", &subjetjet1_bID_deepCSV, &b_subjetjet1_bID_deepCSV);
+   if (fChain->GetListOfBranches()->FindObject("subjetjet1_bID_deepFlavor"))
    fChain->SetBranchAddress("subjetjet1_bID_deepFlavor", &subjetjet1_bID_deepFlavor, &b_subjetjet1_bID_deepFlavor);
    fChain->SetBranchAddress("subjetjet2_pt", &subjetjet2_pt, &b_subjetjet2_pt);
    fChain->SetBranchAddress("subjetjet2_eta", &subjetjet2_eta, &b_subjetjet2_eta);
@@ -1305,6 +1348,7 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("subjetjet2_e", &subjetjet2_e, &b_subjetjet2_e);
    fChain->SetBranchAddress("subjetjet2_bID", &subjetjet2_bID, &b_subjetjet2_bID);
    fChain->SetBranchAddress("subjetjet2_bID_deepCSV", &subjetjet2_bID_deepCSV, &b_subjetjet2_bID_deepCSV);
+   if (fChain->GetListOfBranches()->FindObject("subjetjet2_bID_deepFlavor"))
    fChain->SetBranchAddress("subjetjet2_bID_deepFlavor", &subjetjet2_bID_deepFlavor, &b_subjetjet2_bID_deepFlavor);
    fChain->SetBranchAddress("genjet1_pt", &genjet1_pt, &b_genjet1_pt);
    fChain->SetBranchAddress("genjet1_eta", &genjet1_eta, &b_genjet1_eta);
@@ -1347,8 +1391,10 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("HH_mass_raw", &HH_mass_raw, &b_HH_mass_raw);
    fChain->SetBranchAddress("HH_mass_raw_tauup", &HH_mass_raw_tauup, &b_HH_mass_raw_tauup);
    fChain->SetBranchAddress("HH_mass_raw_taudown", &HH_mass_raw_taudown, &b_HH_mass_raw_taudown);
-   fChain->SetBranchAddress("HH_mass_raw_eleup", &HH_mass_raw_eleup, &b_HH_mass_raw_eleup);
-   fChain->SetBranchAddress("HH_mass_raw_eledown", &HH_mass_raw_eledown, &b_HH_mass_raw_eledown);
+   if (fChain->GetListOfBranches()->FindObject("HH_mass_raw_eleup"))
+     fChain->SetBranchAddress("HH_mass_raw_eleup", &HH_mass_raw_eleup, &b_HH_mass_raw_eleup);
+   if (fChain->GetListOfBranches()->FindObject("HH_mass_raw_eledown"))
+     fChain->SetBranchAddress("HH_mass_raw_eledown", &HH_mass_raw_eledown, &b_HH_mass_raw_eledown);
    fChain->SetBranchAddress("HHKin_mass", &HHKin_mass, &b_HHKin_mass);
    fChain->SetBranchAddress("HHKin_chi2", &HHKin_chi2, &b_HHKin_chi2);
    fChain->SetBranchAddress("HH_deltaPhi", &HH_deltaPhi, &b_HH_deltaPhi);
@@ -1380,7 +1426,8 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("jets_e", &jets_e, &b_jets_e);
    fChain->SetBranchAddress("jets_btag", &jets_btag, &b_jets_btag);
    fChain->SetBranchAddress("jets_btag_deepCSV", &jets_btag_deepCSV, &b_jets_btag_deepCSV);
-   fChain->SetBranchAddress("jets_btag_deepFlavor", &jets_btag_deepFlavor, &b_jets_btag_deepFlavor);
+   if (fChain->GetListOfBranches()->FindObject("jets_btag_deepFlavor"))
+     fChain->SetBranchAddress("jets_btag_deepFlavor", &jets_btag_deepFlavor, &b_jets_btag_deepFlavor);
    fChain->SetBranchAddress("jets_flav", &jets_flav, &b_jets_flav);
    fChain->SetBranchAddress("jets_isH", &jets_isH, &b_jets_isH);
    fChain->SetBranchAddress("jets_hasgenjet", &jets_hasgenjet, &b_jets_hasgenjet);
@@ -1415,8 +1462,10 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("MT2_taudown", &MT2_taudown, &b_MT2_taudown);
    fChain->SetBranchAddress("MT2_jetup", &MT2_jetup, &b_MT2_jetup);
    fChain->SetBranchAddress("MT2_jetdown", &MT2_jetdown, &b_MT2_jetdown);
-   fChain->SetBranchAddress("MT2_eleup", &MT2_eleup, &b_MT2_eleup);
-   fChain->SetBranchAddress("MT2_eledown", &MT2_eledown, &b_MT2_eledown);
+   if (fChain->GetListOfBranches()->FindObject("MT2_eleup"))
+     fChain->SetBranchAddress("MT2_eleup", &MT2_eleup, &b_MT2_eleup);
+   if (fChain->GetListOfBranches()->FindObject("MT2_eledown"))
+     fChain->SetBranchAddress("MT2_eledown", &MT2_eledown, &b_MT2_eledown);
    fChain->SetBranchAddress("bH_mass_raw", &bH_mass_raw, &b_bH_mass_raw);
    fChain->SetBranchAddress("bH_mass_raw_jetup", &bH_mass_raw_jetup, &b_bH_mass_raw_jetup);
    fChain->SetBranchAddress("bH_mass_raw_jetdown", &bH_mass_raw_jetdown, &b_bH_mass_raw_jetdown);
@@ -1425,8 +1474,10 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("HHKin_mass_raw_taudown", &HHKin_mass_raw_taudown, &b_HHKin_mass_raw_taudown);
    fChain->SetBranchAddress("HHKin_mass_raw_jetup", &HHKin_mass_raw_jetup, &b_HHKin_mass_raw_jetup);
    fChain->SetBranchAddress("HHKin_mass_raw_jetdown", &HHKin_mass_raw_jetdown, &b_HHKin_mass_raw_jetdown);
-   fChain->SetBranchAddress("HHKin_mass_raw_eleup", &HHKin_mass_raw_eleup, &b_HHKin_mass_raw_eleup);
-   fChain->SetBranchAddress("HHKin_mass_raw_eledown", &HHKin_mass_raw_eledown, &b_HHKin_mass_raw_eledown);
+   if (fChain->GetListOfBranches()->FindObject("HHKin_mass_raw_eleup"))
+     fChain->SetBranchAddress("HHKin_mass_raw_eleup", &HHKin_mass_raw_eleup, &b_HHKin_mass_raw_eleup);
+   if (fChain->GetListOfBranches()->FindObject("HHKin_mass_raw_eledown"))
+     fChain->SetBranchAddress("HHKin_mass_raw_eledown", &HHKin_mass_raw_eledown, &b_HHKin_mass_raw_eledown);
    fChain->SetBranchAddress("HHKin_mass_raw_chi2", &HHKin_mass_raw_chi2, &b_HHKin_mass_raw_chi2);
    fChain->SetBranchAddress("HHKin_mass_raw_convergence", &HHKin_mass_raw_convergence, &b_HHKin_mass_raw_convergence);
    fChain->SetBranchAddress("HHKin_mass_raw_prob", &HHKin_mass_raw_prob, &b_HHKin_mass_raw_prob);
@@ -1439,7 +1490,8 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("VBFjet1_e", &VBFjet1_e, &b_VBFjet1_e);
    fChain->SetBranchAddress("VBFjet1_btag", &VBFjet1_btag, &b_VBFjet1_btag);
    fChain->SetBranchAddress("VBFjet1_btag_deepCSV", &VBFjet1_btag_deepCSV, &b_VBFjet1_btag_deepCSV);
-   fChain->SetBranchAddress("VBFjet1_btag_deepFlavor", &VBFjet1_btag_deepFlavor, &b_VBFjet1_btag_deepFlavor);
+   if (fChain->GetListOfBranches()->FindObject("VBFjet1_btag_deepFlavor"))
+     fChain->SetBranchAddress("VBFjet1_btag_deepFlavor", &VBFjet1_btag_deepFlavor, &b_VBFjet1_btag_deepFlavor);
    fChain->SetBranchAddress("VBFjet1_flav", &VBFjet1_flav, &b_VBFjet1_flav);
    fChain->SetBranchAddress("VBFjet1_hasgenjet", &VBFjet1_hasgenjet, &b_VBFjet1_hasgenjet);
    fChain->SetBranchAddress("VBFgenjet1_pt", &VBFgenjet1_pt, &b_VBFgenjet1_pt);
@@ -1452,7 +1504,8 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("VBFjet2_e", &VBFjet2_e, &b_VBFjet2_e);
    fChain->SetBranchAddress("VBFjet2_btag", &VBFjet2_btag, &b_VBFjet2_btag);
    fChain->SetBranchAddress("VBFjet2_btag_deepCSV", &VBFjet2_btag_deepCSV, &b_VBFjet2_btag_deepCSV);
-   fChain->SetBranchAddress("VBFjet2_btag_deepFlavor", &VBFjet2_btag_deepFlavor, &b_VBFjet2_btag_deepFlavor);
+   if (fChain->GetListOfBranches()->FindObject("VBFjet2_btag_deepFlavor"))
+     fChain->SetBranchAddress("VBFjet2_btag_deepFlavor", &VBFjet2_btag_deepFlavor, &b_VBFjet2_btag_deepFlavor);
    fChain->SetBranchAddress("VBFjet2_flav", &VBFjet2_flav, &b_VBFjet2_flav);
    fChain->SetBranchAddress("VBFjet2_hasgenjet", &VBFjet2_hasgenjet, &b_VBFjet2_hasgenjet);
    fChain->SetBranchAddress("VBFgenjet2_pt", &VBFgenjet2_pt, &b_VBFgenjet2_pt);
@@ -1470,6 +1523,7 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("jet3_e", &jet3_e, &b_jet3_e);
    fChain->SetBranchAddress("jet3_btag", &jet3_btag, &b_jet3_btag);
    fChain->SetBranchAddress("jet3_btag_deepCSV", &jet3_btag_deepCSV, &b_jet3_btag_deepCSV);
+   if (fChain->GetListOfBranches()->FindObject("jet3_btag_deepFlavor"))
    fChain->SetBranchAddress("jet3_btag_deepFlavor", &jet3_btag_deepFlavor, &b_jet3_btag_deepFlavor);
    fChain->SetBranchAddress("jet3_flav", &jet3_flav, &b_jet3_flav);
    fChain->SetBranchAddress("jet3_hasgenjet", &jet3_hasgenjet, &b_jet3_hasgenjet);
@@ -1483,6 +1537,7 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("jet4_e", &jet4_e, &b_jet4_e);
    fChain->SetBranchAddress("jet4_btag", &jet4_btag, &b_jet4_btag);
    fChain->SetBranchAddress("jet4_btag_deepCSV", &jet4_btag_deepCSV, &b_jet4_btag_deepCSV);
+   if (fChain->GetListOfBranches()->FindObject("jet4_btag_deepFlavor"))
    fChain->SetBranchAddress("jet4_btag_deepFlavor", &jet4_btag_deepFlavor, &b_jet4_btag_deepFlavor);
    fChain->SetBranchAddress("jet4_flav", &jet4_flav, &b_jet4_flav);
    fChain->SetBranchAddress("jet4_hasgenjet", &jet4_hasgenjet, &b_jet4_hasgenjet);
@@ -1508,6 +1563,7 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("jet5_e", &jet5_e, &b_jet5_e);
    fChain->SetBranchAddress("jet5_btag", &jet5_btag, &b_jet5_btag);
    fChain->SetBranchAddress("jet5_btag_deepCSV", &jet5_btag_deepCSV, &b_jet5_btag_deepCSV);
+   if (fChain->GetListOfBranches()->FindObject("jet5_btag_deepFlavor"))
    fChain->SetBranchAddress("jet5_btag_deepFlavor", &jet5_btag_deepFlavor, &b_jet5_btag_deepFlavor);
    fChain->SetBranchAddress("jet5_flav", &jet5_flav, &b_jet5_flav);
    fChain->SetBranchAddress("jet5_hasgenjet", &jet5_hasgenjet, &b_jet5_hasgenjet);
@@ -1518,6 +1574,7 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("jet5_VBF_e", &jet5_VBF_e, &b_jet5_VBF_e);
    fChain->SetBranchAddress("jet5_VBF_btag", &jet5_VBF_btag, &b_jet5_VBF_btag);
    fChain->SetBranchAddress("jet5_VBF_btag_deepCSV", &jet5_VBF_btag_deepCSV, &b_jet5_VBF_btag_deepCSV);
+   if (fChain->GetListOfBranches()->FindObject("jet5_VBF_btag_deepFlavor"))
    fChain->SetBranchAddress("jet5_VBF_btag_deepFlavor", &jet5_VBF_btag_deepFlavor, &b_jet5_VBF_btag_deepFlavor);
    fChain->SetBranchAddress("jet5_VBF_flav", &jet5_VBF_flav, &b_jet5_VBF_flav);
    fChain->SetBranchAddress("jet5_VBF_hasgenjet", &jet5_VBF_hasgenjet, &b_jet5_VBF_hasgenjet);
