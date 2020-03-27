@@ -17,7 +17,7 @@ def makePlot(hlist, fileName, plotscaffold):
     print (fileName, plotscaffold)
     
     resplot = res.Get(plotscaffold)
-    resplot.Scale (1. / resplot.GetEntries() )
+    if (resplot.GetEntries() > 0) : resplot.Scale (1. / resplot.GetEntries() )
 
     hlist.append(deepcopy(resplot))
     res.Close(); del res, resplot
@@ -27,6 +27,8 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold):
     print "Combining list of plots"
     if len(hlist) == 0: raise RuntimeError("Empty list of plots")
     c   = r.TCanvas("c", "c", 800, 800)
+
+    maxim = -1; 
 
     gStyle.SetOptStat(0)
     leg = r.TLegend(plottingStuff['legxlow'], plottingStuff['legylow'], plottingStuff['legxhigh'], plottingStuff['legyhigh'])
@@ -38,7 +40,10 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold):
         hlist[iplot].SetMarkerStyle(20)
         #hlist[iplot].SetMarkerStyle(plottingStuff['markertypedir'][hlist[iplot].GetName()])
         leg.AddEntry(hlist[iplot], legends[iplot], "PL")
-        hlist[iplot].Draw("same")
+        hlist[iplot].Draw("histosame")
+        if ( hlist[iplot].GetMaximum() > maxim ) : 
+          hlist[0].GetYaxis().SetRangeUser(0, hlist[iplot].GetMaximum()*1.5)
+          maxim = hlist[iplot].GetMaximum()
         #hlist[iplot].Draw("P" + (iplot == 0) * "A" + (iplot != 0) * "same")
 
     leg.Draw()
