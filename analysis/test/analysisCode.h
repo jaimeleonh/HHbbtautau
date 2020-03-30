@@ -990,6 +990,8 @@ public :
    virtual void     Fill();
    virtual void     Book();
    virtual void     EndJob();
+   virtual Float_t  getDeltaR(Float_t eta1, Float_t phi1, Float_t eta2, Float_t phi2);
+   virtual Float_t  getDeltaPhi(Float_t phi1, Float_t phi2);
    virtual Bool_t   Notify();
    virtual void     Show(Long64_t entry = -1);
 

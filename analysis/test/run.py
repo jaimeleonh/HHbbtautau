@@ -71,24 +71,26 @@ for fil in files :
 
 
 whatToPlot = []
-stuff = ['HH','tauH','tauH_SVFIT','bH','HHsvfit','HHkinsvfit']
+stuff = ['HH','tauH','tauH_SVFIT','bH','HHsvfit','HHkinsvfit', 'VBFjet1', 'VBFjet2']
 variables = ['pt','eta','mass','phi']
 for st in stuff : 
   for var in variables : 
+    if 'VBFjet' in st and var == 'mass' : continue 
     whatToPlot.append(st+'_'+var)
 
 
-whatToPlot += ["VBFjj_deltaPhi", "VBFjj_deltaEta", "VBFgenjj_deltaPhi"]
+whatToPlot += ["VBFjj_deltaPhi", "VBFjj_deltaEta", "VBFgenjj_deltaPhi", "VBFjj_deltaR"]
 whatToPlot += ["HH_deltaPhi", "HH_deltaEta", "HH_deltaR"]
-whatToPlot += ['HHkinsvfit_bHmass','HHsvfit_deltaPhi', 'HHKin_mass_raw'] 
-
+whatToPlot += ['HHkinsvfit_bHmass','HHsvfit_deltaPhi', 'HHKin_mass_raw', 'HHKin_chi2'] 
+whatToPlot += ['VBFjb_deltaR', 'VBFjTau_deltaR']
 
 
 plottingStuff = { 'lowlimityaxis' : 0,
             'highlimityaxis' : 1,
             'markersize': 1,
 	          'yaxistitleoffset': 1.5,
-	          'legxlow' : 0.3075 + 2 * 0.1975,
+	          'legxlow' : 0.3075 + 1 * 0.1975,
+	          #'legxlow' : 0.3075 + 2 * 0.1975,
 	          'legylow': 0.75,
 	          'legxhigh': 0.9,
 	          'legyhigh': 0.9,
