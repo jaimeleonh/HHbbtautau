@@ -3,7 +3,7 @@ import ROOT as r
 from ROOT import gStyle, gROOT
 from copy import deepcopy
 import sys
-from markerColors import markerColors
+from markers import markerColors, markerTypes
 r.gROOT.SetBatch(True)
 
 
@@ -14,7 +14,6 @@ r.gROOT.SetBatch(True)
 
 def makePlot(hlist, fileName, plotscaffold):
     res = r.TFile.Open(fileName)
-    print (fileName, plotscaffold)
     
     resplot = res.Get(plotscaffold)
     if (resplot.GetEntries() > 0) : resplot.Scale (1. / resplot.GetEntries() )
@@ -33,11 +32,12 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold):
     gStyle.SetOptStat(0)
     leg = r.TLegend(plottingStuff['legxlow'], plottingStuff['legylow'], plottingStuff['legxhigh'], plottingStuff['legyhigh'])
     for iplot in range(len(hlist)):
-        hlist[iplot].SetMarkerColor(markerColors[iplot])
+        hlist[iplot].SetMarkerColor(markerColors[iplot % len(markerColors)])
         #hlist[iplot].SetMarkerColor(plottingStuff['markercolordir'][hlist[iplot].GetName()])
-        hlist[iplot].SetLineColor(markerColors[iplot])
+        hlist[iplot].SetLineColor(markerColors[iplot % len(markerColors)])
         #hlist[iplot].SetLineColor(plottingStuff['markercolordir'][hlist[iplot].GetName()])
         hlist[iplot].SetMarkerStyle(20)
+#        hlist[iplot].SetMarkerStyle(markerTypes[iplot / len(markerColors)])
         #hlist[iplot].SetMarkerStyle(plottingStuff['markertypedir'][hlist[iplot].GetName()])
         leg.AddEntry(hlist[iplot], legends[iplot], "PL")
         hlist[iplot].Draw("histosame")
