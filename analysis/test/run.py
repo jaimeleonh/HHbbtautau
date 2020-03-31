@@ -31,28 +31,39 @@ path = '/eos/home-c/camendol/SKIMS_Thesis2017/'
 eosPath = '/eos/home-j/jleonhol/HHbbtautau/'
 plotPath = './plots/'
 
-if my_namespace.userCopyPath == '' : copyPath = '/eos/home-j/jleonhol/www/HHbbtautau/2017/'
+
+categories = ["noSelection","s1b1jresolvedMcut", "s2b0jresolvedMcut", "VBFtight_DNN", "VBFloose_DNN", "sboostedLLMcut", "VBFloose", "VBFtight"]
+
+if my_namespace.userCopyPath == '' : 
+  copyPath = '/eos/home-j/jleonhol/www/HHbbtautau/allVBF_2017/'
 else : 
   copyPath = my_namespace.userCopyPath
-  if (my_namespace.copy == True) : rc = call('mkdir ' + copyPath, shell=True)
-  if (my_namespace.copy == True) : rc = call('cp -r /eos/home-j/jleonhol/backup/index_HHbbtautau_php ' + plotPath +  '/index.php' , shell=True)
+
+if (my_namespace.copy == True) :
+  rc = call('mkdir ' + copyPath, shell=True)
+  rc = call('cp -r /eos/home-j/jleonhol/backup/index_HHbbtautau_php ' + copyPath +  '/index.php' , shell=True)
+  for cat in categories : 
+    rc = call('mkdir ' + copyPath +  '/' + cat + '/' , shell=True)
+    rc = call('cp -r /eos/home-j/jleonhol/backup/index_HHbbtautau_php ' + copyPath + '/' + cat + '/index.php' , shell=True)
+
+
 
 rc = call('mkdir ' + plotPath, shell=True)
 rc = call('mkdir ' + eosPath + '2017/', shell=True)
 
 files = []
 files.append("SKIM_VBF_CV_1_C2V_1_C3_1")
-#files.append("SKIM_VBF_CV_1_5_C2V_1_C3_1")
-#files.append("SKIM_VBF_CV_1_C2V_1_C3_0")
-#files.append("SKIM_VBF_CV_1_C2V_1_C3_2")
-#files.append("SKIM_VBF_CV_1_C2V_0_C3_2")
-#files.append("SKIM_VBF_CV_1_C2V_2_C3_1")
-files.append("PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM")
+files.append("SKIM_VBF_CV_1_5_C2V_1_C3_1")
+files.append("SKIM_VBF_CV_1_C2V_1_C3_0")
+files.append("SKIM_VBF_CV_1_C2V_1_C3_2")
+files.append("SKIM_VBF_CV_1_C2V_0_C3_2")
+files.append("SKIM_VBF_CV_1_C2V_2_C3_1")
+#files.append("PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM")
 
 
 #files.append("SKIM_VBFSM")
 files.append("SKIM_GGHSM_xs")
-files.append("SKIM_TT_fullyHad")
+#files.append("SKIM_TT_fullyHad")
 #files.append("SKIM_Tau2018A")
 #files.append( samples[0] )
 
@@ -79,7 +90,7 @@ for st in stuff :
     whatToPlot.append(st+'_'+var)
 
 
-whatToPlot += ["VBFjj_deltaPhi", "VBFjj_deltaEta", "VBFgenjj_deltaPhi", "VBFjj_deltaR"]
+whatToPlot += ["VBFjj_mass","VBFjj_deltaPhi", "VBFjj_deltaEta", "VBFgenjj_deltaPhi", "VBFjj_deltaR"]
 whatToPlot += ["HH_deltaPhi", "HH_deltaEta", "HH_deltaR"]
 whatToPlot += ['HHkinsvfit_bHmass','HHsvfit_deltaPhi', 'HHKin_mass_raw', 'HHKin_chi2'] 
 whatToPlot += ['VBFjb_deltaR', 'VBFjTau_deltaR']
@@ -100,15 +111,16 @@ plottingStuff = { 'lowlimityaxis' : 0,
 
 
 for plot in whatToPlot : 
-  listOfPlots = []
-  for fil in files : 
-    plotTools.makePlot(listOfPlots, eosPath + '2017/' + fil + '.root', plot)
-  plotTools.combinePlots (listOfPlots, files, plottingStuff, plotPath, plot) 
+  for cat in categories : 
+    listOfPlots = []
+    for fil in files :
+      plotTools.makePlot(listOfPlots, eosPath + '2017/' + fil + '.root', plot+'_'+cat)
+    plotTools.combinePlots (listOfPlots, files, plottingStuff, plotPath, plot+'_'+cat) 
 
 
-  if my_namespace.copy == True: 
-    for ext in ['.png','.pdf','.root'] : rc = call('cp ' + plotPath + plot + ext + ' ' + copyPath , shell=True)
-    print 'Copying ' +  plotPath + plot + '.* to ' + copyPath 
+    if my_namespace.copy == True: 
+      for ext in ['.png','.pdf','.root'] : rc = call('cp ' + plotPath + plot + '_' + cat + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
+      print 'Copying ' +  plotPath + plot + '_' + cat + '.* to ' + copyPath + '/' + cat 
   
 
 
