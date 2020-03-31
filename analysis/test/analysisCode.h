@@ -505,6 +505,10 @@ public :
    Int_t           isTau2real;
    Int_t           nRealTaus;
    Float_t         BDToutSM_kl_1;
+   Float_t         DNN_VBFvsGGF_MuTau;   
+   Float_t         DNN_VBFvsGGF_ETau;   
+   Float_t         DNN_VBFvsGGF_TauTauTight;   
+   Float_t         DNN_VBFvsGGF_TauTauLoose;   
 
    // List of branches
    TBranch        *b_MC_weight;   //!
@@ -977,6 +981,10 @@ public :
    TBranch        *b_isTau2real;   //!
    TBranch        *b_nRealTaus;   //!
    TBranch        *b_BDToutSM_kl_1;   //!
+   TBranch        *b_DNN_VBFvsGGF_MuTau;   //!
+   TBranch        *b_DNN_VBFvsGGF_ETau;   //!
+   TBranch        *b_DNN_VBFvsGGF_TauTauTight;   //!
+   TBranch        *b_DNN_VBFvsGGF_TauTauLoose;   //!
 
    //analysisCode(int a=0, const TString & outName = "");
    analysisCode(const TString & inSample = "", const TString & outName = "");
@@ -993,6 +1001,7 @@ public :
    virtual Float_t  getDeltaR(Float_t eta1, Float_t phi1, Float_t eta2, Float_t phi2);
    virtual Float_t  getDeltaPhi(Float_t phi1, Float_t phi2);
    virtual Bool_t   Notify();
+   virtual std::vector <std::string> addCategories();
    virtual void     Show(Long64_t entry = -1);
 
    TFile m_outFile; 
@@ -1635,6 +1644,14 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchAddress("isTau2real", &isTau2real, &b_isTau2real);
    fChain->SetBranchAddress("nRealTaus", &nRealTaus, &b_nRealTaus);
    fChain->SetBranchAddress("BDToutSM_kl_1", &BDToutSM_kl_1, &b_BDToutSM_kl_1);
+   if (fChain->GetListOfBranches()->FindObject("DNN_VBFvsGGF_MuTau"))    
+     fChain->SetBranchAddress("DNN_VBFvsGGF_MuTau", &DNN_VBFvsGGF_MuTau, &b_DNN_VBFvsGGF_MuTau);
+   if (fChain->GetListOfBranches()->FindObject("DNN_VBFvsGGF_ETau"))    
+     fChain->SetBranchAddress("DNN_VBFvsGGF_ETau", &DNN_VBFvsGGF_ETau, &b_DNN_VBFvsGGF_ETau);
+   if (fChain->GetListOfBranches()->FindObject("DNN_VBFvsGGF_TauTau"))    
+     fChain->SetBranchAddress("DNN_VBFvsGGF_TauTauTight", &DNN_VBFvsGGF_TauTauTight, &b_DNN_VBFvsGGF_TauTauTight);
+   if (fChain->GetListOfBranches()->FindObject("DNN_VBFvsGGF_MuTau"))    
+     fChain->SetBranchAddress("DNN_VBFvsGGF_TauTauLoose", &DNN_VBFvsGGF_TauTauLoose, &b_DNN_VBFvsGGF_TauTauLoose);
    Notify();
 }
 
