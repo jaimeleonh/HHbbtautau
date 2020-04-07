@@ -25,6 +25,16 @@
 #include <sstream>
 #include <map>
 
+// ROOT
+#include <Math/VectorUtil.h>
+#include <Math/LorentzVector.h>
+#include <Math/PxPyPzM4D.h>
+#include <Math/PtEtaPhiE4D.h>
+#include <TLorentzVector.h>
+
+using LorentzVector = ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiE4D<float>>;
+
+
 using namespace std;
 
 class analysisCode {
@@ -1000,6 +1010,14 @@ public :
    virtual void     EndJob();
    virtual Float_t  getDeltaR(Float_t eta1, Float_t phi1, Float_t eta2, Float_t phi2);
    virtual Float_t  getDeltaPhi(Float_t phi1, Float_t phi2);
+   virtual Float_t  getDeltaEta(Float_t eta1, Float_t eta2);
+   virtual Float_t  getCosDelta(const LorentzVector& v, const LorentzVector& r); 
+   virtual Float_t  getDeltaRboosted(const LorentzVector& v_0, const LorentzVector& v_1, const LorentzVector& ref);
+   virtual Float_t  getCentrality(Float_t eta);
+   virtual Float_t  getHHCentrality();
+   virtual Float_t  getDeltaEtaPlus();
+   virtual Float_t  getDeltaEtaMinus();
+   virtual Float_t  getAHH();
    virtual Bool_t   Notify();
    virtual std::vector <std::string> addCategories();
    virtual void     Show(Long64_t entry = -1);
