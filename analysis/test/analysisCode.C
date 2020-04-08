@@ -47,19 +47,23 @@ void analysisCode::Book()
     for (int i = 1; i<=2; i++) {
       m_plots["tau" + std::to_string(i) + "pt" + cat]    = new TH1F(("tau" + std::to_string(i) + "_pt_"+ cat).c_str(), ("tau" + std::to_string(i) + "_pt; tau" + std::to_string(i) + " pt(GeV); Entries").c_str(), 200, 0, 200); 
       m_plots["tau" + std::to_string(i) + "eta" + cat]    = new TH1F(("tau" + std::to_string(i) + "_eta_"+ cat).c_str(), ("tau" + std::to_string(i) + "_eta; tau" + std::to_string(i) + " eta; Entries").c_str(), 100, -2.5, 2.5); 
+      m_plots["tau" + std::to_string(i) + "e" + cat]    = new TH1F(("tau" + std::to_string(i) + "_e_"+ cat).c_str(), ("tau" + std::to_string(i) + "_e; tau" + std::to_string(i) + " e; Entries").c_str(), 100, 0, 1000); 
       m_plots["tau" + std::to_string(i) + "iso" + cat]    = new TH1F(("tau" + std::to_string(i) + "_iso_"+ cat).c_str(), ("tau" + std::to_string(i) + "_iso; tau" + std::to_string(i) + " iso; Entries").c_str(), 100, -0.1, 1.1); 
       m_plots["tau" + std::to_string(i) + "z" + cat]    = new TH1F(("tau" + std::to_string(i) + "_z_"+ cat).c_str(), ("tau" + std::to_string(i) + "_z; tau" + std::to_string(i) + " z; Entries").c_str(), 100, -5, 5);
 
       m_plots["bjet" + std::to_string(i) + "pt" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_pt_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_pt; bjet" + std::to_string(i) + " pt(GeV); Entries").c_str(), 200, 0, 200); 
       m_plots["bjet" + std::to_string(i) + "eta" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_eta_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_eta; bjet" + std::to_string(i) + " eta; Entries").c_str(), 100, -2.5, 2.5); 
+      m_plots["bjet" + std::to_string(i) + "e" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_e_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_e; bjet" + std::to_string(i) + " e; Entries").c_str(), 100, 0, 1000); 
       m_plots["bjet" + std::to_string(i) + "z" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_z_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_z; bjet" + std::to_string(i) + " z; Entries").c_str(), 100, -5, 5);
 
       m_plots["additionalJet" + std::to_string(i) + "pt" + cat]    = new TH1F(("additionalJet" + std::to_string(i) + "_pt_"+ cat).c_str(), ("additionalJet" + std::to_string(i) + "_pt; additionalJet" + std::to_string(i) + " pt(GeV); Entries").c_str(), 200, 0, 200); 
       m_plots["additionalJet" + std::to_string(i) + "eta" + cat]    = new TH1F(("additionalJet" + std::to_string(i) + "_eta_"+ cat).c_str(), ("additionalJet" + std::to_string(i) + "_eta; additionalJet" + std::to_string(i) + " eta; Entries").c_str(), 100, -2.5, 2.5); 
+      m_plots["additionalJet" + std::to_string(i) + "e" + cat]    = new TH1F(("additionalJet" + std::to_string(i) + "_e_"+ cat).c_str(), ("additionalJet" + std::to_string(i) + "_e; additionalJet" + std::to_string(i) + " e; Entries").c_str(), 100, 0, 1000); 
       m_plots["additionalJet" + std::to_string(i) + "z" + cat]    = new TH1F(("additionalJet" + std::to_string(i) + "_z_"+ cat).c_str(), ("additionalJet" + std::to_string(i) + "_z; additionalJet" + std::to_string(i) + " z; Entries").c_str(), 100, -5, 5);
      
       m_plots["VBFjet" + std::to_string(i) + "pt" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_pt_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_pt; VBFjet" + std::to_string(i) + " pt(GeV); Entries").c_str(), 200, 0, 200); 
       m_plots["VBFjet" + std::to_string(i) + "eta" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_eta_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_eta; VBFjet" + std::to_string(i) + " eta; Entries").c_str(), 100, -2.5, 2.5); 
+      m_plots["VBFjet" + std::to_string(i) + "e" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_e_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_e; VBFjet" + std::to_string(i) + " e; Entries").c_str(), 100, 0, 1000); 
       m_plots["VBFjet" + std::to_string(i) + "phi" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_phi_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_phi; VBFjet" + std::to_string(i) + " phi; Entries").c_str(), 100, -3.5, 3.5); 
       m_plots["VBFjet" + std::to_string(i) + "z" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_z_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_z; VBFjet" + std::to_string(i) + " z; Entries").c_str(), 100, -5, 5);
 
@@ -77,6 +81,7 @@ void analysisCode::Book()
     
     m_plots["additionalVBFjet" + std::to_string(1) + "pt" + cat]  = new TH1F(("additionalVBFjet" + std::to_string(1) + "_pt_"+ cat).c_str(), ("additionalVBFjet" + std::to_string(1) + "_pt; VBFjet" + std::to_string(1) + " pt(GeV); Entries").c_str(), 200, 0, 200); 
     m_plots["additionalVBFjet" + std::to_string(1) + "eta" + cat] = new TH1F(("additionalVBFjet" + std::to_string(1) + "_eta_"+ cat).c_str(), ("additionalVBFjet" + std::to_string(1) + "_eta; VBFjet" + std::to_string(1) + " eta; Entries").c_str(), 100, -2.5, 2.5);    
+    m_plots["additionalVBFjet" + std::to_string(1) + "e" + cat] = new TH1F(("additionalVBFjet" + std::to_string(1) + "_e_"+ cat).c_str(), ("additionalVBFjet" + std::to_string(1) + "_e; VBFjet" + std::to_string(1) + " e; Entries").c_str(), 100, 0, 1000);    
     m_plots["additionalVBFjet" + std::to_string(1) + "z" + cat]   = new TH1F(("additionalVBFjet" + std::to_string(1) + "_z_"+ cat).c_str(), ("additionalVBFjet" + std::to_string(1) + "_z; VBFjet" + std::to_string(1) + " z; Entries").c_str(), 100, -5, 5);
 
     m_plots["HH_mass"+ cat]   = new TH1F(("HH_mass_"+ cat).c_str(), "HH mass; HH Mass (GeV); Entries", 100, 0, 2000); 
@@ -175,6 +180,8 @@ void analysisCode::Fill()
     m_plots["tau2pt"+cat]->Fill(dau2_pt);
     m_plots["tau1eta"+cat]->Fill(dau1_eta);
     m_plots["tau2eta"+cat]->Fill(dau2_eta);
+    m_plots["tau1e"+cat]->Fill(dau1_e);
+    m_plots["tau2e"+cat]->Fill(dau2_e);
     m_plots["tau1iso"+cat]->Fill(dau1_iso);
     m_plots["tau2iso"+cat]->Fill(dau2_iso);
     m_plots["tau1z"+cat]->Fill(getCentrality(dau1_eta));
@@ -185,6 +192,8 @@ void analysisCode::Fill()
     if (bjet2_pt != -1) m_plots["bjet2pt"+cat]->Fill(bjet2_pt);
     if (bjet1_pt != -1) m_plots["bjet1eta"+cat]->Fill(bjet1_eta);
     if (bjet2_pt != -1) m_plots["bjet2eta"+cat]->Fill(bjet2_eta);
+    if (bjet1_pt != -1) m_plots["bjet1e"+cat]->Fill(bjet1_e);
+    if (bjet2_pt != -1) m_plots["bjet2e"+cat]->Fill(bjet2_e);
     if (bjet1_pt != -1) m_plots["bjet1z"+cat]->Fill(getCentrality(bjet1_eta));
     if (bjet2_pt != -1) m_plots["bjet2z"+cat]->Fill(getCentrality(bjet2_eta));
     if (bjet1_pt != -1 && bjet2_pt != -1) m_plots["bjets_deltaEta"+cat]->Fill(std::fabs(bjet1_eta - bjet2_eta));
@@ -195,6 +204,8 @@ void analysisCode::Fill()
     if (VBFjet2_pt!=-999.) m_plots["VBFjet2pt"+cat]->Fill(VBFjet2_pt);
     if (VBFjet1_pt!=-999.) m_plots["VBFjet1eta"+cat]->Fill(VBFjet1_eta);
     if (VBFjet2_pt!=-999.) m_plots["VBFjet2eta"+cat]->Fill(VBFjet2_eta);
+    if (VBFjet1_pt!=-999.) m_plots["VBFjet1e"+cat]->Fill(VBFjet1_e);
+    if (VBFjet2_pt!=-999.) m_plots["VBFjet2e"+cat]->Fill(VBFjet2_e);
     if (VBFjet1_pt!=-999.) m_plots["VBFjet1z"+cat]->Fill(getCentrality(VBFjet1_eta));
     if (VBFjet2_pt!=-999.) m_plots["VBFjet2z"+cat]->Fill(getCentrality(VBFjet2_eta));
     if (VBFjet1_pt!=-999. && VBFjet2_pt!=-999.) m_plots["VBFjj_deltaEta"+cat]->Fill(VBFjj_deltaEta);
@@ -206,6 +217,8 @@ void analysisCode::Fill()
     if (jet4_pt!=-999.) m_plots["additionalJet2pt"+cat]->Fill(jet4_pt);
     if (jet3_pt!=-999.) m_plots["additionalJet1eta"+cat]->Fill(jet3_eta);
     if (jet4_pt!=-999.) m_plots["additionalJet2eta"+cat]->Fill(jet4_eta);
+    if (jet3_pt!=-999.) m_plots["additionalJet1e"+cat]->Fill(jet3_e);
+    if (jet4_pt!=-999.) m_plots["additionalJet2e"+cat]->Fill(jet4_e);
     if (jet3_pt!=-999.) m_plots["additionalJet1z"+cat]->Fill(getCentrality(jet3_eta));
     if (jet4_pt!=-999.) m_plots["additionalJet2z"+cat]->Fill(getCentrality(jet4_eta));
     if (jet3_pt!=-999. && jet4_pt!=-999.) m_plots["additionalJets_deltaEta"+cat]->Fill(jj_deltaEta);
@@ -215,6 +228,7 @@ void analysisCode::Fill()
     // Fill additional VBFjet
     if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1pt"+cat]->Fill(jet5_VBF_pt);
     if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1eta"+cat]->Fill(jet5_VBF_eta);
+    if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1e"+cat]->Fill(jet5_VBF_e);
     if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1z"+cat]->Fill(getCentrality(jet5_VBF_eta));
 
 
