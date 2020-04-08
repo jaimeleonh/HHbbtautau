@@ -21,7 +21,6 @@ void analysisCode::Loop()
    std::cout << "Total entries = " << nentries << endl;
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
-      if (jentry == 1000000) break;
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
       if(jentry % 100 == 0)
@@ -204,6 +203,8 @@ void analysisCode::Fill()
     if (VBFjet2_pt!=-999.) m_plots["VBFjet2pt"+cat]->Fill(VBFjet2_pt);
     if (VBFjet1_pt!=-999.) m_plots["VBFjet1eta"+cat]->Fill(VBFjet1_eta);
     if (VBFjet2_pt!=-999.) m_plots["VBFjet2eta"+cat]->Fill(VBFjet2_eta);
+    if (VBFjet1_pt!=-999.) m_plots["VBFjet1phi"+cat]->Fill(VBFjet1_phi);
+    if (VBFjet2_pt!=-999.) m_plots["VBFjet2phi"+cat]->Fill(VBFjet2_phi);
     if (VBFjet1_pt!=-999.) m_plots["VBFjet1e"+cat]->Fill(VBFjet1_e);
     if (VBFjet2_pt!=-999.) m_plots["VBFjet2e"+cat]->Fill(VBFjet2_e);
     if (VBFjet1_pt!=-999.) m_plots["VBFjet1z"+cat]->Fill(getCentrality(VBFjet1_eta));
@@ -397,6 +398,9 @@ void analysisCode::Fill()
 
 void analysisCode::EndJob()
 {
+  for (auto &plot : m_plots) {
+    plot.second -> Scale (1. / evt_den_ );
+  }
   m_outFile.cd();
   m_outFile.Write();
   m_outFile.Close();

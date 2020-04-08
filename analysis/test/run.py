@@ -5,12 +5,15 @@ from ROOT import gSystem
 r.gROOT.SetBatch(True)
 from subprocess import call
 from samples import samples
+from collections import OrderedDict
 import plotTools
 
 import argparse
 parser = argparse.ArgumentParser(description='Plotter options')
 parser.add_argument('-n','--ntuples', action='store_true', default = False)
 parser.add_argument('-c','--copy', action='store_true', default = False)
+parser.add_argument('-m','--merge', action='store_true', default = False)
+parser.add_argument('-p','--plots', action='store_false', default = True)
 parser.add_argument('-d','--directory', dest='userCopyPath', default = '')
 my_namespace = parser.parse_args()
 
@@ -32,7 +35,8 @@ eosPath = '/eos/home-j/jleonhol/HHbbtautau/'
 plotPath = './plots/'
 
 
-categories = ["baseline","noSelection","s1b1jresolvedMcut", "s2b0jresolvedMcut", "VBFtight_DNN", "VBFloose_DNN", "sboostedLLMcut", "VBFloose", "VBFtight"]
+categories = ["baseline","noSelection"]
+#categories = ["baseline","noSelection","s1b1jresolvedMcut", "s2b0jresolvedMcut", "VBFtight_DNN", "VBFloose_DNN", "sboostedLLMcut", "VBFloose", "VBFtight"]
 
 if my_namespace.userCopyPath == '' : 
   copyPath = '/eos/home-j/jleonhol/www/HHbbtautau/2017'
@@ -48,38 +52,47 @@ if (my_namespace.copy == True) :
 
 
 
-rc = call('mkdir ' + plotPath, shell=True)
+rc = call('mkdir ' + plotPath, shell=True) 
 rc = call('mkdir ' + eosPath + '2017/', shell=True)
 
 files = []
 
 if 'allVBF' in copyPath : 
-  files.append("SKIM_GGHSM_xs")
-  files.append("SKIM_VBF_CV_1_C2V_1_C3_1")
-  files.append("SKIM_VBF_CV_1_5_C2V_1_C3_1")
-  files.append("SKIM_VBF_CV_1_C2V_1_C3_0")
-  files.append("SKIM_VBF_CV_1_C2V_1_C3_2")
-  files.append("SKIM_VBF_CV_1_C2V_0_C3_2")
-  files.append("SKIM_VBF_CV_1_C2V_2_C3_1")
+  files.append("GGHSM_xs")
+  files.append("VBF_CV_1_C2V_1_C3_1")
+  files.append("VBF_CV_1_5_C2V_1_C3_1")
+  files.append("VBF_CV_1_C2V_1_C3_0")
+  files.append("VBF_CV_1_C2V_1_C3_2")
+  files.append("VBF_CV_1_C2V_0_C3_2")
+  files.append("VBF_CV_1_C2V_2_C3_1")
 else : 
-  files.append("SKIM_GGHSM_xs")
-  files.append("SKIM_VBF_CV_1_C2V_1_C3_1")
-  files.append("PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM")
-  files.append("SKIM_TT_fullyHad")
+  #files.append("GGHSM_xs")
+  #files.append("VBF_CV_1_C2V_1_C3_1")
+  #files.append("ttHJetToBB")
+  #files.append("PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM")
+  files += ["TT_fullyHad", "TT_semiLep", "TT_fullyLep"]
 
+  #files += ["DYJets_0j0b_allgenjets_0b", "DYJets_1j0b_allgenjets_0b", "DYJets_1j1b_allgenjets_0b", "DYJets_2j0b_allgenjets_0b", "DYJets_2j1b_allgenjets_0b", "DYJets_2j2b_allgenjets_0b", "DYJets_3j0b_allgenjets_0b", "DYJets_3j1b_allgenjets_0b", "DYJets_3j2b_allgenjets_0b", "DYJets_3j3b_allgenjets_0b", "DYJets_4j0b_allgenjets_0b", "DYJets_4j1b_allgenjets_0b", "DYJets_4j2b_allgenjets_0b", "DYJets_4j3b_allgenjets_0b", "DYJets_4j4b_allgenjets_0b"]
+  #files += ["DYJets_0j0b_allgenjets_1b", "DYJets_1j0b_allgenjets_1b", "DYJets_1j1b_allgenjets_1b", "DYJets_2j0b_allgenjets_1b", "DYJets_2j1b_allgenjets_1b", "DYJets_2j2b_allgenjets_1b", "DYJets_3j0b_allgenjets_1b", "DYJets_3j1b_allgenjets_1b", "DYJets_3j2b_allgenjets_1b", "DYJets_3j3b_allgenjets_1b", "DYJets_4j0b_allgenjets_1b", "DYJets_4j1b_allgenjets_1b", "DYJets_4j2b_allgenjets_1b", "DYJets_4j3b_allgenjets_1b", "DYJets_4j4b_allgenjets_1b"]
+  #files += ["DYJets_0j0b_allgenjets_2b", "DYJets_1j0b_allgenjets_2b", "DYJets_1j1b_allgenjets_2b", "DYJets_2j0b_allgenjets_2b", "DYJets_2j1b_allgenjets_2b", "DYJets_2j2b_allgenjets_2b", "DYJets_3j0b_allgenjets_2b", "DYJets_3j1b_allgenjets_2b", "DYJets_3j2b_allgenjets_2b", "DYJets_3j3b_allgenjets_2b", "DYJets_4j0b_allgenjets_2b", "DYJets_4j1b_allgenjets_2b", "DYJets_4j2b_allgenjets_2b", "DYJets_4j3b_allgenjets_2b", "DYJets_4j4b_allgenjets_2b"]
 
+  mergingCategories = OrderedDict()
+  mergingCategories["ggHSM"] = ["GGHSM_xs"]
+  mergingCategories["VBFSM"] = ["VBF_CV_1_C2V_1_C3_1"]
+  mergingCategories["ttHJetToBB"] = ["ttHJetToBB"]
+  mergingCategories["ggF+2jets"] = ["PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM"]
+  mergingCategories["TT"] = ["TT_fullyHad", "TT_semiLep", "TT_fullyLep"]
+  mergingCategories["DY+0b"] = ["DYJets_0j0b_allgenjets_0b", "DYJets_1j0b_allgenjets_0b", "DYJets_1j1b_allgenjets_0b", "DYJets_2j0b_allgenjets_0b", "DYJets_2j1b_allgenjets_0b", "DYJets_2j2b_allgenjets_0b", "DYJets_3j0b_allgenjets_0b", "DYJets_3j1b_allgenjets_0b", "DYJets_3j2b_allgenjets_0b", "DYJets_3j3b_allgenjets_0b", "DYJets_4j0b_allgenjets_0b", "DYJets_4j1b_allgenjets_0b", "DYJets_4j2b_allgenjets_0b", "DYJets_4j3b_allgenjets_0b", "DYJets_4j4b_allgenjets_0b"]
+  mergingCategories["DY+1b"] = ["DYJets_0j0b_allgenjets_1b", "DYJets_1j0b_allgenjets_1b", "DYJets_1j1b_allgenjets_1b", "DYJets_2j0b_allgenjets_1b", "DYJets_2j1b_allgenjets_1b", "DYJets_2j2b_allgenjets_1b", "DYJets_3j0b_allgenjets_1b", "DYJets_3j1b_allgenjets_1b", "DYJets_3j2b_allgenjets_1b", "DYJets_3j3b_allgenjets_1b", "DYJets_4j0b_allgenjets_1b", "DYJets_4j1b_allgenjets_1b", "DYJets_4j2b_allgenjets_1b", "DYJets_4j3b_allgenjets_1b", "DYJets_4j4b_allgenjets_1b"]
+  mergingCategories["DY+2b"] = ["DYJets_0j0b_allgenjets_2b", "DYJets_1j0b_allgenjets_2b", "DYJets_1j1b_allgenjets_2b", "DYJets_2j0b_allgenjets_2b", "DYJets_2j1b_allgenjets_2b", "DYJets_2j2b_allgenjets_2b", "DYJets_3j0b_allgenjets_2b", "DYJets_3j1b_allgenjets_2b", "DYJets_3j2b_allgenjets_2b", "DYJets_3j3b_allgenjets_2b", "DYJets_4j0b_allgenjets_2b", "DYJets_4j1b_allgenjets_2b", "DYJets_4j2b_allgenjets_2b", "DYJets_4j3b_allgenjets_2b", "DYJets_4j4b_allgenjets_2b"]
 
-#files.append("SKIM_VBFSM")
-#files.append("SKIM_GGHSM_xs")
-#files.append("SKIM_TT_fullyHad")
-#files.append("SKIM_Tau2018A")
-#files.append( samples[0] )
+if not my_namespace.plots : sys.exit(0)
 
 for fil in files :
   if my_namespace.ntuples == True :
     print ('Obtaining plot ntuples for ' + fil)
     time.sleep(2) 
-    if (fil != 'PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM') : analysis = analysisCode(path + fil, eosPath + '2017/' + fil + '.root')
+    if (fil != 'PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM') : analysis = analysisCode(path + 'SKIM_' + fil, eosPath + '2017/' + fil + '.root')
     else : analysis = analysisCode( '/eos/home-j/jleonhol/HHbbtautau/2017/' + fil, eosPath + '2017/' + fil + '.root')
     analysis.Loop()
 
@@ -134,14 +147,20 @@ plottingStuff = { 'lowlimityaxis' : 0,
 	          'markercolordir':{}, 
    	        }   
 
-
+t0 = 0
 for plot in whatToPlot : 
   for cat in categories : 
     listOfPlots = []
-    for fil in files :
-      plotTools.makePlot(listOfPlots, eosPath + '2017/' + fil + '.root', plot+'_'+cat)
-    plotTools.combinePlots (listOfPlots, files, plottingStuff, plotPath, plot+'_'+cat) 
-    plotTools.combinePlots (listOfPlots, files, plottingStuff, plotPath, plot+'_'+cat, logy=True) 
+    if my_namespace.merge == True :
+      legends = mergingCategories.keys() 
+      for merge in mergingCategories :
+        plotTools.makePlot(listOfPlots, eosPath + '2017/', mergingCategories[merge] , plot+'_'+cat, merge=True, normalize=True)
+    else :
+      legends = files
+      for fil in files :
+        plotTools.makePlot(listOfPlots, eosPath + '2017/', fil + '.root', plot+'_'+cat, merge=False, normalize=True)
+    plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat) 
+    plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=True) 
 
 
     if my_namespace.copy == True: 

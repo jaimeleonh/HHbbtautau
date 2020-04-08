@@ -12,11 +12,21 @@ r.gROOT.SetBatch(True)
 
 #############################################################################################################################
 
-def makePlot(hlist, fileName, plotscaffold):
-    res = r.TFile.Open(fileName)
+def makePlot(hlist, path, files, plotscaffold, merge=False, normalize=True):
     
-    resplot = res.Get(plotscaffold)
-    if (resplot.GetEntries() > 0) : resplot.Scale (1. / resplot.GetEntries() )
+    if not merge :
+      res = r.TFile.Open(path + files)
+      resplot = res.Get(plotscaffold)
+    else :
+      res = r.TFile.Open(path+files[0]+'.root')
+      resplot = res.Get(plotscaffold)
+      for i in range (1,len(files)) :
+        otherFile = r.TFile.Open(path+files[i]+'.root')
+        otherPlot = otherFile.Get(plotscaffold)
+        resplot.Add(otherPlot)
+        otherFile.Close(); del otherFile, otherPlot
+
+    if normalize==True and resplot.Integral() > 0 : resplot.Scale (1. / resplot.Integral() )
 
     hlist.append(deepcopy(resplot))
     res.Close(); del res, resplot
@@ -37,6 +47,7 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False)
         hlist[iplot].SetLineColor(markerColors[iplot % len(markerColors)])
         #hlist[iplot].SetLineColor(plottingStuff['markercolordir'][hlist[iplot].GetName()])
         hlist[iplot].SetMarkerStyle(20)
+        hlist[iplot].SetLineStyle(1 + iplot / len(markerColors))
 #        hlist[iplot].SetMarkerStyle(markerTypes[iplot / len(markerColors)])
         #hlist[iplot].SetMarkerStyle(plottingStuff['markertypedir'][hlist[iplot].GetName()])
         leg.AddEntry(hlist[iplot], legends[iplot], "PL")
@@ -81,6 +92,4 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False)
 
 
 
-if __name__ == '__main__':
-  main()
 

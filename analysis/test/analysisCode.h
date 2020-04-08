@@ -1024,6 +1024,8 @@ public :
 
    TFile m_outFile; 
    std::map <std::string, TH1F*> m_plots;
+   int numEntries; 
+   int evt_den_; 
 };
 
 #endif
@@ -1051,20 +1053,25 @@ analysisCode::analysisCode(const TString & inSample, const TString & outName) : 
 {
    TChain *tree = new TChain("HTauTauTree");
    TString goodFile;
-   //fChain = static_cast<TChain*>();
-   int a = 0;
-   //TTree *tree;
+   numEntries = 0;
+   int entryThreshold = 1000000;  
    ifstream file(inSample + "/goodfiles.txt");
    if (file.good()) {
      if (file.is_open()){
-       while (file >> goodFile && a < 1) {
+       while (file >> goodFile) {
          TFile *f = new TFile(goodFile);
+         TH1F * h = (TH1F*) f->Get("h_eff");
+         evt_den_ += h->GetBinContent(1);
          tree->Add(goodFile);
-//         std::cout << "Added to chain " << goodFile << std::endl;
+         numEntries = tree->GetEntries();
+         f->Close();
+         if (numEntries > entryThreshold) {
+           std::cout << "Running only over the first " << numEntries << std::endl; 
+           break; 
+         }
        }
      }
    } else {
-//     std::cout << "Introduced filename is not OK" << std::endl;
      return;
    }
    Init(tree);
