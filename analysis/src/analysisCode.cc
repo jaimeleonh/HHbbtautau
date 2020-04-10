@@ -13,7 +13,7 @@
 
 
 
-void analysisCode::Loop()
+void analysisCode::Loop(bool info)
 {
    if (fChain == 0) return;
    Book();
@@ -23,7 +23,7 @@ void analysisCode::Loop()
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
       if (ientry < 0) break;
-      if(jentry % 100 == 0)
+      if(jentry % 100 == 0 && info==true)
         std::cout << "[analysisCode::Loop] processed : "
         << jentry << " entries\r" << std::flush;
       nb = fChain->GetEntry(jentry);   nbytes += nb;
@@ -406,6 +406,8 @@ void analysisCode::EndJob()
   m_outFile.cd();
   m_outFile.Write();
   m_outFile.Close();
+  std::cout << ">>>>>> Finished processing this sample >>>>>>" << endl; 
+
 }
 
 Float_t analysisCode::getDeltaEta(Float_t eta1, Float_t eta2)

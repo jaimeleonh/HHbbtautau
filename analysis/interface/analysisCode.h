@@ -1004,7 +1004,7 @@ public :
    virtual Int_t    GetEntry(Long64_t entry);
    virtual Long64_t LoadTree(Long64_t entry);
    virtual void     Init(TTree *tree);
-   virtual void     Loop();
+   virtual void     Loop(bool info);
    virtual void     Fill();
    virtual void     Book();
    virtual void     EndJob();
@@ -1024,7 +1024,6 @@ public :
 
    TFile m_outFile; 
    std::map <std::string, TH1F*> m_plots;
-   int numEntries; 
    int evt_den_;
    int isMCSample;  
 };
@@ -1054,9 +1053,6 @@ analysisCode::analysisCode(const TString & inSample, const TString & outName, co
 {
    TChain *tree = new TChain("HTauTauTree");
    TString goodFile;
-   numEntries = 0;
-   int entryThreshold = 9999999; 
-   //int entryThreshold = 1000000; 
 
    isMCSample = MC;
 
@@ -1068,12 +1064,7 @@ analysisCode::analysisCode(const TString & inSample, const TString & outName, co
          TH1F * h = (TH1F*) f->Get("h_eff");
          evt_den_ += h->GetBinContent(1);
          tree->Add(goodFile);
-         numEntries = tree->GetEntries();
          f->Close();
-         if (numEntries > entryThreshold) {
-           std::cout << "Running only over the first " << numEntries << std::endl; 
-           break; 
-         }
        }
      }
    } else {

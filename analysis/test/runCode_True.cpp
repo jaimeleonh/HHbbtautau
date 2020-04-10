@@ -13,6 +13,6 @@ int main(int argc, char** argv)
   }
 
   analysisCode analysis(argv[1], argv[2], atoi(argv[3]) );
-  analysis.Loop(false);
+  analysis.Loop(true);
 
 }

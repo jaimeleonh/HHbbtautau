@@ -20,15 +20,15 @@ parser.add_argument('-dmc','--dataMC', action='store_true', default = False)
 parser.add_argument('-d','--directory', dest='userCopyPath', default = '')
 my_namespace = parser.parse_args()
 
-if my_namespace.ntuples == True :
-    print ("Starting ntuplizer for every sample in input")
-    time.sleep(2)
-    r.gInterpreter.ProcessLine(".x loadExampleAnalysis.C")
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    gSystem.Load(dir_path + "analysisCode_C.so")
-    from ROOT import analysisCode
+if my_namespace.ntuples == True or my_namespace.runInCondor == True:
+  print ("Starting ntuplizer for every sample in input")
+  time.sleep(2)
+#    r.gInterpreter.ProcessLine(".x  ./scripts/loadExampleAnalysis.C")
+#    dir_path = os.path.dirname(os.path.realpath(__file__))
+#    gSystem.Load(dir_path + "analysisCode_C.so")
+#    from ROOT import analysisCode
 else : 
-  print("Not making ntuples. If you want to make them, restart with 'yes' as first argument ")
+  print("Not making ntuples. If you want to make them, restart with '-n' (local) or '-rc' (HTCondor) as argument ")
   time.sleep(2)
 
 #path = '/eos/home-j/jleonhol/HHbbtautau/2017/'
@@ -69,19 +69,19 @@ if 'allVBF' in copyPath :
   files.append("VBF_CV_1_C2V_0_C3_2")
   files.append("VBF_CV_1_C2V_2_C3_1")
 else : 
-  files.append("GGHSM_xs")
-  files.append("VBF_CV_1_C2V_1_C3_1")
-  files.append("ttHJetToBB")
-  files.append("PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM")
+  #files.append("GGHSM_xs")
+  #files.append("VBF_CV_1_C2V_1_C3_1")
+  #files.append("ttHJetToBB")
+  #files.append("PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM")
   files += ["TT_fullyHad", "TT_semiLep", "TT_fullyLep"]
 
-  files += ["DYJets_0j0b_allgenjets_0b", "DYJets_1j0b_allgenjets_0b", "DYJets_1j1b_allgenjets_0b", "DYJets_2j0b_allgenjets_0b", "DYJets_2j1b_allgenjets_0b", "DYJets_2j2b_allgenjets_0b", "DYJets_3j0b_allgenjets_0b", "DYJets_3j1b_allgenjets_0b", "DYJets_3j2b_allgenjets_0b", "DYJets_3j3b_allgenjets_0b", "DYJets_4j0b_allgenjets_0b", "DYJets_4j1b_allgenjets_0b", "DYJets_4j2b_allgenjets_0b", "DYJets_4j3b_allgenjets_0b", "DYJets_4j4b_allgenjets_0b"]
-  files += ["DYJets_0j0b_allgenjets_1b", "DYJets_1j0b_allgenjets_1b", "DYJets_1j1b_allgenjets_1b", "DYJets_2j0b_allgenjets_1b", "DYJets_2j1b_allgenjets_1b", "DYJets_2j2b_allgenjets_1b", "DYJets_3j0b_allgenjets_1b", "DYJets_3j1b_allgenjets_1b", "DYJets_3j2b_allgenjets_1b", "DYJets_3j3b_allgenjets_1b", "DYJets_4j0b_allgenjets_1b", "DYJets_4j1b_allgenjets_1b", "DYJets_4j2b_allgenjets_1b", "DYJets_4j3b_allgenjets_1b", "DYJets_4j4b_allgenjets_1b"]
-  files += ["DYJets_0j0b_allgenjets_2b", "DYJets_1j0b_allgenjets_2b", "DYJets_1j1b_allgenjets_2b", "DYJets_2j0b_allgenjets_2b", "DYJets_2j1b_allgenjets_2b", "DYJets_2j2b_allgenjets_2b", "DYJets_3j0b_allgenjets_2b", "DYJets_3j1b_allgenjets_2b", "DYJets_3j2b_allgenjets_2b", "DYJets_3j3b_allgenjets_2b", "DYJets_4j0b_allgenjets_2b", "DYJets_4j1b_allgenjets_2b", "DYJets_4j2b_allgenjets_2b", "DYJets_4j3b_allgenjets_2b", "DYJets_4j4b_allgenjets_2b"]
+  #files += ["DYJets_0j0b_allgenjets_0b", "DYJets_1j0b_allgenjets_0b", "DYJets_1j1b_allgenjets_0b", "DYJets_2j0b_allgenjets_0b", "DYJets_2j1b_allgenjets_0b", "DYJets_2j2b_allgenjets_0b", "DYJets_3j0b_allgenjets_0b", "DYJets_3j1b_allgenjets_0b", "DYJets_3j2b_allgenjets_0b", "DYJets_3j3b_allgenjets_0b", "DYJets_4j0b_allgenjets_0b", "DYJets_4j1b_allgenjets_0b", "DYJets_4j2b_allgenjets_0b", "DYJets_4j3b_allgenjets_0b", "DYJets_4j4b_allgenjets_0b"]
+  #files += ["DYJets_0j0b_allgenjets_1b", "DYJets_1j0b_allgenjets_1b", "DYJets_1j1b_allgenjets_1b", "DYJets_2j0b_allgenjets_1b", "DYJets_2j1b_allgenjets_1b", "DYJets_2j2b_allgenjets_1b", "DYJets_3j0b_allgenjets_1b", "DYJets_3j1b_allgenjets_1b", "DYJets_3j2b_allgenjets_1b", "DYJets_3j3b_allgenjets_1b", "DYJets_4j0b_allgenjets_1b", "DYJets_4j1b_allgenjets_1b", "DYJets_4j2b_allgenjets_1b", "DYJets_4j3b_allgenjets_1b", "DYJets_4j4b_allgenjets_1b"]
+  #files += ["DYJets_0j0b_allgenjets_2b", "DYJets_1j0b_allgenjets_2b", "DYJets_1j1b_allgenjets_2b", "DYJets_2j0b_allgenjets_2b", "DYJets_2j1b_allgenjets_2b", "DYJets_2j2b_allgenjets_2b", "DYJets_3j0b_allgenjets_2b", "DYJets_3j1b_allgenjets_2b", "DYJets_3j2b_allgenjets_2b", "DYJets_3j3b_allgenjets_2b", "DYJets_4j0b_allgenjets_2b", "DYJets_4j1b_allgenjets_2b", "DYJets_4j2b_allgenjets_2b", "DYJets_4j3b_allgenjets_2b", "DYJets_4j4b_allgenjets_2b"]
 
-  #dataFiles = []
+  dataFiles = []
   #dataFiles = ['Tau2017C','Tau2017D','Tau2017E','Tau2017F']
-  dataFiles = ['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F']
+  #dataFiles = ['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F']
 
 
 
@@ -120,6 +120,8 @@ if my_namespace.runInCondor :
     scriptFile = open (outDir + '/' + scriptName, 'w')
     scriptFile.write ('#!/bin/bash\n')
     scriptFile.write ('cd %s\n' % here)
+    scriptFile.write ('export SCRAM_ARCH=slc6_amd64_gcc491\n')
+    scriptFile.write ('eval `scram r -sh`\n')
     scriptFile.write ('source scripts/setup.sh\n')
     command = program + ' '
     if (fil != 'PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM') : command += path + 'SKIM_' + fil  
@@ -144,24 +146,23 @@ if my_namespace.runInCondor :
     f.close()
 
     os.system ( 'condor_submit %s/submit_condor_%s.sub'%(outDir,str(nj)))
-    break
   sys.exit(0)
 
 
-for fil in files :
+for fil in files+dataFiles :
   if my_namespace.ntuples == True :
     print ('Obtaining plot ntuples for ' + fil)
     time.sleep(2) 
-    if (fil != 'PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM') : analysis = analysisCode(path + 'SKIM_' + fil, eosPath + '2017/' + fil + '.root', 1)
-    else : analysis = analysisCode( '/eos/home-j/jleonhol/HHbbtautau/2017/' + fil, eosPath + '2017/' + fil + '.root', 1)
-    analysis.Loop()
+    program = 'runCode_True.exe'
+    command = program + ' '
+    if (fil != 'PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM') : command += path + 'SKIM_' + fil  
+    else : command += '/eos/home-j/jleonhol/HHbbtautau/2017/' + fil 
+    
+    command += ' ' + eosPath + '2017/' + fil + '.root '
+    if fil in files : command += ' 1'
+    else : command += ' 0'
 
-for fil in dataFiles :
-  if my_namespace.ntuples == True :
-    print ('Obtaining plot ntuples for ' + fil)
-    time.sleep(2) 
-    analysis = analysisCode( path + 'SKIM_' + fil, eosPath + '2017/' + fil + '.root', 0)
-    analysis.Loop()
+    os.system(command)
 
 
 if not my_namespace.plots : sys.exit(0)
