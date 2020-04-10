@@ -15,7 +15,7 @@ source scripts/setup.sh
 ## Running the ntuple production
 
 - ``` python scripts/run.py -n -p``` to run locally. 
-- ``` python scripts/run.py -rc -p``` to run in HTCondor in lxplus. 
+- ``` python scripts/run.py -rc -p``` to run on HTCondor working on lxplus. 
 
 In both cases, you need to modify by hand the samples you want to process and the folder you would like to use.
 
