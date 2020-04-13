@@ -35,11 +35,15 @@ else :
 
   else : 
     filelist = os.listdir(options.userCopyPath)
+    missingJobs = 0
     for fil in filelist :
       if not fil[-4:] == '.log' : continue 
       else : 
         inFile = options.userCopyPath + "/" + fil[0:-4]+'.0.out'
-        if not os.path.isfile( inFile ) : print bcolors.red + "Job in cluster " +  fil[0:-4] + " not processed yet" + bcolors.reset
+        if not os.path.isfile( inFile ) : 
+          print bcolors.red + "Job in cluster " +  fil[0:-4] + " not processed yet" + bcolors.reset
+          missingJobs += 1
+
         else : 
           found = False
           with open( inFile  ) as a : 
@@ -47,7 +51,11 @@ else :
               if "Finished" in line : 
                 found = True 
                 break
-          if not found : print bcolors.red + "Job in cluster " + fil[0:-4] + " not processed yet" + bcolors.reset
+          if not found : 
+            print bcolors.red + "Job in cluster " + fil[0:-4] + " not processed yet" + bcolors.reset
+            missingJobs += 1
           else : print bcolors.green + "Job in cluster " + fil[0:-4] + " completed" + bcolors.reset
+
+    print str(missingJobs) + " missing jobs"
 
 
