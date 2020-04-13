@@ -69,15 +69,17 @@ if 'allVBF' in copyPath :
   files.append("VBF_CV_1_C2V_0_C3_2")
   files.append("VBF_CV_1_C2V_2_C3_1")
 else : 
-  #files.append("GGHSM_xs")
-  #files.append("VBF_CV_1_C2V_1_C3_1")
-  #files.append("ttHJetToBB")
-  #files.append("PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM")
+  files.append("GGHSM_xs")
+  files.append("VBF_CV_1_C2V_1_C3_1")
+  files += ["ttHJetToBB", "ttHJetTononBB"]
+  files.append("PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM")
   files += ["TT_fullyHad", "TT_semiLep", "TT_fullyLep"]
 
-  #files += ["DYJets_0j0b_allgenjets_0b", "DYJets_1j0b_allgenjets_0b", "DYJets_1j1b_allgenjets_0b", "DYJets_2j0b_allgenjets_0b", "DYJets_2j1b_allgenjets_0b", "DYJets_2j2b_allgenjets_0b", "DYJets_3j0b_allgenjets_0b", "DYJets_3j1b_allgenjets_0b", "DYJets_3j2b_allgenjets_0b", "DYJets_3j3b_allgenjets_0b", "DYJets_4j0b_allgenjets_0b", "DYJets_4j1b_allgenjets_0b", "DYJets_4j2b_allgenjets_0b", "DYJets_4j3b_allgenjets_0b", "DYJets_4j4b_allgenjets_0b"]
-  #files += ["DYJets_0j0b_allgenjets_1b", "DYJets_1j0b_allgenjets_1b", "DYJets_1j1b_allgenjets_1b", "DYJets_2j0b_allgenjets_1b", "DYJets_2j1b_allgenjets_1b", "DYJets_2j2b_allgenjets_1b", "DYJets_3j0b_allgenjets_1b", "DYJets_3j1b_allgenjets_1b", "DYJets_3j2b_allgenjets_1b", "DYJets_3j3b_allgenjets_1b", "DYJets_4j0b_allgenjets_1b", "DYJets_4j1b_allgenjets_1b", "DYJets_4j2b_allgenjets_1b", "DYJets_4j3b_allgenjets_1b", "DYJets_4j4b_allgenjets_1b"]
-  #files += ["DYJets_0j0b_allgenjets_2b", "DYJets_1j0b_allgenjets_2b", "DYJets_1j1b_allgenjets_2b", "DYJets_2j0b_allgenjets_2b", "DYJets_2j1b_allgenjets_2b", "DYJets_2j2b_allgenjets_2b", "DYJets_3j0b_allgenjets_2b", "DYJets_3j1b_allgenjets_2b", "DYJets_3j2b_allgenjets_2b", "DYJets_3j3b_allgenjets_2b", "DYJets_4j0b_allgenjets_2b", "DYJets_4j1b_allgenjets_2b", "DYJets_4j2b_allgenjets_2b", "DYJets_4j3b_allgenjets_2b", "DYJets_4j4b_allgenjets_2b"]
+  files += ["DYJets_0j0b_allgenjets_0b", "DYJets_1j0b_allgenjets_0b", "DYJets_1j1b_allgenjets_0b", "DYJets_2j0b_allgenjets_0b", "DYJets_2j1b_allgenjets_0b", "DYJets_2j2b_allgenjets_0b", "DYJets_3j0b_allgenjets_0b", "DYJets_3j1b_allgenjets_0b", "DYJets_3j2b_allgenjets_0b", "DYJets_3j3b_allgenjets_0b", "DYJets_4j0b_allgenjets_0b", "DYJets_4j1b_allgenjets_0b", "DYJets_4j2b_allgenjets_0b", "DYJets_4j3b_allgenjets_0b", "DYJets_4j4b_allgenjets_0b"]
+  files += ["DYJets_0j0b_allgenjets_1b", "DYJets_1j0b_allgenjets_1b", "DYJets_1j1b_allgenjets_1b", "DYJets_2j0b_allgenjets_1b", "DYJets_2j1b_allgenjets_1b", "DYJets_2j2b_allgenjets_1b", "DYJets_3j0b_allgenjets_1b", "DYJets_3j1b_allgenjets_1b", "DYJets_3j2b_allgenjets_1b", "DYJets_3j3b_allgenjets_1b", "DYJets_4j0b_allgenjets_1b", "DYJets_4j1b_allgenjets_1b", "DYJets_4j2b_allgenjets_1b", "DYJets_4j3b_allgenjets_1b", "DYJets_4j4b_allgenjets_1b"]
+  files += ["DYJets_0j0b_allgenjets_2b", "DYJets_1j0b_allgenjets_2b", "DYJets_1j1b_allgenjets_2b", "DYJets_2j0b_allgenjets_2b", "DYJets_2j1b_allgenjets_2b", "DYJets_2j2b_allgenjets_2b", "DYJets_3j0b_allgenjets_2b", "DYJets_3j1b_allgenjets_2b", "DYJets_3j2b_allgenjets_2b", "DYJets_3j3b_allgenjets_2b", "DYJets_4j0b_allgenjets_2b", "DYJets_4j1b_allgenjets_2b", "DYJets_4j2b_allgenjets_2b", "DYJets_4j3b_allgenjets_2b", "DYJets_4j4b_allgenjets_2b"]
+  files += ["WJets_HT_0_100","WJets_HT_1200_2500","WJets_HT_100_200", "WJets_HT_2500_Inf", "WJets_HT_200_400", "WJets_HT_400_600", "WJets_HT_600_800", "WJets_HT_800_1200"]
+  files += ["ST_tW_antitop", "ST_tchannel_antitop", "ST_tW_top", "ST_tchannel_top", "EWKWMinus2Jets_WToLNu", "EWKWPlus2Jets_WToLNu", "EWKZ2Jets_ZToLL", "EWKZ2Jets_ZToNuNu","WWTo2L2Nu", "WWTo4Q", "WWToLNuQQ", "WZTo2L2Q", "WZTo1L1Nu2Q", "WZTo3LNu", "ZZTo2L2Q", "ZZTo4L", "ZH_HBB_ZLL", "ZH_HTauTau", "ggHTauTau", "VBFHTauTau", "WplusHTauTau", "WminusHTauTau", "WWW", "WWZ", "WZZ", "TTWJetsToLNu", "TTWJetsToQQ", "TTWW"]
 
   dataFiles = []
   #dataFiles = ['Tau2017C','Tau2017D','Tau2017E','Tau2017F']
@@ -94,6 +96,8 @@ else :
   mergingCategories["DY+0b"] = ["DYJets_0j0b_allgenjets_0b", "DYJets_1j0b_allgenjets_0b", "DYJets_1j1b_allgenjets_0b", "DYJets_2j0b_allgenjets_0b", "DYJets_2j1b_allgenjets_0b", "DYJets_2j2b_allgenjets_0b", "DYJets_3j0b_allgenjets_0b", "DYJets_3j1b_allgenjets_0b", "DYJets_3j2b_allgenjets_0b", "DYJets_3j3b_allgenjets_0b", "DYJets_4j0b_allgenjets_0b", "DYJets_4j1b_allgenjets_0b", "DYJets_4j2b_allgenjets_0b", "DYJets_4j3b_allgenjets_0b", "DYJets_4j4b_allgenjets_0b"]
   mergingCategories["DY+1b"] = ["DYJets_0j0b_allgenjets_1b", "DYJets_1j0b_allgenjets_1b", "DYJets_1j1b_allgenjets_1b", "DYJets_2j0b_allgenjets_1b", "DYJets_2j1b_allgenjets_1b", "DYJets_2j2b_allgenjets_1b", "DYJets_3j0b_allgenjets_1b", "DYJets_3j1b_allgenjets_1b", "DYJets_3j2b_allgenjets_1b", "DYJets_3j3b_allgenjets_1b", "DYJets_4j0b_allgenjets_1b", "DYJets_4j1b_allgenjets_1b", "DYJets_4j2b_allgenjets_1b", "DYJets_4j3b_allgenjets_1b", "DYJets_4j4b_allgenjets_1b"]
   mergingCategories["DY+2b"] = ["DYJets_0j0b_allgenjets_2b", "DYJets_1j0b_allgenjets_2b", "DYJets_1j1b_allgenjets_2b", "DYJets_2j0b_allgenjets_2b", "DYJets_2j1b_allgenjets_2b", "DYJets_2j2b_allgenjets_2b", "DYJets_3j0b_allgenjets_2b", "DYJets_3j1b_allgenjets_2b", "DYJets_3j2b_allgenjets_2b", "DYJets_3j3b_allgenjets_2b", "DYJets_4j0b_allgenjets_2b", "DYJets_4j1b_allgenjets_2b", "DYJets_4j2b_allgenjets_2b", "DYJets_4j3b_allgenjets_2b", "DYJets_4j4b_allgenjets_2b"]
+  mergingCategories["W+jets"] = ["WJets_HT_0_100","WJets_HT_1200_2500","WJets_HT_100_200", "WJets_HT_2500_Inf", "WJets_HT_200_400", "WJets_HT_400_600", "WJets_HT_600_800", "WJets_HT_800_1200"]
+  mergingCategories["others"] = ["ST_tW_antitop", "ST_tchannel_antitop", "ST_tW_top", "ST_tchannel_top", "EWKWMinus2Jets_WToLNu", "EWKWPlus2Jets_WToLNu", "EWKZ2Jets_ZToLL", "EWKZ2Jets_ZToNuNu","WWTo2L2Nu", "WWTo4Q", "WWToLNuQQ", "WZTo2L2Q", "WZTo1L1Nu2Q", "WZTo3LNu", "ZZTo2L2Q", "ZZTo4L", "ZH_HBB_ZLL", "ZH_HTauTau", "ggHTauTau", "VBFHTauTau", "WplusHTauTau", "WminusHTauTau", "WWW", "WWZ", "WZZ", "TTWJetsToLNu", "TTWJetsToQQ", "TTWW"] + ["ttHJetToBB", "ttHJetTononBB"]
 
 
   data = ['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F']
@@ -142,7 +146,8 @@ if my_namespace.runInCondor :
     f.write( "output             = %s/$(ClusterId).$(ProcId).out\n"%outDir)
     f.write( "error              = %s/$(ClusterId).$(ProcId).error\n"%outDir)
     f.write( "log                = %s/$(ClusterId).log\n"%outDir)
-    f.write("queue \n")
+    f.write( '+JobFlavour        = "microcentury"\n')
+    f.write( "queue\n")
     f.close()
 
     os.system ( 'condor_submit %s/submit_condor_%s.sub'%(outDir,str(nj)))
