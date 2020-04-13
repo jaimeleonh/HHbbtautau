@@ -38,7 +38,8 @@ void analysisCode::Book()
 {
 
   //std::vector <std::string> categories = {""};
-  std::vector <std::string> categories = {"noSelection","baseline","s1b1jresolvedMcut", "s2b0jresolvedMcut", "VBFtight_DNN", "VBFloose_DNN", "sboostedLLMcut", "VBFloose", "VBFtight"};
+  //std::vector <std::string> categories = {"noSelection","baseline","s1b1jresolvedMcut", "s2b0jresolvedMcut", "VBFtight_DNN", "VBFloose_DNN", "sboostedLLMcut", "VBFloose", "VBFtight"};
+  std::vector <std::string> categories = {"noSelection","baseline_etauh","baseline_mutauh","baseline_tauhtauh"};
 
   m_outFile.cd();
 
@@ -152,6 +153,7 @@ void analysisCode::Book()
     m_plots["costheta_met_htt"+ cat]    = new TH1F(("costheta_met_htt_"+ cat).c_str(), "costheta_met_htt; costheta_met_htt; Entries", 100, -1.1, 1.1);
     m_plots["boosted"+ cat]    = new TH1F(("boosted_"+ cat).c_str(), "boosted; boosted; Entries", 3, -1.5, 1.5);
     m_plots["channel"+ cat]    = new TH1F(("channel_"+ cat).c_str(), "channel / pairType; channel; Entries", 5, -0.5, 4.5);
+    m_plots["BDT_topPairMasses"+ cat]    = new TH1F(("BDT_topPairMasses_"+ cat).c_str(), "BDT_topPairMasses; BDT_topPairMasses; Entries", 50, 50, 250);
 
 
      
@@ -386,8 +388,7 @@ void analysisCode::Fill()
     m_plots["costheta_met_htt"+ cat] -> Fill( getCosDelta( met, h_tt_SVFIT ) );
     m_plots["boosted"+ cat] -> Fill (isBoosted);
     m_plots["channel"+ cat] -> Fill (pairType);
-
-
+    if (BDT_topPairMasses!=-999.) m_plots["BDT_topPairMasses"+cat]->Fill(BDT_topPairMasses);
 
 
 
@@ -520,35 +521,39 @@ Float_t  analysisCode::getDeltaRboosted(const LorentzVector& v_0, const LorentzV
 std::vector <std::string> analysisCode::addCategories () {
    std::vector <std::string> categories = {};
 
-   bool baseline = pairType == 2 && dau1_pt > 40 && abs (dau1_eta) < 2.1 && dau2_pt > 40 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1;   
-   // bool baseline = pairType == 2 && dau1_pt > 40 && abs (dau1_eta) < 2.1 && dau2_pt > 40 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1 && isVBFtrigger == 0 && BDToutSM_kl_1 > 0;       // old baseline from Chiara's VBF
-   bool baseline55     = baseline && tauH_SVFIT_mass > 50;
-   bool baselineVBFtight = pairType == 2 && dau1_pt > 25 && abs (dau1_eta) < 2.1 && dau2_pt > 25 && tauH_SVFIT_mass > 50 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1 && isVBFtrigger == 1 && VBFjj_mass > 800 && VBFjet1_pt > 140 && VBFjet2_pt > 60;
-   bool baselineVBFloose = baseline55 && isVBF == 1 && VBFjj_mass > 500 && VBFjj_deltaEta > 3;
+   bool baselinetauhtauh = pairType == 2 && dau1_pt > 40 && abs (dau1_eta) < 2.1 && dau2_pt > 40 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1;   
+   bool baselineetauh    = pairType == 1 && dau1_pt > 20 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.3 && nleps == 0 && nbjetscand > 1;
+   bool baselinemutauh   = pairType == 0 && dau1_pt > 20 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.3 && nleps == 0 && nbjetscand > 1;
+   
+   //bool baseline55     = (baselinetauhtauh || baselineetauh || baselinemutauh ) && tauH_SVFIT_mass > 50;
+   //bool baselineVBFtight = pairType == 2 && dau1_pt > 25 && abs (dau1_eta) < 2.1 && dau2_pt > 25 && tauH_SVFIT_mass > 50 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1 && isVBFtrigger == 1 && VBFjj_mass > 800 && VBFjet1_pt > 140 && VBFjet2_pt > 60;
+   //bool baselineVBFloose = baseline55 && isVBF == 1 && VBFjj_mass > 500 && VBFjj_deltaEta > 3;
 
-   bool btagLL = bjet1_bID_deepCSV > 0.1522 && bjet2_bID_deepCSV > 0.1522;
-   bool btagM  = bjet1_bID_deepCSV > 0.4941 && bjet2_bID_deepCSV < 0.4941;
-   bool btagMM = bjet1_bID_deepCSV > 0.4941 && bjet2_bID_deepCSV > 0.4941; 
-   bool btagMfirst = bjet1_bID_deepCSV > 0.4941;
-   bool ellypsMassCut  = ((tauH_SVFIT_mass-116.)*(tauH_SVFIT_mass-116.))/(35.*35.) + ((bH_mass_raw-111.)*(bH_mass_raw-111.))/(45.*45.) <  1.0;
-   bool boostMassCut = tauH_SVFIT_mass > 79.5 && tauH_SVFIT_mass < 152.5 && fatjet_softdropMass > 90 && fatjet_softdropMass < 160;
+   //bool btagLL = bjet1_bID_deepCSV > 0.1522 && bjet2_bID_deepCSV > 0.1522;
+   //bool btagM  = bjet1_bID_deepCSV > 0.4941 && bjet2_bID_deepCSV < 0.4941;
+   //bool btagMM = bjet1_bID_deepCSV > 0.4941 && bjet2_bID_deepCSV > 0.4941; 
+   //bool btagMfirst = bjet1_bID_deepCSV > 0.4941;
+   //bool ellypsMassCut  = ((tauH_SVFIT_mass-116.)*(tauH_SVFIT_mass-116.))/(35.*35.) + ((bH_mass_raw-111.)*(bH_mass_raw-111.))/(45.*45.) <  1.0;
+   //bool boostMassCut = tauH_SVFIT_mass > 79.5 && tauH_SVFIT_mass < 152.5 && fatjet_softdropMass > 90 && fatjet_softdropMass < 160;
 
-   bool s1b1jresolvedMcut = baseline && btagM &&  isBoosted != 1 && ellypsMassCut && !(isVBF == 1 && VBFjj_mass > 500 && VBFjj_deltaEta > 3 && bjet1_bID_deepCSV > 0.4941);
-   bool s2b0jresolvedMcut = baseline && btagMM && isBoosted != 1 && ellypsMassCut && !(isVBF == 1 && VBFjj_mass > 500 && VBFjj_deltaEta > 3 && bjet1_bID_deepCSV > 0.4941);
-   bool VBFtight_DNN = baselineVBFtight && btagMfirst && BDToutSM_kl_1 > 0 && DNN_VBFvsGGF_TauTauTight > 0.3;
-   bool VBFloose_DNN = baselineVBFloose && btagMfirst && BDToutSM_kl_1 > 0 && DNN_VBFvsGGF_TauTauLoose > 0.4;
-   bool sboostedLLMcut = baseline && btagLL && isBoosted == 1 && boostMassCut && !(isVBF == 1 && VBFjj_mass > 500 && VBFjj_deltaEta > 3 && bjet1_bID_deepCSV > 0.4941);
-   bool VBFloose = baselineVBFloose && btagMfirst && BDToutSM_kl_1 > 0;
-   bool VBFtight = baselineVBFtight && btagMfirst && BDToutSM_kl_1 > 0;
+   //bool s1b1jresolvedMcut = baselinetauhtauh && btagM &&  isBoosted != 1 && ellypsMassCut && !(isVBF == 1 && VBFjj_mass > 500 && VBFjj_deltaEta > 3 && bjet1_bID_deepCSV > 0.4941);
+   //bool s2b0jresolvedMcut = baselinetauhtauh && btagMM && isBoosted != 1 && ellypsMassCut && !(isVBF == 1 && VBFjj_mass > 500 && VBFjj_deltaEta > 3 && bjet1_bID_deepCSV > 0.4941);
+   //bool VBFtight_DNN = baselineVBFtight && btagMfirst && BDToutSM_kl_1 > 0 && DNN_VBFvsGGF_TauTauTight > 0.3;
+   //bool VBFloose_DNN = baselineVBFloose && btagMfirst && BDToutSM_kl_1 > 0 && DNN_VBFvsGGF_TauTauLoose > 0.4;
+   //bool sboostedLLMcut = baselinetauhtauh && btagLL && isBoosted == 1 && boostMassCut && !(isVBF == 1 && VBFjj_mass > 500 && VBFjj_deltaEta > 3 && bjet1_bID_deepCSV > 0.4941);
+   //bool VBFloose = baselineVBFloose && btagMfirst && BDToutSM_kl_1 > 0;
+   //bool VBFtight = baselineVBFtight && btagMfirst && BDToutSM_kl_1 > 0;
 
-   if (s1b1jresolvedMcut) categories.push_back("s1b1jresolvedMcut");
-   if (s2b0jresolvedMcut) categories.push_back("s2b0jresolvedMcut");
-   if (VBFtight_DNN) categories.push_back("VBFtight_DNN");
-   if (VBFloose_DNN) categories.push_back("VBFloose_DNN");
-   if (sboostedLLMcut) categories.push_back("sboostedLLMcut");
-   if (VBFtight) categories.push_back("VBFtight");
-   if (VBFloose) categories.push_back("VBFloose");
-   if (baseline) categories.push_back("baseline");
+   //if (s1b1jresolvedMcut) categories.push_back("s1b1jresolvedMcut");
+   //if (s2b0jresolvedMcut) categories.push_back("s2b0jresolvedMcut");
+   //f (VBFtight_DNN) categories.push_back("VBFtight_DNN");
+   //if (VBFloose_DNN) categories.push_back("VBFloose_DNN");
+   //if (sboostedLLMcut) categories.push_back("sboostedLLMcut");
+   //if (VBFtight) categories.push_back("VBFtight");
+   //if (VBFloose) categories.push_back("VBFloose");
+   if (baselinetauhtauh) categories.push_back("baseline_tauhtauh");
+   if (baselinemutauh) categories.push_back("baseline_mutauh");
+   if (baselineetauh) categories.push_back("baseline_etauh");
 
    return categories; 
 }
