@@ -6,7 +6,7 @@ cmsrel CMSSW_10_6_5_patch1
 cd CMSSW_10_6_5_patch1/src/
 cmsenv
 git clone https://github.com/jaimeleonh/HHbbtautau.git
-cd analysis
+cd HHbbtautau/analysis
 make
 make exe
 source scripts/setup.sh
