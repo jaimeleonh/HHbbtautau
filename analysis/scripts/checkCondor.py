@@ -36,26 +36,41 @@ else :
   else : 
     filelist = os.listdir(options.userCopyPath)
     missingJobs = 0
+    failedJobs = 0
+    totalJobs = 0
     for fil in filelist :
       if not fil[-4:] == '.log' : continue 
-      else : 
+      else :
+        totalJobs+=1
         inFile = options.userCopyPath + "/" + fil[0:-4]+'.0.out'
-        if not os.path.isfile( inFile ) : 
-          print bcolors.red + "Job in cluster " +  fil[0:-4] + " not processed yet" + bcolors.reset
-          missingJobs += 1
-
-        else : 
-          found = False
+        found = False
+        if os.path.isfile( inFile ) : 
           with open( inFile  ) as a : 
             for line in a : 
               if "Finished" in line : 
                 found = True 
                 break
-          if not found : 
-            print bcolors.red + "Job in cluster " + fil[0:-4] + " not processed yet" + bcolors.reset
-            missingJobs += 1
-          else : print bcolors.green + "Job in cluster " + fil[0:-4] + " completed" + bcolors.reset
+        if found : 
+          print bcolors.green + "Job in cluster " + fil[0:-4] + " completed" + bcolors.reset
+          continue
 
-    print str(missingJobs) + " missing jobs"
+        failed = False
+        with open (  options.userCopyPath + '/' + fil  ) as b : 
+          for lin in b :
+            if "SYSTEM_PERIODIC_REMOVE" in lin : 
+              print bcolors.purple + "Failed job in cluster " +  fil[0:-4] + ". Finished w/o processing" + bcolors.reset
+              failedJobs += 1
+              failed = True
+              break 
+        if not failed :         
+          print bcolors.red + "Job in cluster " + fil[0:-4] + " not processed yet" + bcolors.reset
+          missingJobs += 1
 
+
+    print "\n", "*********************** SUMMARY **********************", "\n"
+    print bcolors.red + str(missingJobs) + " missing job" + (missingJobs!=1)*"s" + bcolors.reset
+    print bcolors.purple + str(failedJobs) + " failed job" + (failedJobs!=1)*"s" + bcolors.reset
+    print bcolors.green + str(totalJobs-missingJobs-failedJobs) + " succeeded job" + (totalJobs-missingJobs-failedJobs!=1)*"s" + bcolors.reset,'\n'
+
+    print "******************************************************", "\n"
 
