@@ -51,19 +51,19 @@ else :
                 found = True 
                 break
         if found : 
-          print bcolors.green + "Job in cluster " + fil[0:-4] + " completed" + bcolors.reset
+          print bcolors.green + "Job " + str(totalJobs) + " in cluster " + fil[0:-4] + " completed" + bcolors.reset
           continue
 
         failed = False
         with open (  options.userCopyPath + '/' + fil  ) as b : 
           for lin in b :
             if "SYSTEM_PERIODIC_REMOVE" in lin : 
-              print bcolors.purple + "Failed job in cluster " +  fil[0:-4] + ". Finished w/o processing" + bcolors.reset
+              print bcolors.purple + "Failed job " + str(totalJobs) +" in cluster " +  fil[0:-4] + ". Finished w/o processing" + bcolors.reset
               failedJobs += 1
               failed = True
               break 
         if not failed :         
-          print bcolors.red + "Job in cluster " + fil[0:-4] + " not processed yet" + bcolors.reset
+          print bcolors.red + "Job " + str(totalJobs) + " in cluster " + fil[0:-4] + " not processed yet" + bcolors.reset
           missingJobs += 1
 
 
