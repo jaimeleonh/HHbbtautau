@@ -46,23 +46,23 @@ void analysisCode::Book()
   for (auto & cat : categories) {
     for (int i = 1; i<=2; i++) {
       m_plots["tau" + std::to_string(i) + "pt" + cat]    = new TH1F(("tau" + std::to_string(i) + "_pt_"+ cat).c_str(), ("tau" + std::to_string(i) + "_pt; tau" + std::to_string(i) + " pt(GeV); Entries").c_str(), 200, 0, 200); 
-      m_plots["tau" + std::to_string(i) + "eta" + cat]    = new TH1F(("tau" + std::to_string(i) + "_eta_"+ cat).c_str(), ("tau" + std::to_string(i) + "_eta; tau" + std::to_string(i) + " eta; Entries").c_str(), 100, -2.5, 2.5); 
+      m_plots["tau" + std::to_string(i) + "eta" + cat]    = new TH1F(("tau" + std::to_string(i) + "_eta_"+ cat).c_str(), ("tau" + std::to_string(i) + "_eta; tau" + std::to_string(i) + " eta; Entries").c_str(), 50, -2.5, 2.5); 
       m_plots["tau" + std::to_string(i) + "e" + cat]    = new TH1F(("tau" + std::to_string(i) + "_e_"+ cat).c_str(), ("tau" + std::to_string(i) + "_e; tau" + std::to_string(i) + " e; Entries").c_str(), 100, 0, 1000); 
       m_plots["tau" + std::to_string(i) + "iso" + cat]    = new TH1F(("tau" + std::to_string(i) + "_iso_"+ cat).c_str(), ("tau" + std::to_string(i) + "_iso; tau" + std::to_string(i) + " iso; Entries").c_str(), 100, -0.1, 1.1); 
       m_plots["tau" + std::to_string(i) + "z" + cat]    = new TH1F(("tau" + std::to_string(i) + "_z_"+ cat).c_str(), ("tau" + std::to_string(i) + "_z; tau" + std::to_string(i) + " z; Entries").c_str(), 100, -5, 5);
 
       m_plots["bjet" + std::to_string(i) + "pt" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_pt_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_pt; bjet" + std::to_string(i) + " pt(GeV); Entries").c_str(), 200, 0, 200); 
-      m_plots["bjet" + std::to_string(i) + "eta" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_eta_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_eta; bjet" + std::to_string(i) + " eta; Entries").c_str(), 100, -2.5, 2.5); 
+      m_plots["bjet" + std::to_string(i) + "eta" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_eta_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_eta; bjet" + std::to_string(i) + " eta; Entries").c_str(), 50, -2.5, 2.5); 
       m_plots["bjet" + std::to_string(i) + "e" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_e_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_e; bjet" + std::to_string(i) + " e; Entries").c_str(), 100, 0, 1000); 
       m_plots["bjet" + std::to_string(i) + "z" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_z_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_z; bjet" + std::to_string(i) + " z; Entries").c_str(), 100, -5, 5);
 
       m_plots["additionalJet" + std::to_string(i) + "pt" + cat]    = new TH1F(("additionalJet" + std::to_string(i) + "_pt_"+ cat).c_str(), ("additionalJet" + std::to_string(i) + "_pt; additionalJet" + std::to_string(i) + " pt(GeV); Entries").c_str(), 200, 0, 200); 
-      m_plots["additionalJet" + std::to_string(i) + "eta" + cat]    = new TH1F(("additionalJet" + std::to_string(i) + "_eta_"+ cat).c_str(), ("additionalJet" + std::to_string(i) + "_eta; additionalJet" + std::to_string(i) + " eta; Entries").c_str(), 100, -2.5, 2.5); 
+      m_plots["additionalJet" + std::to_string(i) + "eta" + cat]    = new TH1F(("additionalJet" + std::to_string(i) + "_eta_"+ cat).c_str(), ("additionalJet" + std::to_string(i) + "_eta; additionalJet" + std::to_string(i) + " eta; Entries").c_str(), 50, -2.5, 2.5); 
       m_plots["additionalJet" + std::to_string(i) + "e" + cat]    = new TH1F(("additionalJet" + std::to_string(i) + "_e_"+ cat).c_str(), ("additionalJet" + std::to_string(i) + "_e; additionalJet" + std::to_string(i) + " e; Entries").c_str(), 100, 0, 1000); 
       m_plots["additionalJet" + std::to_string(i) + "z" + cat]    = new TH1F(("additionalJet" + std::to_string(i) + "_z_"+ cat).c_str(), ("additionalJet" + std::to_string(i) + "_z; additionalJet" + std::to_string(i) + " z; Entries").c_str(), 100, -5, 5);
      
       m_plots["VBFjet" + std::to_string(i) + "pt" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_pt_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_pt; VBFjet" + std::to_string(i) + " pt(GeV); Entries").c_str(), 200, 0, 200); 
-      m_plots["VBFjet" + std::to_string(i) + "eta" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_eta_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_eta; VBFjet" + std::to_string(i) + " eta; Entries").c_str(), 100, -2.5, 2.5); 
+      m_plots["VBFjet" + std::to_string(i) + "eta" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_eta_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_eta; VBFjet" + std::to_string(i) + " eta; Entries").c_str(), 50, -2.5, 2.5); 
       m_plots["VBFjet" + std::to_string(i) + "e" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_e_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_e; VBFjet" + std::to_string(i) + " e; Entries").c_str(), 100, 0, 1000); 
       m_plots["VBFjet" + std::to_string(i) + "phi" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_phi_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_phi; VBFjet" + std::to_string(i) + " phi; Entries").c_str(), 100, -3.5, 3.5); 
       m_plots["VBFjet" + std::to_string(i) + "z" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_z_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_z; VBFjet" + std::to_string(i) + " z; Entries").c_str(), 100, -5, 5);
@@ -80,12 +80,12 @@ void analysisCode::Book()
     m_plots["additionalJets_mass"+ cat]    = new TH1F(("additionalJets_mass_"+ cat).c_str(), "additionalJets_mass; additionalJets_mass ; Entries", 100, 0, 1000); 
     
     m_plots["additionalVBFjet" + std::to_string(1) + "pt" + cat]  = new TH1F(("additionalVBFjet" + std::to_string(1) + "_pt_"+ cat).c_str(), ("additionalVBFjet" + std::to_string(1) + "_pt; VBFjet" + std::to_string(1) + " pt(GeV); Entries").c_str(), 200, 0, 200); 
-    m_plots["additionalVBFjet" + std::to_string(1) + "eta" + cat] = new TH1F(("additionalVBFjet" + std::to_string(1) + "_eta_"+ cat).c_str(), ("additionalVBFjet" + std::to_string(1) + "_eta; VBFjet" + std::to_string(1) + " eta; Entries").c_str(), 100, -2.5, 2.5);    
+    m_plots["additionalVBFjet" + std::to_string(1) + "eta" + cat] = new TH1F(("additionalVBFjet" + std::to_string(1) + "_eta_"+ cat).c_str(), ("additionalVBFjet" + std::to_string(1) + "_eta; VBFjet" + std::to_string(1) + " eta; Entries").c_str(), 50, -2.5, 2.5);    
     m_plots["additionalVBFjet" + std::to_string(1) + "e" + cat] = new TH1F(("additionalVBFjet" + std::to_string(1) + "_e_"+ cat).c_str(), ("additionalVBFjet" + std::to_string(1) + "_e; VBFjet" + std::to_string(1) + " e; Entries").c_str(), 100, 0, 1000);    
     m_plots["additionalVBFjet" + std::to_string(1) + "z" + cat]   = new TH1F(("additionalVBFjet" + std::to_string(1) + "_z_"+ cat).c_str(), ("additionalVBFjet" + std::to_string(1) + "_z; VBFjet" + std::to_string(1) + " z; Entries").c_str(), 100, -5, 5);
 
     m_plots["HH_mass"+ cat]   = new TH1F(("HH_mass_"+ cat).c_str(), "HH mass; HH Mass (GeV); Entries", 100, 0, 2000); 
-    m_plots["HH_eta"+ cat]    = new TH1F(("HH_eta_"+ cat).c_str(), "HH eta; HH eta; Entries", 100, -2.5, 2.5); 
+    m_plots["HH_eta"+ cat]    = new TH1F(("HH_eta_"+ cat).c_str(), "HH eta; HH eta; Entries", 50, -2.5, 2.5); 
     m_plots["HH_phi"+ cat]    = new TH1F(("HH_phi_"+ cat).c_str(), "HH phi; HH phi; Entries", 100, -3.5, 3.5); 
     m_plots["HH_pt"+ cat]   = new TH1F(("HH_pt_"+ cat).c_str(), "HH pt; HH pt (GeV); Entries", 100, 0, 500); 
     m_plots["HH_z"+ cat]   = new TH1F(("HH_z_"+ cat).c_str(), "HH z; HH z; Entries", 100, -5, 5); 
@@ -96,14 +96,14 @@ void analysisCode::Book()
     m_plots["HH_deltaR"+ cat]    = new TH1F(("HH_deltaR_"+ cat).c_str(), "HH_deltaR; HH_deltaR ; Entries", 100, 0, 10); 
 
     m_plots["HHsvfit_mass"+ cat]   = new TH1F(("HHsvfit_mass_"+ cat).c_str(), "HH mass; HH Mass (GeV); Entries", 100, 0, 2000); 
-    m_plots["HHsvfit_eta"+ cat]    = new TH1F(("HHsvfit_eta_"+ cat).c_str(), "HH eta; HH eta; Entries", 100, -2.5, 2.5); 
+    m_plots["HHsvfit_eta"+ cat]    = new TH1F(("HHsvfit_eta_"+ cat).c_str(), "HH eta; HH eta; Entries", 50, -2.5, 2.5); 
     m_plots["HHsvfit_phi"+ cat]    = new TH1F(("HHsvfit_phi_"+ cat).c_str(), "HH phi; HH phi; Entries", 100, -3.5, 3.5); 
     m_plots["HHsvfit_pt"+ cat]   = new TH1F(("HHsvfit_pt_"+ cat).c_str(), "HH pt; HH pt (GeV); Entries", 100, 0, 500); 
     m_plots["HHsvfit_deltaPhi"+ cat] = new TH1F(("HHsvfit_deltaPhi_"+ cat).c_str(), "HH_deltaPhi; HH_deltaPhi ; Entries", 100, -0.5, 3.5);
   
     m_plots["HHKin_mass_raw"+ cat]   = new TH1F(("HHKin_mass_raw_"+ cat).c_str(), "HHKin mass; HHKin Mass (GeV); Entries", 100, 0, 2000); 
     m_plots["HHkinsvfit_mass"+ cat]   = new TH1F(("HHkinsvfit_mass_"+ cat).c_str(), "HH mass; HH Mass (GeV); Entries", 100, 0, 500); 
-    m_plots["HHkinsvfit_eta"+ cat]    = new TH1F(("HHkinsvfit_eta_"+ cat).c_str(), "HH eta; HH eta; Entries", 100, -2.5, 2.5); 
+    m_plots["HHkinsvfit_eta"+ cat]    = new TH1F(("HHkinsvfit_eta_"+ cat).c_str(), "HH eta; HH eta; Entries", 50, -2.5, 2.5); 
     m_plots["HHkinsvfit_phi"+ cat]    = new TH1F(("HHkinsvfit_phi_"+ cat).c_str(), "HH phi; HH phi; Entries", 100, -6.5, 6.5); 
     m_plots["HHkinsvfit_pt"+ cat]   = new TH1F(("HHkinsvfit_pt_"+ cat).c_str(), "HH pt; HH pt (GeV); Entries", 100, 0, 500); 
     m_plots["HHkinsvfit_bHmass"+ cat]   = new TH1F(("HHkinsvfit_bHmass_"+ cat).c_str(), "bH mass; bH Mass (GeV); Entries", 100, 0, 250); 
@@ -111,19 +111,19 @@ void analysisCode::Book()
   
     m_plots["tauH_mass"+ cat] = new TH1F(("tauH_mass_"+ cat).c_str(), "tauH mass; tauH Mass (GeV); Entries", 100, 0, 250); 
     m_plots["tauH_pt"+ cat]   = new TH1F(("tauH_pt_"+ cat).c_str(), "tauH pt; tauH pt (GeV); Entries", 100, 0, 500); 
-    m_plots["tauH_eta"+ cat]  = new TH1F(("tauH_eta_"+ cat).c_str(), "tauH eta; tauH eta ; Entries", 100, -2.5, 2.5); 
+    m_plots["tauH_eta"+ cat]  = new TH1F(("tauH_eta_"+ cat).c_str(), "tauH eta; tauH eta ; Entries", 50, -2.5, 2.5); 
     m_plots["tauH_phi"+ cat]  = new TH1F(("tauH_phi_"+ cat).c_str(), "tauH phi; tauH phi ; Entries", 100, -3.5, 3.5); 
     m_plots["tauH_z"+ cat]  = new TH1F(("tauH_z_"+ cat).c_str(), "tauH z; tauH z ; Entries", 100, -0.1, 1.1); 
   
     m_plots["tauH_SVFIT_mass"+ cat] = new TH1F(("tauH_SVFIT_mass_"+ cat).c_str(), "tauH SVFIT mass; tauH Mass (GeV); Entries", 100, 0, 250); 
     m_plots["tauH_SVFIT_pt"+cat]   = new TH1F(("tauH_SVFIT_pt_"+ cat).c_str(), "tauH SVFIT pt; tauH pt (GeV); Entries", 100, 0, 500); 
-    m_plots["tauH_SVFIT_eta"+cat]  = new TH1F(("tauH_SVFIT_eta_"+ cat).c_str(), "tauH SVFIT eta; tauH eta ; Entries", 100, -2.5, 2.5); 
+    m_plots["tauH_SVFIT_eta"+cat]  = new TH1F(("tauH_SVFIT_eta_"+ cat).c_str(), "tauH SVFIT eta; tauH eta ; Entries", 50, -2.5, 2.5); 
     m_plots["tauH_SVFIT_phi"+cat]  = new TH1F(("tauH_SVFIT_phi_"+ cat).c_str(), "tauH SVFIT phi; tauH phi ; Entries", 100, -3.5, 3.5); 
   
   
     m_plots["bH_mass"+ cat]   = new TH1F(("bH_mass_"+ cat).c_str(), "bH mass; bH Mass (GeV); Entries", 100, 0, 250); 
     m_plots["bH_pt"+ cat]     = new TH1F(("bH_pt_"+ cat).c_str(), "bH pt (GeV); bH pt (GeV); Entries", 100, 0, 500); 
-    m_plots["bH_eta"+ cat]    = new TH1F(("bH_eta_"+ cat).c_str(), "bH eta; bH eta ; Entries", 100, -2.5, 2.5); 
+    m_plots["bH_eta"+ cat]    = new TH1F(("bH_eta_"+ cat).c_str(), "bH eta; bH eta ; Entries", 50, -2.5, 2.5); 
     m_plots["bH_phi"+ cat]    = new TH1F(("bH_phi_"+ cat).c_str(), "bH phi; bH phi ; Entries", 100, -3.5, 3.5); 
     m_plots["bH_z"+ cat]      = new TH1F(("bH_z_"+ cat).c_str(), "bH z; bH z ; Entries", 100, -0.1, 1.1); 
     

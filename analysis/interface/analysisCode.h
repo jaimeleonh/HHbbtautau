@@ -1055,6 +1055,7 @@ analysisCode::analysisCode(const TString & inSample, const TString & outName, co
    TString goodFile;
 
    isMCSample = MC;
+   evt_den_ = 0; 
 
    ifstream file(inSample + "/goodfiles.txt");
    if (file.good()) {
