@@ -12,6 +12,7 @@
 #include <TChain.h>
 #include <TFile.h>
 #include <TH1.h>
+#include <TLeaf.h>
 
 // Header file for the classes stored in the TTree if any.
 #include "vector"
@@ -24,6 +25,10 @@
 #include <iostream>
 #include <sstream>
 #include <map>
+
+//LLR
+#include "CfgParser.h"
+#include <boost/variant.hpp>
 
 // ROOT
 #include <Math/VectorUtil.h>
@@ -997,7 +1002,7 @@ public :
    TBranch        *b_DNN_VBFvsGGF_TauTauLoose;   //!
 
    //analysisCode(int a=0, const TString & outName = "");
-   analysisCode(const TString & inSample = "", const TString & outName = "", const int & MC = -1);
+   analysisCode(const TString & inSample = "", const TString & outName = "", const std::string & selCfgName = "", const TString & sampleName = "", const int & MC = -1);
    //analysisCode(TTree *tree=0);
    virtual ~analysisCode();
    virtual Int_t    Cut(Long64_t entry);
@@ -1018,6 +1023,7 @@ public :
    virtual Float_t  getDeltaEtaPlus();
    virtual Float_t  getDeltaEtaMinus();
    virtual Float_t  getAHH();
+   virtual Float_t  getWeights(std::string category);
    virtual Bool_t   Notify();
    virtual std::vector <std::string> addCategories();
    virtual void     Show(Long64_t entry = -1);
@@ -1025,7 +1031,10 @@ public :
    TFile m_outFile; 
    std::map <std::string, TH1F*> m_plots;
    int evt_den_;
-   int isMCSample;  
+   int isMCSample; 
+   std::string mySampleName;  
+   std::unique_ptr<CfgParser> cutCfg_;
+   std::unique_ptr<TChain> tree;
 };
 
 #endif
@@ -1049,10 +1058,17 @@ public :
 }
 */
 
-analysisCode::analysisCode(const TString & inSample, const TString & outName, const int & MC) : fChain(0), m_outFile(outName, "RECREATE")
+analysisCode::analysisCode(const TString & inSample, const TString & outName, 
+                           const std::string & selCfgName, const TString & sampleName,
+                           const int & MC) : fChain(0), m_outFile(outName, "RECREATE")
 {
-   TChain *tree = new TChain("HTauTauTree");
+   //TChain *tree = new TChain("HTauTauTree");
+   tree = unique_ptr<TChain>(new TChain(("HTauTauTree")));
    TString goodFile;
+  
+   
+   mySampleName = sampleName;
+   cutCfg_ = unique_ptr<CfgParser>(new CfgParser(selCfgName));  
 
    isMCSample = MC;
    evt_den_ = 0; 
@@ -1065,14 +1081,17 @@ analysisCode::analysisCode(const TString & inSample, const TString & outName, co
          TH1F * h = (TH1F*) f->Get("h_eff");
          evt_den_ += h->GetBinContent(1);
          tree->Add(goodFile);
-         f->Close();
+         //f->Delete("HTauTauTree;1");
+         //f->Close("R");
+         delete h; 
+         delete f; 
        }
      }
    } else {
      cout << "Algo baila" << endl; 
      return;
    }
-   Init(tree);
+   Init(tree.get());
 }
 
 analysisCode::~analysisCode()
@@ -1127,6 +1146,17 @@ void analysisCode::Init(TTree *tree)
    leps_phi = 0;
    leps_e = 0;
    leps_flav = 0;
+   MC_weight = 0;
+   totalWeight = 0; 
+   prescaleWeight = 0;
+   L1pref_weight = 0; 
+   PUReweight = 0;
+   trigSF = 0; 
+   FakeRateSF = 0; 
+   //IdAndIsoSF_decayMode = 0; 
+   TTtopPtreweight = 0; 
+   DYLOtoNLOreweight = 0; 
+
    // Set branch addresses and branch pointers
    if (!tree) return;
    fChain = tree;
@@ -1703,4 +1733,33 @@ Int_t analysisCode::Cut(Long64_t entry)
 // returns -1 otherwise.
    return 1;
 }
+
+class get_variant_as_double : public boost::static_visitor<double>
+{
+  public:
+    double operator()(int& x) const
+    {
+      return (double) x;
+    }
+    double operator()(float& x)  const
+    {
+      return (double) x;
+    }
+    double operator()(double& x) const
+    {
+      return x;
+    }
+    double operator()(bool& x) const
+    {
+      return (x ? 1.0 : 0.0);
+    }
+}; 
+
+
+
+
+
+
+
+
 #endif // #ifdef analysisCode_cxx

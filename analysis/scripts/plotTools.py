@@ -133,7 +133,7 @@ def dataMCPlots (dataPlot, MClist, MClegends, plottingStuff, path, savescaffold,
     
     #hs.Scale(dataPlot[0].Integral() / hs.Integral() )
     for iplot in range(len(MClist)):
-      if dataPlot[0].Integral() > 0 : MClist[iplot].Scale( dataPlot[0].Integral() / nEntries )
+      #if dataPlot[0].Integral() > 0 : MClist[iplot].Scale( dataPlot[0].Integral() / nEntries )
       if iplot == 0 : h = MClist[iplot].Clone()
       else : h.Add(MClist[iplot])
       hs.Add(MClist[iplot])
@@ -146,8 +146,8 @@ def dataMCPlots (dataPlot, MClist, MClegends, plottingStuff, path, savescaffold,
     #c.Divide(1,2,0,0);
     pad1.cd();
     #c.GetPad(1).SetBottomMargin(0.1)
-    hs.Draw("histoF")
-    dataPlot[0].Draw("esame")
+    dataPlot[0].Draw("e")
+    hs.Draw("histoFsame")
     leg.SetFillColor(4001)
     leg.SetBorderSize(0)
     leg.SetNColumns(2)

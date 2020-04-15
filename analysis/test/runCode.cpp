@@ -12,7 +12,7 @@ int main(int argc, char** argv)
     return 0;
   }
 
-  analysisCode analysis(argv[1], argv[2], atoi(argv[3]) );
+  analysisCode analysis(argv[1], argv[2], argv[3], argv[4], atoi(argv[5]) );
   analysis.Loop(false);
 
 }

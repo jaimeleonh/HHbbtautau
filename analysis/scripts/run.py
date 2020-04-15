@@ -37,13 +37,16 @@ path = '/eos/home-c/camendol/SKIMS_Thesis2017/'
 eosPath = '/eos/home-j/jleonhol/HHbbtautau/'
 plotPath = './plots/'
 
+year = '2017'
+selectionCfg = './config/selectionCfg_TauTau_VBF.cfg'
+
 
 categories = ["baseline_tauhtauh", "baseline_etauh", "baseline_mutauh","noSelection"]
 #categories = ["baseline","noSelection"]
 #categories = ["baseline","noSelection","s1b1jresolvedMcut", "s2b0jresolvedMcut", "VBFtight_DNN", "VBFloose_DNN", "sboostedLLMcut", "VBFloose", "VBFtight"]
 
 if my_namespace.userCopyPath == '' : 
-  copyPath = '/eos/home-j/jleonhol/www/HHbbtautau/2017'
+  copyPath = '/eos/home-j/jleonhol/www/HHbbtautau/' + year 
 else : 
   copyPath = '/eos/home-j/jleonhol/www/HHbbtautau/' + my_namespace.userCopyPath + '/'
 
@@ -57,7 +60,7 @@ if (my_namespace.copy == True) :
 
 
 rc = call('mkdir ' + plotPath, shell=True) 
-rc = call('mkdir ' + eosPath + '2017/', shell=True)
+rc = call('mkdir ' + eosPath + year +'/', shell=True)
 
 files = []
 
@@ -70,22 +73,21 @@ if 'allVBF' in copyPath :
   files.append("VBF_CV_1_C2V_0_C3_2")
   files.append("VBF_CV_1_C2V_2_C3_1")
 else : 
-  #files.append("GGHSM_xs")
-  #files.append("VBF_CV_1_C2V_1_C3_1")
-  #files += ["ttHJetToBB", "ttHJetTononBB"]
-  #files.append("PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM")
-  files += ["TT_fullyLep"]
-  #files += ["TT_fullyHad", "TT_semiLep", "TT_fullyLep"]
+  files.append("GGHSM_xs")
+  files.append("VBF_CV_1_C2V_1_C3_1")
+  files += ["ttHJetToBB", "ttHJetTononBB"]
+  files.append("PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM")
+  files += ["TT_fullyHad", "TT_semiLep", "TT_fullyLep"]
 
-  #files += ["DYJets_0j0b_allgenjets_0b", "DYJets_1j0b_allgenjets_0b", "DYJets_1j1b_allgenjets_0b", "DYJets_2j0b_allgenjets_0b", "DYJets_2j1b_allgenjets_0b", "DYJets_2j2b_allgenjets_0b", "DYJets_3j0b_allgenjets_0b", "DYJets_3j1b_allgenjets_0b", "DYJets_3j2b_allgenjets_0b", "DYJets_3j3b_allgenjets_0b", "DYJets_4j0b_allgenjets_0b", "DYJets_4j1b_allgenjets_0b", "DYJets_4j2b_allgenjets_0b", "DYJets_4j3b_allgenjets_0b", "DYJets_4j4b_allgenjets_0b"]
-  #files += ["DYJets_0j0b_allgenjets_1b", "DYJets_1j0b_allgenjets_1b", "DYJets_1j1b_allgenjets_1b", "DYJets_2j0b_allgenjets_1b", "DYJets_2j1b_allgenjets_1b", "DYJets_2j2b_allgenjets_1b", "DYJets_3j0b_allgenjets_1b", "DYJets_3j1b_allgenjets_1b", "DYJets_3j2b_allgenjets_1b", "DYJets_3j3b_allgenjets_1b", "DYJets_4j0b_allgenjets_1b", "DYJets_4j1b_allgenjets_1b", "DYJets_4j2b_allgenjets_1b", "DYJets_4j3b_allgenjets_1b", "DYJets_4j4b_allgenjets_1b"]
-  #files += ["DYJets_0j0b_allgenjets_2b", "DYJets_1j0b_allgenjets_2b", "DYJets_1j1b_allgenjets_2b", "DYJets_2j0b_allgenjets_2b", "DYJets_2j1b_allgenjets_2b", "DYJets_2j2b_allgenjets_2b", "DYJets_3j0b_allgenjets_2b", "DYJets_3j1b_allgenjets_2b", "DYJets_3j2b_allgenjets_2b", "DYJets_3j3b_allgenjets_2b", "DYJets_4j0b_allgenjets_2b", "DYJets_4j1b_allgenjets_2b", "DYJets_4j2b_allgenjets_2b", "DYJets_4j3b_allgenjets_2b", "DYJets_4j4b_allgenjets_2b"]
-  #files += ["WJets_HT_0_100","WJets_HT_1200_2500","WJets_HT_100_200", "WJets_HT_2500_Inf", "WJets_HT_200_400", "WJets_HT_400_600", "WJets_HT_600_800", "WJets_HT_800_1200"]
-  #files += ["ST_tW_antitop", "ST_tchannel_antitop", "ST_tW_top", "ST_tchannel_top", "EWKWMinus2Jets_WToLNu", "EWKWPlus2Jets_WToLNu", "EWKZ2Jets_ZToLL", "EWKZ2Jets_ZToNuNu","WWTo2L2Nu", "WWTo4Q", "WWToLNuQQ", "WZTo2L2Q", "WZTo1L1Nu2Q", "WZTo3LNu", "ZZTo2L2Q", "ZZTo4L", "ZH_HBB_ZLL", "ZH_HTauTau", "ggHTauTau", "VBFHTauTau", "WplusHTauTau", "WminusHTauTau", "WWW", "WWZ", "WZZ", "TTWJetsToLNu", "TTWJetsToQQ", "TTWW"]
+  files += ["DYJets_0j0b_0b", "DYJets_1j0b_0b", "DYJets_1j1b_0b", "DYJets_2j0b_0b", "DYJets_2j1b_0b", "DYJets_2j2b_0b", "DYJets_3j0b_0b", "DYJets_3j1b_0b", "DYJets_3j2b_0b", "DYJets_3j3b_0b", "DYJets_4j0b_0b", "DYJets_4j1b_0b", "DYJets_4j2b_0b", "DYJets_4j3b_0b", "DYJets_4j4b_0b"]
+  files += ["DYJets_0j0b_1b", "DYJets_1j0b_1b", "DYJets_1j1b_1b", "DYJets_2j0b_1b", "DYJets_2j1b_1b", "DYJets_2j2b_1b", "DYJets_3j0b_1b", "DYJets_3j1b_1b", "DYJets_3j2b_1b", "DYJets_3j3b_1b", "DYJets_4j0b_1b", "DYJets_4j1b_1b", "DYJets_4j2b_1b", "DYJets_4j3b_1b", "DYJets_4j4b_1b"]
+  files += ["DYJets_0j0b_2b", "DYJets_1j0b_2b", "DYJets_1j1b_2b", "DYJets_2j0b_2b", "DYJets_2j1b_2b", "DYJets_2j2b_2b", "DYJets_3j0b_2b", "DYJets_3j1b_2b", "DYJets_3j2b_2b", "DYJets_3j3b_2b", "DYJets_4j0b_2b", "DYJets_4j1b_2b", "DYJets_4j2b_2b", "DYJets_4j3b_2b", "DYJets_4j4b_2b"]
+  files += ["WJets_HT_0_100","WJets_HT_1200_2500","WJets_HT_100_200", "WJets_HT_2500_Inf", "WJets_HT_200_400", "WJets_HT_400_600", "WJets_HT_600_800", "WJets_HT_800_1200"]
+  files += ["ST_tW_antitop", "ST_tchannel_antitop", "ST_tW_top", "ST_tchannel_top", "EWKWMinus2Jets_WToLNu", "EWKWPlus2Jets_WToLNu", "EWKZ2Jets_ZToLL", "EWKZ2Jets_ZToNuNu","WWTo2L2Nu", "WWTo4Q", "WWToLNuQQ", "WZTo2L2Q", "WZTo1L1Nu2Q", "WZTo3LNu", "ZZTo2L2Q", "ZZTo4L", "ZH_HBB_ZLL", "ZH_HTauTau", "ggHTauTau", "VBFHTauTau", "WplusHTauTau", "WminusHTauTau", "WWW", "WWZ", "WZZ", "TTWJetsToLNu", "TTWJetsToQQ", "TTWW"]
 
   dataFiles = []
   #dataFiles = ['Tau2017C','Tau2017D','Tau2017E','Tau2017F']
-  #dataFiles = ['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F']
+  dataFiles = ['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F']
 
 
 
@@ -95,12 +97,12 @@ else :
   #mergingCategories["ttHJetToBB"] = ["ttHJetToBB"]
  # mergingCategories["ggF+2jets"] = ["PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM"]
   mergingCategories["TT"] = ["TT_fullyHad", "TT_semiLep", "TT_fullyLep"]
-  mergingCategories["DY"] = ["DYJets_0j0b_allgenjets_0b", "DYJets_1j0b_allgenjets_0b", "DYJets_1j1b_allgenjets_0b", "DYJets_2j0b_allgenjets_0b", "DYJets_2j1b_allgenjets_0b", "DYJets_2j2b_allgenjets_0b", "DYJets_3j0b_allgenjets_0b", "DYJets_3j1b_allgenjets_0b", "DYJets_3j2b_allgenjets_0b", "DYJets_3j3b_allgenjets_0b", "DYJets_4j0b_allgenjets_0b", "DYJets_4j1b_allgenjets_0b", "DYJets_4j2b_allgenjets_0b", "DYJets_4j3b_allgenjets_0b", "DYJets_4j4b_allgenjets_0b"]
-  #mergingCategories["DY+0b"] = ["DYJets_0j0b_allgenjets_0b", "DYJets_1j0b_allgenjets_0b", "DYJets_1j1b_allgenjets_0b", "DYJets_2j0b_allgenjets_0b", "DYJets_2j1b_allgenjets_0b", "DYJets_2j2b_allgenjets_0b", "DYJets_3j0b_allgenjets_0b", "DYJets_3j1b_allgenjets_0b", "DYJets_3j2b_allgenjets_0b", "DYJets_3j3b_allgenjets_0b", "DYJets_4j0b_allgenjets_0b", "DYJets_4j1b_allgenjets_0b", "DYJets_4j2b_allgenjets_0b", "DYJets_4j3b_allgenjets_0b", "DYJets_4j4b_allgenjets_0b"]
-  mergingCategories["DY"] += ["DYJets_0j0b_allgenjets_1b", "DYJets_1j0b_allgenjets_1b", "DYJets_1j1b_allgenjets_1b", "DYJets_2j0b_allgenjets_1b", "DYJets_2j1b_allgenjets_1b", "DYJets_2j2b_allgenjets_1b", "DYJets_3j0b_allgenjets_1b", "DYJets_3j1b_allgenjets_1b", "DYJets_3j2b_allgenjets_1b", "DYJets_3j3b_allgenjets_1b", "DYJets_4j0b_allgenjets_1b", "DYJets_4j1b_allgenjets_1b", "DYJets_4j2b_allgenjets_1b", "DYJets_4j3b_allgenjets_1b", "DYJets_4j4b_allgenjets_1b"]
-  #mergingCategories["DY+1b"] = ["DYJets_0j0b_allgenjets_1b", "DYJets_1j0b_allgenjets_1b", "DYJets_1j1b_allgenjets_1b", "DYJets_2j0b_allgenjets_1b", "DYJets_2j1b_allgenjets_1b", "DYJets_2j2b_allgenjets_1b", "DYJets_3j0b_allgenjets_1b", "DYJets_3j1b_allgenjets_1b", "DYJets_3j2b_allgenjets_1b", "DYJets_3j3b_allgenjets_1b", "DYJets_4j0b_allgenjets_1b", "DYJets_4j1b_allgenjets_1b", "DYJets_4j2b_allgenjets_1b", "DYJets_4j3b_allgenjets_1b", "DYJets_4j4b_allgenjets_1b"]
-  mergingCategories["DY"] += ["DYJets_0j0b_allgenjets_2b", "DYJets_1j0b_allgenjets_2b", "DYJets_1j1b_allgenjets_2b", "DYJets_2j0b_allgenjets_2b", "DYJets_2j1b_allgenjets_2b", "DYJets_2j2b_allgenjets_2b", "DYJets_3j0b_allgenjets_2b", "DYJets_3j1b_allgenjets_2b", "DYJets_3j2b_allgenjets_2b", "DYJets_3j3b_allgenjets_2b", "DYJets_4j0b_allgenjets_2b", "DYJets_4j1b_allgenjets_2b", "DYJets_4j2b_allgenjets_2b", "DYJets_4j3b_allgenjets_2b", "DYJets_4j4b_allgenjets_2b"]
-  #mergingCategories["DY+2b"] = ["DYJets_0j0b_allgenjets_2b", "DYJets_1j0b_allgenjets_2b", "DYJets_1j1b_allgenjets_2b", "DYJets_2j0b_allgenjets_2b", "DYJets_2j1b_allgenjets_2b", "DYJets_2j2b_allgenjets_2b", "DYJets_3j0b_allgenjets_2b", "DYJets_3j1b_allgenjets_2b", "DYJets_3j2b_allgenjets_2b", "DYJets_3j3b_allgenjets_2b", "DYJets_4j0b_allgenjets_2b", "DYJets_4j1b_allgenjets_2b", "DYJets_4j2b_allgenjets_2b", "DYJets_4j3b_allgenjets_2b", "DYJets_4j4b_allgenjets_2b"]
+  mergingCategories["DY"] = ["DYJets_0j0b_0b", "DYJets_1j0b_0b", "DYJets_1j1b_0b", "DYJets_2j0b_0b", "DYJets_2j1b_0b", "DYJets_2j2b_0b", "DYJets_3j0b_0b", "DYJets_3j1b_0b", "DYJets_3j2b_0b", "DYJets_3j3b_0b", "DYJets_4j0b_0b", "DYJets_4j1b_0b", "DYJets_4j2b_0b", "DYJets_4j3b_0b", "DYJets_4j4b_0b"]
+  #mergingCategories["DY+0b"] = ["DYJets_0j0b_0b", "DYJets_1j0b_0b", "DYJets_1j1b_0b", "DYJets_2j0b_0b", "DYJets_2j1b_0b", "DYJets_2j2b_0b", "DYJets_3j0b_0b", "DYJets_3j1b_0b", "DYJets_3j2b_0b", "DYJets_3j3b_0b", "DYJets_4j0b_0b", "DYJets_4j1b_0b", "DYJets_4j2b_0b", "DYJets_4j3b_0b", "DYJets_4j4b_0b"]
+  mergingCategories["DY"] += ["DYJets_0j0b_1b", "DYJets_1j0b_1b", "DYJets_1j1b_1b", "DYJets_2j0b_1b", "DYJets_2j1b_1b", "DYJets_2j2b_1b", "DYJets_3j0b_1b", "DYJets_3j1b_1b", "DYJets_3j2b_1b", "DYJets_3j3b_1b", "DYJets_4j0b_1b", "DYJets_4j1b_1b", "DYJets_4j2b_1b", "DYJets_4j3b_1b", "DYJets_4j4b_1b"]
+  #mergingCategories["DY+1b"] = ["DYJets_0j0b_1b", "DYJets_1j0b_1b", "DYJets_1j1b_1b", "DYJets_2j0b_1b", "DYJets_2j1b_1b", "DYJets_2j2b_1b", "DYJets_3j0b_1b", "DYJets_3j1b_1b", "DYJets_3j2b_1b", "DYJets_3j3b_1b", "DYJets_4j0b_1b", "DYJets_4j1b_1b", "DYJets_4j2b_1b", "DYJets_4j3b_1b", "DYJets_4j4b_1b"]
+  mergingCategories["DY"] += ["DYJets_0j0b_2b", "DYJets_1j0b_2b", "DYJets_1j1b_2b", "DYJets_2j0b_2b", "DYJets_2j1b_2b", "DYJets_2j2b_2b", "DYJets_3j0b_2b", "DYJets_3j1b_2b", "DYJets_3j2b_2b", "DYJets_3j3b_2b", "DYJets_4j0b_2b", "DYJets_4j1b_2b", "DYJets_4j2b_2b", "DYJets_4j3b_2b", "DYJets_4j4b_2b"]
+  #mergingCategories["DY+2b"] = ["DYJets_0j0b_2b", "DYJets_1j0b_2b", "DYJets_1j1b_2b", "DYJets_2j0b_2b", "DYJets_2j1b_2b", "DYJets_2j2b_2b", "DYJets_3j0b_2b", "DYJets_3j1b_2b", "DYJets_3j2b_2b", "DYJets_3j3b_2b", "DYJets_4j0b_2b", "DYJets_4j1b_2b", "DYJets_4j2b_2b", "DYJets_4j3b_2b", "DYJets_4j4b_2b"]
   mergingCategories["W+jets"] = ["WJets_HT_0_100","WJets_HT_1200_2500","WJets_HT_100_200", "WJets_HT_2500_Inf", "WJets_HT_200_400", "WJets_HT_400_600", "WJets_HT_600_800", "WJets_HT_800_1200"]
   mergingCategories["others"] = ["ST_tW_antitop", "ST_tchannel_antitop", "ST_tW_top", "ST_tchannel_top", "EWKWMinus2Jets_WToLNu", "EWKWPlus2Jets_WToLNu", "EWKZ2Jets_ZToLL", "EWKZ2Jets_ZToNuNu","WWTo2L2Nu", "WWTo4Q", "WWToLNuQQ", "WZTo2L2Q", "WZTo1L1Nu2Q", "WZTo3LNu", "ZZTo2L2Q", "ZZTo4L", "ZH_HBB_ZLL", "ZH_HTauTau", "ggHTauTau", "VBFHTauTau", "WplusHTauTau", "WminusHTauTau", "WWW", "WWZ", "WZZ", "TTWJetsToLNu", "TTWJetsToQQ", "TTWW"] + ["ttHJetToBB", "ttHJetTononBB"]
 
@@ -133,10 +135,10 @@ if my_namespace.runInCondor :
     scriptFile.write ('eval `scram r -sh`\n')
     scriptFile.write ('source scripts/setup.sh\n')
     command = program + ' '
-    if (fil != 'PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM') : command += path + 'SKIM_' + fil  
-    else : command += '/eos/home-j/jleonhol/HHbbtautau/2017/' + fil 
+    command += samples[year][fil] 
     
-    command += ' ' + eosPath + '2017/' + fil + '.root '
+
+    command += ' ' + eosPath + year + '/' + fil + '.root ' + selectionCfg + ' ' + fil
     if fil in files : command += ' 1'
     else : command += ' 0'
 
@@ -161,6 +163,7 @@ if my_namespace.runInCondor :
 
 for fil in files+dataFiles :
   if my_namespace.ntuples == True :
+    continue #FIXME
     print ('Obtaining plot ntuples for ' + fil)
     time.sleep(2) 
     program = 'runCode_True.exe'
@@ -234,11 +237,11 @@ if my_namespace.merge == True or my_namespace.dataMC == True:
   for merge in mergingCategories: 
     myFiles[merge] = []
     for fil in mergingCategories[merge] : 
-      myFiles[merge].append(r.TFile.Open(eosPath + '2017/' +fil+'.root'))
+      myFiles[merge].append(r.TFile.Open(eosPath + year + '/' +fil+'.root'))
 if my_namespace.dataMC == True : 
   dataFiles = []
   for fil in data : 
-    dataFiles.append(r.TFile.Open(eosPath + '2017/'+fil+'.root'))
+    dataFiles.append(r.TFile.Open(eosPath + year + '/'+fil+'.root'))
 
 for plot in whatToPlot :
   for cat in categories : 
@@ -252,16 +255,16 @@ for plot in whatToPlot :
 
       legends = mergingCategories.keys() 
       for merge in mergingCategories :
-        plotTools.makePlot(listOfPlots, eosPath + '2017/', myFiles[merge] , plot+'_'+cat, True, normalize)
+        plotTools.makePlot(listOfPlots, eosPath + year + '/', myFiles[merge] , plot+'_'+cat, True, normalize)
         #plotTools.makePlot(listOfPlots, eosPath + '2017/', mergingCategories[merge] , plot+'_'+cat, True, normalize)
       if my_namespace.dataMC == True : 
-        plotTools.makePlot(listOfDataPlots, eosPath + '2017/', dataFiles , plot+'_'+cat, True, normalize)
+        plotTools.makePlot(listOfDataPlots, eosPath + year + '/', dataFiles , plot+'_'+cat, True, -1)
         #plotTools.makePlot(listOfDataPlots, eosPath + '2017/', data , plot+'_'+cat, True, normalize)
 
     else :
       legends = files
       for fil in files :
-        plotTools.makePlot(listOfPlots, eosPath + '2017/', fil + '.root', plot+'_'+cat, merge=False, normalize=1)
+        plotTools.makePlot(listOfPlots, eosPath + year + '/', fil + '.root', plot+'_'+cat, merge=False, normalize=1)
     
     if not my_namespace.dataMC : 
       plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False) 
@@ -279,6 +282,7 @@ for plot in whatToPlot :
         for ext in ['.png','.pdf'] : 
         #for ext in ['.png','.pdf','.root'] : 
           rc = call('cp ' + plotPath + plot + '_' + cat + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
+        print 'Copying ' +  plotPath + plot + '_' + cat + '.* to ' + copyPath + '/' + cat 
 
   
 

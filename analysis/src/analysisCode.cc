@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <string>
 #include <sys/stat.h>
-
+#include <boost/variant.hpp>
 
 
 
@@ -46,6 +46,7 @@ void analysisCode::Book()
   for (auto & cat : categories) {
     for (int i = 1; i<=2; i++) {
       m_plots["tau" + std::to_string(i) + "pt" + cat]    = new TH1F(("tau" + std::to_string(i) + "_pt_"+ cat).c_str(), ("tau" + std::to_string(i) + "_pt; tau" + std::to_string(i) + " pt(GeV); Entries").c_str(), 200, 0, 200); 
+      m_plots["tauw" + std::to_string(i) + "pt" + cat]    = new TH1F(("tau" + std::to_string(i) + "_pt_noweight_"+ cat).c_str(), ("tau" + std::to_string(i) + "_pt; tau" + std::to_string(i) + " pt(GeV); Entries").c_str(), 200, 0, 200); 
       m_plots["tau" + std::to_string(i) + "eta" + cat]    = new TH1F(("tau" + std::to_string(i) + "_eta_"+ cat).c_str(), ("tau" + std::to_string(i) + "_eta; tau" + std::to_string(i) + " eta; Entries").c_str(), 50, -2.5, 2.5); 
       m_plots["tau" + std::to_string(i) + "e" + cat]    = new TH1F(("tau" + std::to_string(i) + "_e_"+ cat).c_str(), ("tau" + std::to_string(i) + "_e; tau" + std::to_string(i) + " e; Entries").c_str(), 100, 0, 1000); 
       m_plots["tau" + std::to_string(i) + "iso" + cat]    = new TH1F(("tau" + std::to_string(i) + "_iso_"+ cat).c_str(), ("tau" + std::to_string(i) + "_iso; tau" + std::to_string(i) + " iso; Entries").c_str(), 100, -0.1, 1.1); 
@@ -170,95 +171,100 @@ void analysisCode::Book()
 
 void analysisCode::Fill()
 {
-
+ 
   std::vector <std::string> categories = addCategories();
   categories.push_back("noSelection");
 
   for (auto & cat : categories ) {
 
+    double myweight = 1;
+    if (isMC == 1){
+      double myweight = getWeights(cat);
+    }
     //Fill tau plots
-    m_plots["tau1pt"+cat]->Fill(dau1_pt);
-    m_plots["tau2pt"+cat]->Fill(dau2_pt);
-    m_plots["tau1eta"+cat]->Fill(dau1_eta);
-    m_plots["tau2eta"+cat]->Fill(dau2_eta);
-    m_plots["tau1e"+cat]->Fill(dau1_e);
-    m_plots["tau2e"+cat]->Fill(dau2_e);
-    m_plots["tau1iso"+cat]->Fill(dau1_iso);
-    m_plots["tau2iso"+cat]->Fill(dau2_iso);
-    m_plots["tau1z"+cat]->Fill(getCentrality(dau1_eta));
-    m_plots["tau2z"+cat]->Fill(getCentrality(dau2_eta));
+    m_plots["tau1pt"+cat]->Fill(dau1_pt, myweight);
+    m_plots["tauw1pt"+cat]->Fill(dau1_pt);
+    m_plots["tau2pt"+cat]->Fill(dau2_pt, myweight);
+    m_plots["tau1eta"+cat]->Fill(dau1_eta, myweight);
+    m_plots["tau2eta"+cat]->Fill(dau2_eta, myweight);
+    m_plots["tau1e"+cat]->Fill(dau1_e, myweight);
+    m_plots["tau2e"+cat]->Fill(dau2_e, myweight);
+    m_plots["tau1iso"+cat]->Fill(dau1_iso, myweight);
+    m_plots["tau2iso"+cat]->Fill(dau2_iso, myweight);
+    m_plots["tau1z"+cat]->Fill(getCentrality(dau1_eta), myweight);
+    m_plots["tau2z"+cat]->Fill(getCentrality(dau2_eta), myweight);
     
     // Fill b plots
-    if (bjet1_pt != -1) m_plots["bjet1pt"+cat]->Fill(bjet1_pt);
-    if (bjet2_pt != -1) m_plots["bjet2pt"+cat]->Fill(bjet2_pt);
-    if (bjet1_pt != -1) m_plots["bjet1eta"+cat]->Fill(bjet1_eta);
-    if (bjet2_pt != -1) m_plots["bjet2eta"+cat]->Fill(bjet2_eta);
-    if (bjet1_pt != -1) m_plots["bjet1e"+cat]->Fill(bjet1_e);
-    if (bjet2_pt != -1) m_plots["bjet2e"+cat]->Fill(bjet2_e);
-    if (bjet1_pt != -1) m_plots["bjet1z"+cat]->Fill(getCentrality(bjet1_eta));
-    if (bjet2_pt != -1) m_plots["bjet2z"+cat]->Fill(getCentrality(bjet2_eta));
-    if (bjet1_pt != -1 && bjet2_pt != -1) m_plots["bjets_deltaEta"+cat]->Fill(std::fabs(bjet1_eta - bjet2_eta));
-    if (bjet1_pt != -1 && bjet2_pt != -1) m_plots["bjets_eta1eta2"+cat]->Fill(bjet1_eta * bjet2_eta);
+    if (bjet1_pt != -1) m_plots["bjet1pt"+cat]->Fill(bjet1_pt, myweight);
+    if (bjet2_pt != -1) m_plots["bjet2pt"+cat]->Fill(bjet2_pt, myweight);
+    if (bjet1_pt != -1) m_plots["bjet1eta"+cat]->Fill(bjet1_eta, myweight);
+    if (bjet2_pt != -1) m_plots["bjet2eta"+cat]->Fill(bjet2_eta, myweight);
+    if (bjet1_pt != -1) m_plots["bjet1e"+cat]->Fill(bjet1_e, myweight);
+    if (bjet2_pt != -1) m_plots["bjet2e"+cat]->Fill(bjet2_e, myweight);
+    if (bjet1_pt != -1) m_plots["bjet1z"+cat]->Fill(getCentrality(bjet1_eta), myweight);
+    if (bjet2_pt != -1) m_plots["bjet2z"+cat]->Fill(getCentrality(bjet2_eta), myweight);
+    if (bjet1_pt != -1 && bjet2_pt != -1) m_plots["bjets_deltaEta"+cat]->Fill(std::fabs(bjet1_eta - bjet2_eta), myweight);
+    if (bjet1_pt != -1 && bjet2_pt != -1) m_plots["bjets_eta1eta2"+cat]->Fill(bjet1_eta * bjet2_eta, myweight);
     
     // Fill VBFjet plots
-    if (VBFjet1_pt!=-999.) m_plots["VBFjet1pt"+cat]->Fill(VBFjet1_pt);
-    if (VBFjet2_pt!=-999.) m_plots["VBFjet2pt"+cat]->Fill(VBFjet2_pt);
-    if (VBFjet1_pt!=-999.) m_plots["VBFjet1eta"+cat]->Fill(VBFjet1_eta);
-    if (VBFjet2_pt!=-999.) m_plots["VBFjet2eta"+cat]->Fill(VBFjet2_eta);
-    if (VBFjet1_pt!=-999.) m_plots["VBFjet1phi"+cat]->Fill(VBFjet1_phi);
-    if (VBFjet2_pt!=-999.) m_plots["VBFjet2phi"+cat]->Fill(VBFjet2_phi);
-    if (VBFjet1_pt!=-999.) m_plots["VBFjet1e"+cat]->Fill(VBFjet1_e);
-    if (VBFjet2_pt!=-999.) m_plots["VBFjet2e"+cat]->Fill(VBFjet2_e);
-    if (VBFjet1_pt!=-999.) m_plots["VBFjet1z"+cat]->Fill(getCentrality(VBFjet1_eta));
-    if (VBFjet2_pt!=-999.) m_plots["VBFjet2z"+cat]->Fill(getCentrality(VBFjet2_eta));
-    if (VBFjet1_pt!=-999. && VBFjet2_pt!=-999.) m_plots["VBFjj_deltaEta"+cat]->Fill(VBFjj_deltaEta);
-    if (VBFjet1_pt!=-999. && VBFjet2_pt!=-999.) m_plots["VBFjj_eta1eta2"+cat]->Fill(VBFjet1_eta*VBFjet2_eta);
-    if (VBFjj_mass!=-999.) m_plots["VBFjj_mass"+cat]->Fill(VBFjj_mass);
+    if (VBFjet1_pt!=-999.) m_plots["VBFjet1pt"+cat]->Fill(VBFjet1_pt, myweight);
+    if (VBFjet2_pt!=-999.) m_plots["VBFjet2pt"+cat]->Fill(VBFjet2_pt, myweight);
+    if (VBFjet1_pt!=-999.) m_plots["VBFjet1eta"+cat]->Fill(VBFjet1_eta, myweight);
+    if (VBFjet2_pt!=-999.) m_plots["VBFjet2eta"+cat]->Fill(VBFjet2_eta, myweight);
+    if (VBFjet1_pt!=-999.) m_plots["VBFjet1phi"+cat]->Fill(VBFjet1_phi, myweight);
+    if (VBFjet2_pt!=-999.) m_plots["VBFjet2phi"+cat]->Fill(VBFjet2_phi, myweight);
+    if (VBFjet1_pt!=-999.) m_plots["VBFjet1e"+cat]->Fill(VBFjet1_e, myweight);
+    if (VBFjet2_pt!=-999.) m_plots["VBFjet2e"+cat]->Fill(VBFjet2_e, myweight);
+    if (VBFjet1_pt!=-999.) m_plots["VBFjet1z"+cat]->Fill(getCentrality(VBFjet1_eta), myweight);
+    if (VBFjet2_pt!=-999.) m_plots["VBFjet2z"+cat]->Fill(getCentrality(VBFjet2_eta), myweight);
+    if (VBFjet1_pt!=-999. && VBFjet2_pt!=-999.) m_plots["VBFjj_deltaEta"+cat]->Fill(VBFjj_deltaEta, myweight);
+    if (VBFjet1_pt!=-999. && VBFjet2_pt!=-999.) m_plots["VBFjj_eta1eta2"+cat]->Fill(VBFjet1_eta*VBFjet2_eta, myweight);
+    if (VBFjj_mass!=-999.) m_plots["VBFjj_mass"+cat]->Fill(VBFjj_mass, myweight);
 
     // Fill additional b plots
-    if (jet3_pt!=-999.) m_plots["additionalJet1pt"+cat]->Fill(jet3_pt);
-    if (jet4_pt!=-999.) m_plots["additionalJet2pt"+cat]->Fill(jet4_pt);
-    if (jet3_pt!=-999.) m_plots["additionalJet1eta"+cat]->Fill(jet3_eta);
-    if (jet4_pt!=-999.) m_plots["additionalJet2eta"+cat]->Fill(jet4_eta);
-    if (jet3_pt!=-999.) m_plots["additionalJet1e"+cat]->Fill(jet3_e);
-    if (jet4_pt!=-999.) m_plots["additionalJet2e"+cat]->Fill(jet4_e);
-    if (jet3_pt!=-999.) m_plots["additionalJet1z"+cat]->Fill(getCentrality(jet3_eta));
-    if (jet4_pt!=-999.) m_plots["additionalJet2z"+cat]->Fill(getCentrality(jet4_eta));
-    if (jet3_pt!=-999. && jet4_pt!=-999.) m_plots["additionalJets_deltaEta"+cat]->Fill(jj_deltaEta);
-    if (jet3_pt!=-999. && jet4_pt!=-999.) m_plots["additionalJets_eta1eta2"+cat]->Fill(jet3_eta*jet4_eta);
-    if (jj_mass!=-999.) m_plots["additionalJets_mass"+cat]->Fill(jj_mass);
+    if (jet3_pt!=-999.) m_plots["additionalJet1pt"+cat]->Fill(jet3_pt, myweight);
+    if (jet4_pt!=-999.) m_plots["additionalJet2pt"+cat]->Fill(jet4_pt, myweight);
+    if (jet3_pt!=-999.) m_plots["additionalJet1eta"+cat]->Fill(jet3_eta, myweight);
+    if (jet4_pt!=-999.) m_plots["additionalJet2eta"+cat]->Fill(jet4_eta, myweight);
+    if (jet3_pt!=-999.) m_plots["additionalJet1e"+cat]->Fill(jet3_e, myweight);
+    if (jet4_pt!=-999.) m_plots["additionalJet2e"+cat]->Fill(jet4_e, myweight);
+    if (jet3_pt!=-999.) m_plots["additionalJet1z"+cat]->Fill(getCentrality(jet3_eta), myweight);
+    if (jet4_pt!=-999.) m_plots["additionalJet2z"+cat]->Fill(getCentrality(jet4_eta), myweight);
+    if (jet3_pt!=-999. && jet4_pt!=-999.) m_plots["additionalJets_deltaEta"+cat]->Fill(jj_deltaEta, myweight);
+    if (jet3_pt!=-999. && jet4_pt!=-999.) m_plots["additionalJets_eta1eta2"+cat]->Fill(jet3_eta*jet4_eta, myweight);
+    if (jj_mass!=-999.) m_plots["additionalJets_mass"+cat]->Fill(jj_mass, myweight);
 
     // Fill additional VBFjet
-    if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1pt"+cat]->Fill(jet5_VBF_pt);
-    if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1eta"+cat]->Fill(jet5_VBF_eta);
-    if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1e"+cat]->Fill(jet5_VBF_e);
-    if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1z"+cat]->Fill(getCentrality(jet5_VBF_eta));
+    if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1pt"+cat]->Fill(jet5_VBF_pt, myweight);
+    if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1eta"+cat]->Fill(jet5_VBF_eta, myweight);
+    if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1e"+cat]->Fill(jet5_VBF_e, myweight);
+    if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1z"+cat]->Fill(getCentrality(jet5_VBF_eta), myweight);
 
 
     if (HH_eta != -1. && HH_phi != -1. && HH_pt != -1.) { 
-      m_plots["HH_mass"+cat]->Fill( HH_mass );
-      m_plots["HH_eta"+cat]->Fill( HH_eta );
-      m_plots["HH_phi"+cat]->Fill( HH_phi );
-      m_plots["HH_pt"+cat]->Fill( HH_pt );
-      m_plots["HH_z"+cat]->Fill( getHHCentrality());
-      m_plots["HH_AHH"+cat]->Fill( getAHH());
+      m_plots["HH_mass"+cat]->Fill( HH_mass, myweight );
+      m_plots["HH_eta"+cat]->Fill( HH_eta, myweight );
+      m_plots["HH_phi"+cat]->Fill( HH_phi, myweight );
+      m_plots["HH_pt"+cat]->Fill( HH_pt, myweight );
+      m_plots["HH_z"+cat]->Fill( getHHCentrality(), myweight);
+      m_plots["HH_AHH"+cat]->Fill( getAHH(), myweight);
     } else {
       //m_plots["HH_mass"]->Fill( -999. );
       //m_plots["HH_eta"]->Fill( -999. );
       //m_plots["HH_phi"]->Fill( -999. );
       //m_plots["HH_pt"]->Fill( -999. );
     }
-    if (HHKin_mass_raw != 0.) m_plots["HHKin_mass_raw"+cat]->Fill( HHKin_mass_raw );
+    if (HHKin_mass_raw != 0.) m_plots["HHKin_mass_raw"+cat]->Fill( HHKin_mass_raw, myweight );
     //else m_plots["HHKin_mass_raw"]->Fill( -999. );
   
-    m_plots["HHKin_chi2"+cat]->Fill(HHKin_chi2);
+    m_plots["HHKin_chi2"+cat]->Fill(HHKin_chi2, myweight);
    
     if (HHsvfit_eta != -1. && HHsvfit_phi != -1. && HHsvfit_pt != -1.) { 
-      m_plots["HHsvfit_mass"+cat]->Fill( HHsvfit_mass );
-      m_plots["HHsvfit_eta"+cat]->Fill( HHsvfit_eta );
-      m_plots["HHsvfit_phi"+cat]->Fill( HHsvfit_phi );
-      m_plots["HHsvfit_pt"+cat]->Fill( HHsvfit_pt );
-      m_plots["HHsvfit_deltaPhi"+cat]->Fill( HHsvfit_deltaPhi );
+      m_plots["HHsvfit_mass"+cat]->Fill( HHsvfit_mass, myweight );
+      m_plots["HHsvfit_eta"+cat]->Fill( HHsvfit_eta, myweight );
+      m_plots["HHsvfit_phi"+cat]->Fill( HHsvfit_phi, myweight );
+      m_plots["HHsvfit_pt"+cat]->Fill( HHsvfit_pt, myweight );
+      m_plots["HHsvfit_deltaPhi"+cat]->Fill( HHsvfit_deltaPhi, myweight );
     } else {
       //m_plots["HHsvfit_mass"]->Fill( -999. );
       //m_plots["HHsvfit_eta"]->Fill( -999. );
@@ -268,10 +274,10 @@ void analysisCode::Fill()
     }
   
     if (HHkinsvfit_eta != -1. && HHkinsvfit_phi != -1. && HHkinsvfit_pt != -1.) { 
-      m_plots["HHkinsvfit_eta"+cat]->Fill( HHkinsvfit_eta );
-      m_plots["HHkinsvfit_phi"+cat]->Fill( HHkinsvfit_phi );
-      m_plots["HHkinsvfit_pt"+cat]->Fill( HHkinsvfit_pt );
-      m_plots["HHkinsvfit_bHmass"+cat]->Fill( HHkinsvfit_bHmass );
+      m_plots["HHkinsvfit_eta"+cat]->Fill( HHkinsvfit_eta, myweight );
+      m_plots["HHkinsvfit_phi"+cat]->Fill( HHkinsvfit_phi, myweight );
+      m_plots["HHkinsvfit_pt"+cat]->Fill( HHkinsvfit_pt, myweight );
+      m_plots["HHkinsvfit_bHmass"+cat]->Fill( HHkinsvfit_bHmass, myweight );
     } else {
       //m_plots["HHkinsvfit_eta"]->Fill( -999. );
       //m_plots["HHkinsvfit_phi"]->Fill( -999. );
@@ -280,9 +286,9 @@ void analysisCode::Fill()
     }
   
     if (HH_deltaPhi != -1. && HH_deltaEta != -1. && HH_deltaR != -1.) { 
-      m_plots["HH_deltaPhi"+cat]->Fill( HH_deltaPhi );
-      m_plots["HH_deltaEta"+cat]->Fill( HH_deltaEta );
-      m_plots["HH_deltaR"+cat]->Fill( HH_deltaR );
+      m_plots["HH_deltaPhi"+cat]->Fill( HH_deltaPhi, myweight );
+      m_plots["HH_deltaEta"+cat]->Fill( HH_deltaEta, myweight );
+      m_plots["HH_deltaR"+cat]->Fill( HH_deltaR, myweight );
     } else {
     //m_plots["HH_deltaPhi"]->Fill( -999. );
     //m_plots["HH_deltaEta"]->Fill( -999. );
@@ -291,11 +297,11 @@ void analysisCode::Fill()
   
   
     if (tauH_mass != -1. && tauH_pt != -1 && tauH_eta!=-1 ) {
-      m_plots["tauH_mass"+cat]->Fill( tauH_mass );
-      m_plots["tauH_pt"+cat]->Fill( tauH_pt );
-      m_plots["tauH_eta"+cat]->Fill( tauH_eta );
-      m_plots["tauH_phi"+cat]->Fill( tauH_phi );
-      m_plots["tauH_z"+cat]->Fill( getCentrality(tauH_eta) );
+      m_plots["tauH_mass"+cat]->Fill( tauH_mass, myweight );
+      m_plots["tauH_pt"+cat]->Fill( tauH_pt, myweight );
+      m_plots["tauH_eta"+cat]->Fill( tauH_eta, myweight );
+      m_plots["tauH_phi"+cat]->Fill( tauH_phi, myweight );
+      m_plots["tauH_z"+cat]->Fill( getCentrality(tauH_eta), myweight );
     } else {
       //m_plots["tauH_mass"]->Fill( -999. );
       //m_plots["tauH_pt"]->Fill( -999. );
@@ -304,10 +310,10 @@ void analysisCode::Fill()
     }
  
     if (tauH_SVFIT_mass != -1. && tauH_SVFIT_pt != -1 && tauH_SVFIT_eta!=-1 ) {
-      m_plots["tauH_SVFIT_mass"+cat]->Fill( tauH_SVFIT_mass );
-      m_plots["tauH_SVFIT_pt"+cat]->Fill( tauH_SVFIT_pt );
-      m_plots["tauH_SVFIT_eta"+cat]->Fill( tauH_SVFIT_eta );
-      m_plots["tauH_SVFIT_phi"+cat]->Fill( tauH_SVFIT_phi );
+      m_plots["tauH_SVFIT_mass"+cat]->Fill( tauH_SVFIT_mass, myweight );
+      m_plots["tauH_SVFIT_pt"+cat]->Fill( tauH_SVFIT_pt, myweight );
+      m_plots["tauH_SVFIT_eta"+cat]->Fill( tauH_SVFIT_eta, myweight );
+      m_plots["tauH_SVFIT_phi"+cat]->Fill( tauH_SVFIT_phi, myweight );
     } else {
       //m_plots["tauH_SVFIT_mass"]->Fill( -999. );
       //m_plots["tauH_SVFIT_pt"]->Fill( -999. );
@@ -316,28 +322,28 @@ void analysisCode::Fill()
     }
 
     if (bH_mass != -1. && bH_pt != -1. && bH_eta!=-1. ) {
-      m_plots["bH_mass"+cat]->Fill( bH_mass );
-      m_plots["bH_pt"+cat]->Fill( bH_pt );
-      m_plots["bH_eta"+cat]->Fill( bH_eta );
-      m_plots["bH_phi"+cat]->Fill( bH_phi );
-      m_plots["bH_z"+cat]->Fill( getCentrality(bH_eta) );
+      m_plots["bH_mass"+cat]->Fill( bH_mass, myweight );
+      m_plots["bH_pt"+cat]->Fill( bH_pt, myweight );
+      m_plots["bH_eta"+cat]->Fill( bH_eta, myweight );
+      m_plots["bH_phi"+cat]->Fill( bH_phi, myweight );
+      m_plots["bH_z"+cat]->Fill( getCentrality(bH_eta), myweight );
     } else {
       //m_plots["bH_mass"]->Fill( -999. );
       //m_plots["bH_pt"]->Fill( -999. );
       //m_plots["bH_eta"]->Fill( -999. );
       //m_plots["bH_phi"]->Fill( -999. );
     }
-    m_plots["VBFjj_HT"+cat]->Fill(VBFjj_HT); 
+    m_plots["VBFjj_HT"+cat]->Fill(VBFjj_HT, myweight); 
   
 
     if (VBFjet1_phi != -999 && VBFjet2_phi != -999) { 
-      m_plots["VBFjj_deltaPhi"+cat]->Fill(getDeltaPhi(VBFjet1_phi,VBFjet2_phi)); 
-      m_plots["VBFjj_deltaR"+cat]->Fill( getDeltaR(VBFjet1_eta, VBFjet1_phi, VBFjet2_eta, VBFjet2_phi) ); 
+      m_plots["VBFjj_deltaPhi"+cat]->Fill(getDeltaPhi(VBFjet1_phi,VBFjet2_phi), myweight); 
+      m_plots["VBFjj_deltaR"+cat]->Fill( getDeltaR(VBFjet1_eta, VBFjet1_phi, VBFjet2_eta, VBFjet2_phi), myweight ); 
     } else {
       // m_plots["VBFjj_deltaPhi"]->Fill(-999);
       // m_plots["VBFjj_deltaR"]->Fill(-999);
     }
-    if (VBFgenjet1_phi != -999 && VBFgenjet2_phi != -999) m_plots["VBFgenjj_deltaPhi"+cat]->Fill(getDeltaPhi(VBFgenjet1_phi, VBFgenjet2_phi)); 
+    if (VBFgenjet1_phi != -999 && VBFgenjet2_phi != -999) m_plots["VBFgenjj_deltaPhi"+cat]->Fill(getDeltaPhi(VBFgenjet1_phi, VBFgenjet2_phi), myweight); 
     //  else m_plots["VBFgenjj_deltaPhi"]->Fill(-999);
 
     // Fill VBF(j/tau) plots
@@ -347,7 +353,7 @@ void analysisCode::Fill()
     if (getDeltaR(VBFjet2_eta, VBFjet2_phi, dau1_eta, dau1_phi)!=-1 && getDeltaR(VBFjet2_eta, VBFjet2_phi, dau1_eta, dau1_phi) < minDeltaRVBFjTau) minDeltaRVBFjTau = getDeltaR(VBFjet2_eta, VBFjet2_phi, dau1_eta, dau1_phi);
     if (getDeltaR(VBFjet2_eta, VBFjet2_phi, dau2_eta, dau2_phi)!=-1 && getDeltaR(VBFjet2_eta, VBFjet2_phi, dau2_eta, dau2_phi) < minDeltaRVBFjTau) minDeltaRVBFjTau = getDeltaR(VBFjet2_eta, VBFjet2_phi, dau2_eta, dau2_phi);
 
-    if (minDeltaRVBFjTau!=9999) m_plots["VBFjTau_deltaR"+cat]->Fill(minDeltaRVBFjTau);
+    if (minDeltaRVBFjTau!=9999) m_plots["VBFjTau_deltaR"+cat]->Fill(minDeltaRVBFjTau, myweight);
 
     Float_t minDeltaRVBFjb = 9999; 
     if (getDeltaR(VBFjet1_eta, VBFjet1_phi, bjet1_eta, bjet1_phi)!=-1) minDeltaRVBFjb = getDeltaR(VBFjet1_eta, VBFjet1_phi, bjet1_eta, bjet1_phi);
@@ -355,7 +361,7 @@ void analysisCode::Fill()
     if (getDeltaR(VBFjet2_eta, VBFjet2_phi, bjet1_eta, bjet1_phi)!=-1 && getDeltaR(VBFjet2_eta, VBFjet2_phi, bjet1_eta, bjet1_phi) < minDeltaRVBFjTau) minDeltaRVBFjb = getDeltaR(VBFjet2_eta, VBFjet2_phi, bjet1_eta, bjet1_phi);
     if (getDeltaR(VBFjet2_eta, VBFjet2_phi, bjet2_eta, bjet2_phi)!=-1 && getDeltaR(VBFjet2_eta, VBFjet2_phi, bjet2_eta, bjet2_phi) < minDeltaRVBFjTau) minDeltaRVBFjb = getDeltaR(VBFjet2_eta, VBFjet2_phi, bjet2_eta, bjet2_phi);
 
-    if (minDeltaRVBFjb!=9999) m_plots["VBFjb_deltaR"+cat]->Fill(minDeltaRVBFjb);
+    if (minDeltaRVBFjb!=9999) m_plots["VBFjb_deltaR"+cat]->Fill(minDeltaRVBFjb, myweight);
 
 
     if (getDeltaR( bH_eta, bH_phi, tauH_SVFIT_eta, tauH_SVFIT_phi ) != -1 ) m_plots["dR_hbb_sv"+ cat] -> Fill(getDeltaR( bH_eta, bH_phi, tauH_SVFIT_eta, tauH_SVFIT_phi )); 
@@ -376,19 +382,19 @@ void analysisCode::Fill()
     h_tt_SVFIT.SetEta(tauH_SVFIT.Eta());  h_tt_SVFIT.SetPhi(tauH_SVFIT.Phi());  h_tt_SVFIT.SetPt(tauH_SVFIT.Pt());  h_tt_SVFIT.SetE(tauH_SVFIT.E());
     met.SetEta(0.);  met.SetPhi(met_phi);  met.SetPt(met_et);  met.SetE(metT.E());
     
-    m_plots["dR_l1_l2_boosted_htt_met"+ cat] -> Fill ( getDeltaRboosted( l_1, l_2, h_tt_vis+met ));
-    if (getDeltaPhi (tauH_SVFIT_phi, bH_phi) != -999.) m_plots["dphi_hbb_sv"+ cat] -> Fill( getDeltaPhi (tauH_SVFIT_phi, bH_phi) );
-    if (getDeltaEta (bjet1_eta, bjet2_eta) != -999.) m_plots["deta_b1_b2"+ cat] -> Fill( getDeltaEta (bjet1_eta, bjet2_eta) );
-    m_plots["costheta_l2_htt"+ cat] -> Fill ( getCosDelta(l_2, h_tt_SVFIT) ) ;
-    m_plots["dphi_l1_met"+ cat] -> Fill(getDeltaPhi ( dau1_phi, met_phi ) );
-    m_plots["costheta_htt_hh_met"+ cat] -> Fill(getCosDelta( h_tt_SVFIT,  h_tt_vis+met+h_bb ) );
-    m_plots["dR_hbb_httmet"+ cat] -> Fill(getDeltaR(h_bb.Eta(), h_bb.Phi(), (h_tt_vis+met).Eta(), (h_tt_vis+met).Phi()));
-    m_plots["costheta_b1_hbb"+ cat] -> Fill( getCosDelta ( b_1 , h_bb ) ); 
-    m_plots["deta_hbb_httmet"+ cat] -> Fill( getDeltaEta ( h_bb.Eta(), (h_tt_vis+met).Eta() ) );
-    m_plots["costheta_met_htt"+ cat] -> Fill( getCosDelta( met, h_tt_SVFIT ) );
-    m_plots["boosted"+ cat] -> Fill (isBoosted);
-    m_plots["channel"+ cat] -> Fill (pairType);
-    if (BDT_topPairMasses!=-999.) m_plots["BDT_topPairMasses"+cat]->Fill(BDT_topPairMasses);
+    m_plots["dR_l1_l2_boosted_htt_met"+ cat] -> Fill ( getDeltaRboosted( l_1, l_2, h_tt_vis+met ), myweight);
+    if (getDeltaPhi (tauH_SVFIT_phi, bH_phi) != -999.) m_plots["dphi_hbb_sv"+ cat] -> Fill( getDeltaPhi (tauH_SVFIT_phi, bH_phi), myweight );
+    if (getDeltaEta (bjet1_eta, bjet2_eta) != -999.) m_plots["deta_b1_b2"+ cat] -> Fill( getDeltaEta (bjet1_eta, bjet2_eta), myweight );
+    m_plots["costheta_l2_htt"+ cat] -> Fill ( getCosDelta(l_2, h_tt_SVFIT) , myweight) ;
+    m_plots["dphi_l1_met"+ cat] -> Fill(getDeltaPhi ( dau1_phi, met_phi ), myweight );
+    m_plots["costheta_htt_hh_met"+ cat] -> Fill(getCosDelta( h_tt_SVFIT,  h_tt_vis+met+h_bb ), myweight );
+    m_plots["dR_hbb_httmet"+ cat] -> Fill(getDeltaR(h_bb.Eta(), h_bb.Phi(), (h_tt_vis+met).Eta(), (h_tt_vis+met).Phi()), myweight);
+    m_plots["costheta_b1_hbb"+ cat] -> Fill( getCosDelta ( b_1 , h_bb ) , myweight); 
+    m_plots["deta_hbb_httmet"+ cat] -> Fill( getDeltaEta ( h_bb.Eta(), (h_tt_vis+met).Eta() ), myweight );
+    m_plots["costheta_met_htt"+ cat] -> Fill( getCosDelta( met, h_tt_SVFIT ), myweight );
+    m_plots["boosted"+ cat] -> Fill (isBoosted, myweight);
+    m_plots["channel"+ cat] -> Fill (pairType, myweight);
+    if (BDT_topPairMasses!=-999.) m_plots["BDT_topPairMasses"+cat]->Fill(BDT_topPairMasses, myweight);
 
 
 
@@ -511,12 +517,69 @@ Float_t  analysisCode::getDeltaRboosted(const LorentzVector& v_0, const LorentzV
   return DeltaR(ROOT::Math::VectorUtil::boost(v_0, ref.BoostToCM()), ROOT::Math::VectorUtil::boost(v_1, ref.BoostToCM()));
 }
 
+Float_t analysisCode::getWeights( std::string category ){
+  //return 1;
+  typedef boost::variant<bool, int, float, double> varType;
+  unordered_map<string, varType> valuesMap; 
+  
+  std::vector <std::string> sampleWeights;
+  if (cutCfg_->hasOpt(Form("sampleWeights::%s", mySampleName.c_str()))) { 
+    sampleWeights = cutCfg_->readStringListOpt(Form("sampleWeights::%s", mySampleName.c_str())); 
+  }
+
+  std::vector <std::string> selectionWeights;
+  if (cutCfg_->hasOpt(Form("selectionWeights::%s", category.c_str()))) { 
+    selectionWeights = cutCfg_->readStringListOpt(Form("selectionWeights::%s", category.c_str())); 
+  }
+
+  for (auto &sampleWeight : sampleWeights) {
+    valuesMap[sampleWeight] = float(0);
+  }
+  for (auto &selectionWeight : selectionWeights) {
+    valuesMap[selectionWeight] = float(0);
+  }
+
+  Float_t myWeight = 1; 
+  //TObjArray *branchList = fChain->GetListOfBranches();
+  for (auto it = valuesMap.begin(); it != valuesMap.end(); ++it)
+  {
+    //TBranch* br = (TBranch*) branchList->FindObject(it->first.c_str());
+    //std::string brName = br->GetTitle();
+    //if (brName.find(string("/F")) != string::npos) // F : a 32 bit floating point (Float_t)
+   // {
+    //  it->second = float(0.0);
+    //  cout << "Before Branch" << endl;
+     // fChain->SetBranchAddress(it->first.c_str(), &boost::get<float>(it->second));
+    //  cout << "After Branch" << endl;
+   // }
+   // else if (brName.find(string("/D")) != string::npos) // D : a 64 bit floating point (Double_t)
+    //{
+    //  it->second = double(0.0);
+    //  cout << "Before Branch" << endl;
+     // fChain->SetBranchAddress(it->first.c_str(), &boost::get<double>(it->second));
+    //  cout << "After Branch" << endl;
+    //} else {
+    //  cout << "Tenemos un problema, no es ni double ni float" << endl;
+   // }
+   //
+   
+    //TBranch *myBranch = fChain->FindBranch(it->first.c_str());
+    //myBranch->SetAddress(&it->second);
+  }
+
+  for (auto & value : valuesMap) {
+    TBranch * myBranch = fChain->FindBranch(value.first.c_str());
+    TLeaf * myLeaf = myBranch->GetLeaf(value.first.c_str());
+    value.second = myLeaf->GetValue();
+  }
 
 
-
-
-
-
+  for (auto & value : valuesMap) {
+    //cout << value.first << " " << value.second << " " << myWeight << endl; 
+    myWeight *= boost::apply_visitor(get_variant_as_double(), value.second);
+  } 
+  return myWeight; 
+}
 
 std::vector <std::string> analysisCode::addCategories () {
    std::vector <std::string> categories = {};
