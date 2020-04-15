@@ -1026,6 +1026,7 @@ public :
    virtual Float_t  getWeights(std::string category);
    virtual Bool_t   Notify();
    virtual std::vector <std::string> addCategories();
+   virtual std::vector <std::string> addRegions();
    virtual void     Show(Long64_t entry = -1);
 
    TFile m_outFile; 

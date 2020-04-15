@@ -39,8 +39,15 @@ void analysisCode::Book()
 
   //std::vector <std::string> categories = {""};
   //std::vector <std::string> categories = {"noSelection","baseline","s1b1jresolvedMcut", "s2b0jresolvedMcut", "VBFtight_DNN", "VBFloose_DNN", "sboostedLLMcut", "VBFloose", "VBFtight"};
-  std::vector <std::string> categories = {"noSelection","baseline_etauh","baseline_mutauh","baseline_tauhtauh"};
+  std::vector <std::string> selections = {"noSelection","baseline_etauh","baseline_mutauh","baseline_tauhtauh"};
+  std::vector <std::string> regions = {"noRegion", "SR", "SStight", "OSrlx", "SSrlx", "OSinviso", "SSinviso"}; 
+  std::vector <std::string> categories = {};
 
+  for (auto & cat : selections ) {
+    for (auto & reg : regions ) {
+      categories.push_back(cat + "_" +reg);
+    }
+  }
   m_outFile.cd();
 
   for (auto & cat : categories) {
@@ -172,14 +179,25 @@ void analysisCode::Book()
 void analysisCode::Fill()
 {
  
-  std::vector <std::string> categories = addCategories();
-  categories.push_back("noSelection");
+  std::vector <std::string> selections = addCategories();
+  selections.push_back("noSelection");
 
+  std::vector <std::string> regions = addRegions();
+  regions.push_back("noRegion");
+
+  std::vector <std::string> categories = {};
+  for (auto & cat : selections ) {
+    for (auto & reg : regions ) {
+      categories.push_back(cat + "_" +reg);
+    }
+  }
+
+  
   for (auto & cat : categories ) {
 
     double myweight = 1;
     if (isMC == 1){
-      double myweight = getWeights(cat);
+      myweight = getWeights(cat);
     }
     //Fill tau plots
     m_plots["tau1pt"+cat]->Fill(dau1_pt, myweight);
@@ -581,13 +599,34 @@ Float_t analysisCode::getWeights( std::string category ){
   return myWeight; 
 }
 
+std::vector <std::string> analysisCode::addRegions () {
+   std::vector <std::string> regions = {};
+
+   bool SR           = isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3; // signal region: opposite sign, isolated taus
+   bool SStight      = isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3; // B region
+   bool OSrlx        = isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1;            
+   bool SSrlx        = isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1; // B' region
+   bool OSinviso     = isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3; // C region
+   bool SSinviso     = isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3; // D region
+
+   if (SR) regions.push_back("SR");
+   if (SStight) regions.push_back("SStight");
+   if (OSrlx) regions.push_back("OSrlx"); 
+   if (SSrlx) regions.push_back("SSrlx"); 
+   if (OSinviso) regions.push_back("OSinviso");
+   if (SSinviso) regions.push_back("SSinviso");
+
+   return regions; 
+}   
+   
 std::vector <std::string> analysisCode::addCategories () {
    std::vector <std::string> categories = {};
 
    bool baselinetauhtauh = pairType == 2 && dau1_pt > 40 && abs (dau1_eta) < 2.1 && dau2_pt > 40 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1;   
    bool baselineetauh    = pairType == 1 && dau1_pt > 20 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.3 && nleps == 0 && nbjetscand > 1;
    bool baselinemutauh   = pairType == 0 && dau1_pt > 20 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.3 && nleps == 0 && nbjetscand > 1;
-   
+
+
    //bool baseline55     = (baselinetauhtauh || baselineetauh || baselinemutauh ) && tauH_SVFIT_mass > 50;
    //bool baselineVBFtight = pairType == 2 && dau1_pt > 25 && abs (dau1_eta) < 2.1 && dau2_pt > 25 && tauH_SVFIT_mass > 50 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1 && isVBFtrigger == 1 && VBFjj_mass > 800 && VBFjet1_pt > 140 && VBFjet2_pt > 60;
    //bool baselineVBFloose = baseline55 && isVBF == 1 && VBFjj_mass > 500 && VBFjj_deltaEta > 3;
