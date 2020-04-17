@@ -1002,7 +1002,7 @@ public :
    TBranch        *b_DNN_VBFvsGGF_TauTauLoose;   //!
 
    //analysisCode(int a=0, const TString & outName = "");
-   analysisCode(const TString & inSample = "", const TString & outName = "", const std::string & selCfgName = "", const TString & sampleName = "", const int & MC = -1);
+   analysisCode(const TString & inSample = "", const TString & outName = "", const std::string & selCfgName = "", const TString & sampleName = "", const int & MC = -1, const int & lumi = -1);
    //analysisCode(TTree *tree=0);
    virtual ~analysisCode();
    virtual Int_t    Cut(Long64_t entry);
@@ -1026,12 +1026,13 @@ public :
    virtual Float_t  getWeights(std::string category);
    virtual Bool_t   Notify();
    virtual std::vector <std::string> addCategories();
-   virtual std::vector <std::string> addRegions();
-   virtual void     Show(Long64_t entry = -1);
+   virtual std::vector <std::pair<std::string, std::string>> addRegions (std::vector<std::string> regions);
+   virtual void Show(Long64_t entry = -1);
 
    TFile m_outFile; 
    std::map <std::string, TH1F*> m_plots;
    int evt_den_;
+   int lumi_;
    int isMCSample; 
    std::string mySampleName;  
    std::unique_ptr<CfgParser> cutCfg_;
@@ -1061,7 +1062,7 @@ public :
 
 analysisCode::analysisCode(const TString & inSample, const TString & outName, 
                            const std::string & selCfgName, const TString & sampleName,
-                           const int & MC) : fChain(0), m_outFile(outName, "RECREATE")
+                           const int & MC, const int & lumi) : fChain(0), m_outFile(outName, "RECREATE")
 {
    //TChain *tree = new TChain("HTauTauTree");
    tree = unique_ptr<TChain>(new TChain(("HTauTauTree")));
@@ -1072,7 +1073,8 @@ analysisCode::analysisCode(const TString & inSample, const TString & outName,
    cutCfg_ = unique_ptr<CfgParser>(new CfgParser(selCfgName));  
 
    isMCSample = MC;
-   evt_den_ = 0; 
+   evt_den_ = 0;
+   lumi_ = lumi;  
 
    ifstream file(inSample + "/goodfiles.txt");
    if (file.good()) {

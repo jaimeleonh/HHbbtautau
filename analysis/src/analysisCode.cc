@@ -40,7 +40,7 @@ void analysisCode::Book()
   //std::vector <std::string> categories = {""};
   //std::vector <std::string> categories = {"noSelection","baseline","s1b1jresolvedMcut", "s2b0jresolvedMcut", "VBFtight_DNN", "VBFloose_DNN", "sboostedLLMcut", "VBFloose", "VBFtight"};
   std::vector <std::string> selections = {"noSelection","baseline_etauh","baseline_mutauh","baseline_tauhtauh"};
-  std::vector <std::string> regions = {"noRegion", "SR", "SStight", "OSrlx", "SSrlx", "OSinviso", "SSinviso"}; 
+  std::vector <std::string> regions = {"","SR", "SStight", "OSrlx", "SSrlx", "OSinviso", "SSinviso"}; 
   std::vector <std::string> categories = {};
 
   for (auto & cat : selections ) {
@@ -180,24 +180,19 @@ void analysisCode::Fill()
 {
  
   std::vector <std::string> selections = addCategories();
-  selections.push_back("noSelection");
 
-  std::vector <std::string> regions = addRegions();
-  regions.push_back("noRegion");
+  std::vector <std::pair<std::string, std::string>> categories = addRegions(selections); 
 
-  std::vector <std::string> categories = {};
-  for (auto & cat : selections ) {
-    for (auto & reg : regions ) {
-      categories.push_back(cat + "_" +reg);
-    }
+  for (auto & cat : selections) {
+    categories.push_back(make_pair(cat,cat+"_"));
   }
+  categories.push_back(make_pair("noSelection","noSelection_"));
 
-  
-  for (auto & cat : categories ) {
-
+  for (auto & mycat : categories ) {
+    std::string cat = mycat.second; 
     double myweight = 1;
-    if (isMC == 1){
-      myweight = getWeights(cat);
+    if (isMCSample == 1){
+      myweight = getWeights(mycat.first);
     }
     //Fill tau plots
     m_plots["tau1pt"+cat]->Fill(dau1_pt, myweight);
@@ -422,10 +417,10 @@ void analysisCode::Fill()
 }
 
 void analysisCode::EndJob()
-{ 
-  if (isMC == 1){
+{
+  if (isMCSample == 1){
     for (auto &plot : m_plots) {
-      plot.second -> Scale (1. / evt_den_ );
+      plot.second -> Scale ((double)lumi_ / (double)evt_den_ );
     }
   }
   m_outFile.cd();
@@ -550,6 +545,7 @@ Float_t analysisCode::getWeights( std::string category ){
     selectionWeights = cutCfg_->readStringListOpt(Form("selectionWeights::%s", category.c_str())); 
   }
 
+
   for (auto &sampleWeight : sampleWeights) {
     valuesMap[sampleWeight] = float(0);
   }
@@ -559,8 +555,8 @@ Float_t analysisCode::getWeights( std::string category ){
 
   Float_t myWeight = 1; 
   //TObjArray *branchList = fChain->GetListOfBranches();
-  for (auto it = valuesMap.begin(); it != valuesMap.end(); ++it)
-  {
+  //for (auto it = valuesMap.begin(); it != valuesMap.end(); ++it)
+ // {
     //TBranch* br = (TBranch*) branchList->FindObject(it->first.c_str());
     //std::string brName = br->GetTitle();
     //if (brName.find(string("/F")) != string::npos) // F : a 32 bit floating point (Float_t)
@@ -583,40 +579,69 @@ Float_t analysisCode::getWeights( std::string category ){
    
     //TBranch *myBranch = fChain->FindBranch(it->first.c_str());
     //myBranch->SetAddress(&it->second);
-  }
+  //}
 
   for (auto & value : valuesMap) {
-    TBranch * myBranch = fChain->FindBranch(value.first.c_str());
+   // cout << "Before TBranch " << value.first << endl; 
+    TBranch * myBranch = fChain->GetBranch(value.first.c_str());
+   // cout << "Before TLeaf"<< myBranch <<endl; 
     TLeaf * myLeaf = myBranch->GetLeaf(value.first.c_str());
+   // cout << "Before GetValue"<< endl; 
     value.second = myLeaf->GetValue();
+   // cout << "After GetValue"<< endl; 
   }
 
 
   for (auto & value : valuesMap) {
-    //cout << value.first << " " << value.second << " " << myWeight << endl; 
     myWeight *= boost::apply_visitor(get_variant_as_double(), value.second);
   } 
   return myWeight; 
 }
 
-std::vector <std::string> analysisCode::addRegions () {
-   std::vector <std::string> regions = {};
+std::vector <std::pair<std::string, std::string>> analysisCode::addRegions (std::vector<std::string> categories) {
+  std::vector <std::pair<std::string, std::string>> regions = {};
+  for (auto & selection : categories) {
+    /*bool SR          = (isOS != 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 ) 
+                    || (isOS != 0 && dau1_iso < 0.1 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_etauh" )==0 )   
+                    || (isOS != 0 && dau1_iso < 0.15 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_mutauh" )==0 );// signal region: opposite sign, isolated taus
+    bool SStight     = (isOS == 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
+                    || (isOS == 0 && dau1_iso < 0.1 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_etauh" )==0 )
+                    || (isOS == 0 && dau1_iso < 0.15 && dau2_deepTauVsJet >= 5  && strcmp(selection.c_str(), "baseline_mutauh" )==0 )    ; // B region
+    bool OSrlx       = (isOS != 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 2 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
+                    || (isOS != 0 && dau1_iso < 0.1 && dau2_deepTauVsJet >= 2 && strcmp(selection.c_str(), "baseline_etauh" )==0 )
+                    || (isOS != 0 && dau1_iso < 0.15 && dau2_deepTauVsJet >= 2 && strcmp(selection.c_str(), "baseline_mutauh" )==0 ) ; 
+    bool SSrlx       = (isOS == 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 2 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
+                    || (isOS == 0 && dau1_iso < 0.1 && dau2_deepTauVsJet >= 2 && strcmp(selection.c_str(), "baseline_etauh" )==0 )
+                    || (isOS == 0 && dau1_iso < 0.15 && dau2_deepTauVsJet >= 2  && strcmp(selection.c_str(), "baseline_mutauh" )==0 ) ; // B' region
+    bool OSinviso    = (isOS != 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 2 && dau2_deepTauVsJet < 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
+                    || (isOS != 0 && dau1_iso < 0.1 && dau2_deepTauVsJet >= 2 && dau2_deepTauVsJet < 5 && strcmp(selection.c_str(), "baseline_etauh" )==0 )
+                    || (isOS != 0 && dau1_iso < 0.15 && dau2_deepTauVsJet >= 2 && dau2_deepTauVsJet < 5 && strcmp(selection.c_str(), "baseline_mutauh" )==0 ); // C region
+    bool SSinviso    = (isOS == 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 2 && dau2_deepTauVsJet < 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
+                    || (isOS == 0 && dau1_iso < 0.1 && dau2_deepTauVsJet >= 2 && dau2_deepTauVsJet < 5 && strcmp(selection.c_str(), "baseline_etauh" )==0 )
+                    || (isOS == 0 && dau1_iso < 0.15 && dau2_deepTauVsJet >= 2 && dau2_deepTauVsJet < 5 && strcmp(selection.c_str(), "baseline_mutauh" )==0 ); // D region
+    
+    bool SR          = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )>-9999 );
+    bool SStight     = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )>-9999 );
+    bool OSrlx       = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && strcmp(selection.c_str(), "baseline_tauhtauh" )>-9999 );
+    bool SSrlx       = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && strcmp(selection.c_str(), "baseline_tauhtauh" )>-9999 );
+    bool OSinviso    = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )>-9999 );
+    bool SSinviso    = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )>-9999 );
+*/
+    bool SR          = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3);
+    bool SStight     = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3);
+    bool OSrlx       = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1);
+    bool SSrlx       = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1);
+    bool OSinviso    = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1);
+    bool SSinviso    = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1);
 
-   bool SR           = isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3; // signal region: opposite sign, isolated taus
-   bool SStight      = isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3; // B region
-   bool OSrlx        = isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1;            
-   bool SSrlx        = isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1; // B' region
-   bool OSinviso     = isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3; // C region
-   bool SSinviso     = isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3; // D region
-
-   if (SR) regions.push_back("SR");
-   if (SStight) regions.push_back("SStight");
-   if (OSrlx) regions.push_back("OSrlx"); 
-   if (SSrlx) regions.push_back("SSrlx"); 
-   if (OSinviso) regions.push_back("OSinviso");
-   if (SSinviso) regions.push_back("SSinviso");
-
-   return regions; 
+    if (SR) regions.push_back(make_pair(selection, selection+"_SR"));
+    if (SStight) regions.push_back(make_pair(selection,selection+"_SStight"));
+    if (OSrlx) regions.push_back(make_pair(selection,selection+"_OSrlx")); 
+    if (SSrlx) regions.push_back(make_pair(selection,selection+"_SSrlx")); 
+    if (OSinviso) regions.push_back(make_pair(selection,selection+"_OSinviso"));
+    if (SSinviso) regions.push_back(make_pair(selection,selection+"_SSinviso"));
+  }
+  return regions; 
 }   
    
 std::vector <std::string> analysisCode::addCategories () {

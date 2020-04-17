@@ -8,6 +8,8 @@ from samples import samples
 from collections import OrderedDict
 import plotTools
 import datetime
+import OutputManager as omng
+import itertools
 
 import argparse
 parser = argparse.ArgumentParser(description='Plotter options')
@@ -37,11 +39,17 @@ path = '/eos/home-c/camendol/SKIMS_Thesis2017/'
 eosPath = '/eos/home-j/jleonhol/HHbbtautau/'
 plotPath = './plots/'
 
+selections = ["baseline_tauhtauh"]
+regions = ["","SR", "SStight", "OSrlx", "SSrlx", "OSinviso", "SSinviso"]
+myCategories = [x[0] + '_' + x[1] for x in list(itertools.product(selections, regions))]
+
 year = '2017'
-selectionCfg = './config/selectionCfg_TauTau_VBF.cfg'
+lumi = '41557' 
+selectionCfg = './config/selectionCfg_2017.cfg'
 
 
-categories = ["baseline_tauhtauh", "baseline_etauh", "baseline_mutauh","noSelection"]
+categories = ["baseline_tauhtauh_", "baseline_etauh_", "baseline_mutauh_", "baseline_tauhtauh_"]
+#categories = ["baseline_tauhtauh_SR", "baseline_etauh_SR", "baseline_mutauh_SR"]
 #categories = ["baseline","noSelection"]
 #categories = ["baseline","noSelection","s1b1jresolvedMcut", "s2b0jresolvedMcut", "VBFtight_DNN", "VBFloose_DNN", "sboostedLLMcut", "VBFloose", "VBFtight"]
 
@@ -54,8 +62,12 @@ if (my_namespace.copy == True) :
   rc = call('mkdir ' + copyPath, shell=True)
   rc = call('cp -r /eos/home-j/jleonhol/backup/index_HHbbtautau_php ' + copyPath +  '/index.php' , shell=True)
   for cat in categories : 
-    rc = call('mkdir ' + copyPath +  '/' + cat + '/' , shell=True)
-    rc = call('cp -r /eos/home-j/jleonhol/backup/index_HHbbtautau_php ' + copyPath + '/' + cat + '/index.php' , shell=True)
+    if not my_namespace.dataMC : 
+      rc = call('mkdir ' + copyPath +  '/' + cat + '/' , shell=True)
+      rc = call('cp -r /eos/home-j/jleonhol/backup/index_HHbbtautau_php ' + copyPath + '/' + cat + '/index.php' , shell=True)
+    else : 
+      rc = call('mkdir ' + copyPath +  '/' + cat + 'SR/' , shell=True)
+      rc = call('cp -r /eos/home-j/jleonhol/backup/index_HHbbtautau_php ' + copyPath + '/' + cat + 'SR/index.php' , shell=True)
 
 
 
@@ -139,8 +151,9 @@ if my_namespace.runInCondor :
     
 
     command += ' ' + eosPath + year + '/' + fil + '.root ' + selectionCfg + ' ' + fil
-    if fil in files : command += ' 1'
-    else : command += ' 0'
+    if fil in files : command += ' 1 '
+    else : command += ' 0 '
+    command += lumi
 
     scriptFile.write(command)
     scriptFile.close()
@@ -216,6 +229,7 @@ else :  #plots we obtained before looking at Chiara's thesis
   whatToPlot += ['HHkinsvfit_bHmass','HHsvfit_deltaPhi', 'HHKin_mass_raw', 'HHKin_chi2'] 
   whatToPlot += ['VBFjb_deltaR', 'VBFjTau_deltaR']
 
+#whatToPlot = ["tau1_pt"]
 
 plottingStuff = { 'lowlimityaxis' : 0,
             'highlimityaxis' : 1,
@@ -232,6 +246,9 @@ plottingStuff = { 'lowlimityaxis' : 0,
 
 t0 = 0
 
+
+
+
 if my_namespace.merge == True or my_namespace.dataMC == True:
   myFiles = {}
   for merge in mergingCategories: 
@@ -243,15 +260,74 @@ if my_namespace.dataMC == True :
   for fil in data : 
     dataFiles.append(r.TFile.Open(eosPath + year + '/'+fil+'.root'))
 
+
+  omngr = omng.OutputManager()
+  omngr.sel_def     = selections
+  omngr.sel_regions = regions    
+  omngr.selections  = [x[0] + '_' + x[1] for x in list(itertools.product(selections, regions))]   
+  omngr.variables   = whatToPlot  
+  omngr.variables2D = [] 
+  # omngr.samples     = sigList + bkgList + dataList
+  omngr.data        = data
+  omngr.dataFiles   = dataFiles
+  omngr.bkgs        = mergingCategories
+  omngr.bkgFiles    = myFiles
+  omngr.path        = eosPath + year + '/'
+
+
+  omngr.merge()
+  
+  print omngr.histos.keys()
+  
+  
+  SBtoSRforQCD = 1
+  computeSBtoSRdyn = False
+  if SBtoSRforQCD == 1: 
+    computeSBtoSRdyn = True
+  omngr.makeQCD(
+        SR           = "SR",
+        yieldSB      = "SStight",
+        shapeSB      = "SSrlx",
+        SBtoSRfactor = 1,
+        regionC      = "OSinviso",   
+        regionD      = "SSinviso",   
+        doFitIf      = "False",
+        fitFunc      = "[0] + [1]x",
+        computeSBtoSR = computeSBtoSRdyn
+        )
+
+  print omngr.histos.keys()
+
+  for plot in whatToPlot :
+    for cat in ["baseline_tauhtauh_SR"] : 
+    #for cat in myCategories : 
+      listOfPlots = []
+      listOfDataPlots = []
+   
+      for merge in mergingCategories.keys()+["QCD"] : 
+        listOfPlots.append(omngr.histos[merge + "_" +cat + "_" + plot ])
+      plotTools.makePlot(listOfDataPlots, eosPath + year + '/', dataFiles , plot+'_'+cat, True, -1)
+
+      legends = mergingCategories.keys()+["QCD"]
+      plotTools.dataMCPlots (listOfDataPlots, listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False) 
+      if my_namespace.copy == True: 
+        for ext in ['.png','.pdf'] : 
+        #for ext in ['.png','.pdf','.root'] : 
+          rc = call('cp ' + plotPath + plot + '_' + cat + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
+        print 'Copying ' +  plotPath + plot + '_' + cat + '.* to ' + copyPath + '/' + cat 
+      
+  sys.exit()
+
+
+
 for plot in whatToPlot :
-  for cat in categories : 
+  for cat in ["baseline_tauhtauh_SR"] : 
+  #for cat in myCategories : 
     listOfPlots = []
     listOfDataPlots = []
-    
-    if my_namespace.merge == True or my_namespace.dataMC == True:
-      lumi = 41557 
-      if my_namespace.dataMC == True : normalize = lumi
-      else : normalize = 1
+
+    if my_namespace.merge == True :
+      normalize = 1
 
       legends = mergingCategories.keys() 
       for merge in mergingCategories :
@@ -266,24 +342,15 @@ for plot in whatToPlot :
       for fil in files :
         plotTools.makePlot(listOfPlots, eosPath + year + '/', fil + '.root', plot+'_'+cat, merge=False, normalize=1)
     
-    if not my_namespace.dataMC : 
-      plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False) 
-      plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=True) 
+    plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False) 
+    plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=True) 
 
-      if my_namespace.copy == True: 
-        for ext in ['.png','.pdf'] : 
-        #for ext in ['.png','.pdf','.root'] : 
-          rc = call('cp ' + plotPath + plot + '_' + cat + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
-          rc = call('cp ' + plotPath + plot + '_' + cat + '_logy' + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
-        print 'Copying ' +  plotPath + plot + '_' + cat + '.* to ' + copyPath + '/' + cat 
-    else : 
-      plotTools.dataMCPlots (listOfDataPlots, listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False) 
-      if my_namespace.copy == True: 
-        for ext in ['.png','.pdf'] : 
-        #for ext in ['.png','.pdf','.root'] : 
-          rc = call('cp ' + plotPath + plot + '_' + cat + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
-        print 'Copying ' +  plotPath + plot + '_' + cat + '.* to ' + copyPath + '/' + cat 
-
+    if my_namespace.copy == True: 
+      for ext in ['.png','.pdf'] : 
+      #for ext in ['.png','.pdf','.root'] : 
+        rc = call('cp ' + plotPath + plot + '_' + cat + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
+        rc = call('cp ' + plotPath + plot + '_' + cat + '_logy' + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
+      print 'Copying ' +  plotPath + plot + '_' + cat + '.* to ' + copyPath + '/' + cat 
   
 
 
