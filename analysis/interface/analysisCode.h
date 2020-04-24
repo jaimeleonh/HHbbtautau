@@ -520,6 +520,7 @@ public :
    Int_t           isTau2real;
    Int_t           nRealTaus;
    Float_t         BDToutSM_kl_1;
+   Float_t         DNNoutSM_kl_1;
    Float_t         DNN_VBFvsGGF_MuTau;   
    Float_t         DNN_VBFvsGGF_ETau;   
    Float_t         DNN_VBFvsGGF_TauTauTight;   
@@ -996,6 +997,7 @@ public :
    TBranch        *b_isTau2real;   //!
    TBranch        *b_nRealTaus;   //!
    TBranch        *b_BDToutSM_kl_1;   //!
+   TBranch        *b_DNNoutSM_kl_1;   //!
    TBranch        *b_DNN_VBFvsGGF_MuTau;   //!
    TBranch        *b_DNN_VBFvsGGF_ETau;   //!
    TBranch        *b_DNN_VBFvsGGF_TauTauTight;   //!
@@ -1708,6 +1710,8 @@ void analysisCode::Init(TTree *tree)
      fChain->SetBranchAddress("DNN_VBFvsGGF_TauTauTight", &DNN_VBFvsGGF_TauTauTight, &b_DNN_VBFvsGGF_TauTauTight);
    if (fChain->GetListOfBranches()->FindObject("DNN_VBFvsGGF_MuTau"))    
      fChain->SetBranchAddress("DNN_VBFvsGGF_TauTauLoose", &DNN_VBFvsGGF_TauTauLoose, &b_DNN_VBFvsGGF_TauTauLoose);
+   if (fChain->GetListOfBranches()->FindObject("DNNoutSM_kl_1"))    
+     fChain->SetBranchAddress("DNNoutSM_kl_1", &DNNoutSM_kl_1, &b_DNNoutSM_kl_1);
    Notify();
 }
 

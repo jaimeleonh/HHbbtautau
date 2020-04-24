@@ -3,7 +3,7 @@ import ROOT as r
 from ROOT import gStyle, gROOT
 from copy import deepcopy
 import sys
-from markers import markerColors, markerTypes
+from markers import markerColors, markerTypes, markerColorsMerge
 r.gROOT.SetBatch(True)
 
 
@@ -11,6 +11,31 @@ r.gROOT.SetBatch(True)
 ############################################# CHANGE IF NECESSARY ###########################################################
 
 #############################################################################################################################
+
+def makePlotReturn(path, files, plotscaffold, merge, normalize):
+    
+    if not merge :
+      res = files
+      #res = r.TFile.Open(path + files)
+      resplot = res.Get(plotscaffold)
+    else :
+      #res = r.TFile.Open(path+files[0]+'.root')
+      res = files[0]
+      resplot = res.Get(plotscaffold)
+      for i in range (1,len(files)) :
+        otherFile = files[i]
+        #otherFile = r.TFile.Open(path+files[i]+'.root')
+        otherPlot = otherFile.Get(plotscaffold)
+        
+        resplot.Add(otherPlot)
+        #otherFile.Close();
+        del otherPlot
+
+    if normalize==1 and resplot.Integral() > 0 : resplot.Scale (1. / resplot.Integral() )
+    elif normalize>1 : resplot.Scale (normalize)
+
+
+    return resplot
 
 def makePlot(hlist, path, files, plotscaffold, merge, normalize):
     
@@ -25,6 +50,7 @@ def makePlot(hlist, path, files, plotscaffold, merge, normalize):
         otherFile = files[i]
         #otherFile = r.TFile.Open(path+files[i]+'.root')
         otherPlot = otherFile.Get(plotscaffold)
+        
         resplot.Add(otherPlot)
         #otherFile.Close();
         del otherPlot
@@ -39,7 +65,7 @@ def makePlot(hlist, path, files, plotscaffold, merge, normalize):
     #res.Close(); del res, resplot
     return
 
-def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False): 
+def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False, normalize=False): 
     print "Combining list of plots"
     if len(hlist) == 0: raise RuntimeError("Empty list of plots")
     c   = r.TCanvas("c", "c", 800, 800)
@@ -49,14 +75,19 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False)
     gStyle.SetOptStat(0)
     leg = r.TLegend(plottingStuff['legxlow'], plottingStuff['legylow'], plottingStuff['legxhigh'], plottingStuff['legyhigh'])
     for iplot in range(len(hlist)):
-        hlist[iplot].SetMarkerColor(markerColors[iplot % len(markerColors)])
-        #hlist[iplot].SetMarkerColor(plottingStuff['markercolordir'][hlist[iplot].GetName()])
-        hlist[iplot].SetLineColor(markerColors[iplot % len(markerColors)])
-        #hlist[iplot].SetLineColor(plottingStuff['markercolordir'][hlist[iplot].GetName()])
+        if hlist[iplot].Integral() > 0 :  hlist[iplot].Scale(1./ hlist[iplot].Integral())
+        if legends[iplot] in markerColorsMerge : 
+          #hlist[iplot].SetFillColor(markerColorsMerge[legends[iplot]])
+          hlist[iplot].SetMarkerColor(markerColorsMerge[legends[iplot]])
+          hlist[iplot].SetLineColor(markerColorsMerge[legends[iplot]])
+        else: 
+          #hlist[iplot].SetFillColor(markerColors[iplot % len(markerColors)])
+          hlist[iplot].SetMarkerColor(markerColors[iplot % len(markerColors)])
+          hlist[iplot].SetLineColor(markerColors[iplot % len(markerColors)])
+        
+        if legends[iplot]=="VBFHHSM" or legends[iplot]=="ggHHSM" : hlist[iplot].SetLineStyle(r.kDashed) 
+        
         hlist[iplot].SetMarkerStyle(20)
-        hlist[iplot].SetLineStyle(1 + iplot / len(markerColors))
-#        hlist[iplot].SetMarkerStyle(markerTypes[iplot / len(markerColors)])
-        #hlist[iplot].SetMarkerStyle(plottingStuff['markertypedir'][hlist[iplot].GetName()])
         leg.AddEntry(hlist[iplot], legends[iplot], "PL")
         hlist[iplot].Draw("histosame")
         if ( hlist[iplot].GetMaximum() > maxim ) : 
@@ -96,7 +127,7 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False)
 
 
 
-def dataMCPlots (dataPlot, MClist, MClegends, plottingStuff, path, savescaffold, logy=False): 
+def dataMCPlots (dataPlot, MClist, signalList, MClegends, plottingStuff, path, savescaffold, logy=False): 
     print "Combining list of plots"
     if len(MClist) == 0 or len(dataPlot) == 0: raise RuntimeError("Empty list of plots")
     #c   = r.TCanvas("c", "c", 800, 800)
@@ -121,24 +152,27 @@ def dataMCPlots (dataPlot, MClist, MClegends, plottingStuff, path, savescaffold,
     hs = r.THStack("hs","")
     nEntries = 0
     for iplot in range(len(MClist)):
-        MClist[iplot].SetFillColor(markerColors[iplot % len(markerColors)])
-        nEntries += MClist[iplot].Integral()
-        leg.AddEntry(MClist[iplot], MClegends[iplot], "f")
+      if MClegends[iplot] in markerColorsMerge : MClist[iplot].SetFillColor(markerColorsMerge[MClegends[iplot]])
+      else: MClist[iplot].SetFillColor(markerColors[iplot % len(markerColors)])
+      nEntries += MClist[iplot].Integral()
+      leg.AddEntry(MClist[iplot], MClegends[iplot], "f")
 
     dataPlot[0].SetMarkerColor(r.kBlack)
     dataPlot[0].SetMarkerSize(1)
     dataPlot[0].SetMarkerStyle(20)
     dataPlot[0].SetLineColor(r.kBlack)
-    leg.AddEntry(dataPlot[0], "data", "PL")
-    
+    binWidth=dataPlot[0].GetBinWidth(1)
+    dataPlot[0].SetTitle(" ; ; Entries / {:.1f}".format(binWidth))
+
     #hs.Scale(dataPlot[0].Integral() / hs.Integral() )
+    #for iplot in range(1):
     for iplot in range(len(MClist)):
       #if dataPlot[0].Integral() > 0 : MClist[iplot].Scale( dataPlot[0].Integral() / nEntries )
       if iplot == 0 : h = MClist[iplot].Clone()
       else : h.Add(MClist[iplot])
       hs.Add(MClist[iplot])
 
-    preliminary = r.TLatex(0.11,0.91,"    #scale[1.5]{CMS} preliminary");
+    preliminary = r.TLatex(0.11,0.91,"#scale[1.5]{CMS} preliminary");
     preliminary.SetTextSize(0.03)
     preliminary.SetNDC();
     #preliminary.SetTextFont(42);
@@ -146,8 +180,25 @@ def dataMCPlots (dataPlot, MClist, MClegends, plottingStuff, path, savescaffold,
     #c.Divide(1,2,0,0);
     pad1.cd();
     #c.GetPad(1).SetBottomMargin(0.1)
-    dataPlot[0].Draw("e")
-    hs.Draw("histoFsame")
+    hs.Draw("histo")
+    dataPlot[0].Draw("P same")
+
+    
+
+    
+    for iplot in range(len(signalList)):
+      if MClegends[iplot+len(MClist)] in markerColorsMerge : 
+          signalList[iplot].SetLineColor(markerColorsMerge[MClegends[len(MClist)+iplot]])
+      else: 
+        print "Better add a color to the sample " +  MClegends[iplot+len(MClist)] + " and restart"
+        sys.exit()
+      if signalList[iplot].Integral()!=0 and dataPlot[0].Integral()!=0 :  signalList[iplot].Scale(dataPlot[0].Integral()/(signalList[iplot].Integral()))
+      signalList[iplot].Scale(1./2.)
+      signalList[iplot].SetLineWidth(2)
+      signalList[iplot].Draw("hist same")
+      leg.AddEntry(signalList[iplot], MClegends[len(MClist)+iplot], "L")
+    
+    leg.AddEntry(dataPlot[0], "data", "PL")
     leg.SetFillColor(4001)
     leg.SetBorderSize(0)
     leg.SetNColumns(2)
@@ -166,7 +217,7 @@ def dataMCPlots (dataPlot, MClist, MClegends, plottingStuff, path, savescaffold,
     hD.SetTitleSize(0.08, "xy");
     pad2.cd(); 
     pad2.SetGrid()
-    hD.SetTitle(" ; ; Data/MC")
+    hD.SetTitle(" ; ; Data/Background")
     hD.Draw()
 
     
