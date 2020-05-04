@@ -5,7 +5,7 @@ from ROOT import gSystem
 r.gROOT.SetBatch(True)
 from subprocess import call
 from samples import samples
-from config import files as allFiles, mergingCategories as allMergingCategories, signal as allSignals
+from config import files as allFiles, mergingCategories as allMergingCategories, signal as allSignals, dataCategories as dataCategories
 from collections import OrderedDict
 import plotTools
 import datetime
@@ -19,6 +19,7 @@ parser.add_argument('-c','--copy', action='store_true', default = False)
 parser.add_argument('-m','--merge', action='store_true', default = False)
 parser.add_argument('-p','--plots', action='store_false', default = True)
 parser.add_argument('-rc','--runInCondor', action='store_true', default = False)
+parser.add_argument('-l','--launch', action='store_false', default = True)
 parser.add_argument('-dmc','--dataMC', action='store_true', default = False)
 parser.add_argument('-d','--directory', dest='userCopyPath', default = '')
 my_namespace = parser.parse_args()
@@ -41,11 +42,16 @@ path = '/eos/home-c/camendol/SKIMMED_Legacy2017_27mar2020_DNN'
 eosPath = '/eos/home-j/jleonhol/HHbbtautau/'
 plotPath = './plots/'
 
-selections = ["baseline_tauhtauh", "baseline_etauh","baseline_mutauh",]
-regions = ["","SR", "SStight", "OSrlx", "SSrlx", "OSinviso", "SSinviso"]
+selections = ["tauhtauh", "etauh","mutauh",]
+regions = ["SR", "SStight", "OSrlx", "SSrlx", "OSinviso", "SSinviso"]
 myCategories = [x[0] + '_' + x[1] for x in list(itertools.product(selections, regions))]
 
+#########################################################################################
+#########################################################################################
 year = '2017'
+#########################################################################################
+#########################################################################################
+
 lumi = '41557' 
 
 allSelectionCfg = {}
@@ -81,10 +87,12 @@ rc = call('mkdir ' + plotPath, shell=True)
 rc = call('mkdir ' + eosPath + year +'/', shell=True)
 
 files = allFiles[year] 
+#files = []
+#files = ["GGHHSM","VBFHHSM","VBFHH_CV_1_C2V_1_C3_2","VBFHH_CV_1_C2V_1_C3_0"]
 
 if 'allVBF' in copyPath : 
-  files.append("GGHSM_xs")
-  files.append("VBF_CV_1_C2V_1_C3_1")
+  #files.append("GGHSM_xs")
+  #files.append("VBF_CV_1_C2V_1_C3_1")
   files.append("VBF_CV_1_5_C2V_1_C3_1")
   files.append("VBF_CV_1_C2V_1_C3_0")
   files.append("VBF_CV_1_C2V_1_C3_2")
@@ -92,15 +100,16 @@ if 'allVBF' in copyPath :
   files.append("VBF_CV_1_C2V_2_C3_1")
   
 dataFiles = []
-dataFiles = ['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F']
+dataFiles = ['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F', 
+             'SingleMuon2017B','SingleMuon2017C','SingleMuon2017D','SingleMuon2017E','SingleMuon2017F',
+             'SingleElectron2017B','SingleElectron2017C','SingleElectron2017D','SingleElectron2017E','SingleElectron2017F',
+            ]
 
-
+########################## MERGING CATEGORIES ########################
 signal = allSignals[year]
-
 mergingCategories = allMergingCategories[year]
-
-data = ['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F']
-
+data = dataCategories[year]
+######################################################################
 
 if my_namespace.runInCondor :
 
@@ -150,7 +159,7 @@ if my_namespace.runInCondor :
     f.write( "queue\n")
     f.close()
 
-    os.system ( 'condor_submit %s/submit_condor_%s.sub'%(outDir,str(nj)))
+    if my_namespace.launch : os.system ( 'condor_submit %s/submit_condor_%s.sub'%(outDir,str(nj)))
   sys.exit(0)
 
 
@@ -247,15 +256,17 @@ if my_namespace.merge == True or my_namespace.dataMC == True:
       mySignalFiles[signalS].append(r.TFile.Open(eosPath + year + '/' +sample+'.root'))
   
   #DATAFILES
-  dataFiles = []
-  for fil in data : 
-    dataFiles.append(r.TFile.Open(eosPath + year + '/'+fil+'.root'))
+  dataFiles = {}
+  for chan in data :
+    dataFiles[chan] = []
+    for fil in data[chan] :
+      dataFiles[chan].append(r.TFile.Open(eosPath + year + '/'+fil+'.root'))
 
-
+  
   omngr = omng.OutputManager()
   omngr.sel_def     = selections
   omngr.sel_regions = regions    
-  omngr.selections  = [x[0] + '_' + x[1] for x in list(itertools.product(selections, regions))]   
+  omngr.selections  = ["baseline_" + x[0] + '_' + x[1] for x in list(itertools.product(selections, regions))]   
   omngr.variables   = whatToPlot  
   omngr.variables2D = [] 
   # omngr.samples     = sigList + bkgList + dataList
@@ -297,21 +308,21 @@ if my_namespace.dataMC == True :
       listOfPlots = []
       listOfDataPlots = []
       signalList = []
-      cat+="_SR"
+      fullCat="baseline_"+cat+"_SR"
       
       for merge in mergingCategories.keys()+["QCD"] : 
-        listOfPlots.append(omngr.histos[merge + "_" +cat + "_" + plot ])
+        listOfPlots.append(omngr.histos[merge + "_" +fullCat + "_" + plot ])
       for merge in signal : 
-        plotTools.makePlot(signalList, eosPath + year + '/', mySignalFiles[merge] , plot+'_'+cat, True, -1)
-      plotTools.makePlot(listOfDataPlots, eosPath + year + '/', dataFiles , plot+'_'+cat, True, -1)
+        plotTools.makePlot(signalList, eosPath + year + '/', mySignalFiles[merge] , plot+'_'+fullCat, True, -1)
+      plotTools.makePlot(listOfDataPlots, eosPath + year + '/', dataFiles[cat], plot+'_'+fullCat, True, -1)
 
       legends = mergingCategories.keys()+["QCD"]+signal.keys()
-      plotTools.dataMCPlots (listOfDataPlots, listOfPlots, signalList, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False) 
+      plotTools.dataMCPlots (listOfDataPlots, listOfPlots, signalList, legends, plottingStuff, plotPath, plot+'_'+fullCat, logy=False) 
       if my_namespace.copy == True: 
         for ext in ['.png','.pdf'] : 
         #for ext in ['.png','.pdf','.root'] : 
-          rc = call('cp ' + plotPath + plot + '_' + cat + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
-        print 'Copying ' +  plotPath + plot + '_' + cat + '.* to ' + copyPath + '/' + cat 
+          rc = call('cp ' + plotPath + plot + '_' + fullCat + ext + ' ' + copyPath + '/' + fullCat + '/', shell=True)
+        print 'Copying ' +  plotPath + plot + '_' + fullCat + '.* to ' + copyPath + '/' + fullCat 
       
   sys.exit()
 
@@ -319,25 +330,25 @@ if my_namespace.dataMC == True :
 if my_namespace.merge == True : 
   for plot in whatToPlot :
     for cat in selections : 
-      cat+="_SR"
-    #for cat in myCategories : 
+      fullCat="baseline_"+cat+"_SR"
       listOfPlots = []
       for merge in signal : 
-        plotTools.makePlot(listOfPlots, eosPath + year + '/', mySignalFiles[merge] , plot+'_'+cat, True, -1)
+        plotTools.makePlot(listOfPlots, eosPath + year + '/', mySignalFiles[merge] , plot+'_'+fullCat, True, -1)
       for merge in mergingCategories.keys()+["QCD"] : 
-        listOfPlots.append(omngr.histos[merge + "_" +cat + "_" + plot ])
+        listOfPlots.append(omngr.histos[merge + "_" +fullCat + "_" + plot ])
       legends = signal.keys() + mergingCategories.keys()+["QCD"]
-      plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False, normalize=True) 
+      plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+fullCat, logy=False, normalize=True) 
       if my_namespace.copy == True: 
         for ext in ['.png','.pdf'] : 
         #for ext in ['.png','.pdf','.root'] : 
-          rc = call('cp ' + plotPath + plot + '_' + cat + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
-        print 'Copying ' +  plotPath + plot + '_' + cat + '.* to ' + copyPath + '/' + cat 
+          rc = call('cp ' + plotPath + plot + '_' + fullCat + ext + ' ' + copyPath + '/' + fullCat + '/', shell=True)
+        print 'Copying ' +  plotPath + plot + '_' + fullCat + '.* to ' + copyPath + '/' + fullCat 
   sys.exit()
 
 
+#FIXME: Remove merge and dmc from here
 for plot in whatToPlot :
-  for cat in ["baseline_tauhtauh_SR"] : 
+  for cat in ["baseline_tauhtauh_"] : 
   #for cat in myCategories : 
     listOfPlots = []
     listOfDataPlots = []
@@ -359,13 +370,12 @@ for plot in whatToPlot :
         plotTools.makePlot(listOfPlots, eosPath + year + '/', fil + '.root', plot+'_'+cat, merge=False, normalize=1)
     
     plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False) 
-    plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=True) 
 
     if my_namespace.copy == True: 
       for ext in ['.png','.pdf'] : 
       #for ext in ['.png','.pdf','.root'] : 
         rc = call('cp ' + plotPath + plot + '_' + cat + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
-        rc = call('cp ' + plotPath + plot + '_' + cat + '_logy' + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
+       # rc = call('cp ' + plotPath + plot + '_' + cat + '_logy' + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
       print 'Copying ' +  plotPath + plot + '_' + cat + '.* to ' + copyPath + '/' + cat 
   
 

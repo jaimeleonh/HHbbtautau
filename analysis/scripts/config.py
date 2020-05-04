@@ -29,14 +29,19 @@ mergingCategories["2017_FC"]["W+Jets"] = ["WJets_HT_0_100","WJets_HT_1200_2500",
 mergingCategories["2017_FC"]["TT"] = ["TTfullyHad", "TTsemiLep", "TTfullyLep"]
 mergingCategories["2017_FC"]["DY+Jets"]= ["DYJets_0j0b", "DYJets_1j0b", "DYJets_1j1b", "DYJets_2j0b", "DYJets_2j1b", "DYJets_2j2b", "DYJets_3j0b", "DYJets_3j1b", "DYJets_3j2b", "DYJets_3j3b", "DYJets_4j0b", "DYJets_4j1b", "DYJets_4j2b", "DYJets_4j3b", "DYJets_4j4b"]
 
-
+dataCategories = {"2017": {}, "2017_FC": {}}
+dataCategories["2017"] = {"tauhtauh":['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F',],
+                          "mutauh":['SingleMuon2017B','SingleMuon2017C','SingleMuon2017D','SingleMuon2017E','SingleMuon2017F',],
+                          "etauh":['SingleElectron2017B','SingleElectron2017C','SingleElectron2017D','SingleElectron2017E','SingleElectron2017F',],
+                         }
+dataCategories["2017_FC"] = {"tauhtauh":['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F']}
 
 signal = {"2017":OrderedDict(), "2017_FC":OrderedDict()}
 signal["2017"]['ggHSM'] = ['GGHSM_xs']
 signal["2017"]['VBFSM'] = ['VBF_CV_1_C2V_1_C3_1']
   
 ## NEW FROM CHIARA AND FRANCESCO
-signal["2017_FC"]['ggHHSM'] = ['GGHHSM']
+signal["2017_FC"]['GGHHSM'] = ['GGHHSM']
 signal["2017_FC"]['VBFHHSM'] = ['VBFHHSM']
 
 

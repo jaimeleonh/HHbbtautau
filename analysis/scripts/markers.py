@@ -11,7 +11,7 @@ markerColors = [
 ]
 
 markerColorsMerge = {
-    "ggHHSM":r.kRed,
+    "GGHHSM":r.kRed,
     "ggHSM":r.kRed,
     "VBFHHSM":r.kBlue,
     "VBFSM":r.kBlue,

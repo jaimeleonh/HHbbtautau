@@ -5,7 +5,7 @@ from copy import deepcopy
 import sys
 from markers import markerColors, markerTypes, markerColorsMerge
 r.gROOT.SetBatch(True)
-
+import math
 
 
 ############################################# CHANGE IF NECESSARY ###########################################################
@@ -19,16 +19,19 @@ def makePlotReturn(path, files, plotscaffold, merge, normalize):
       #res = r.TFile.Open(path + files)
       resplot = res.Get(plotscaffold)
     else :
-      #res = r.TFile.Open(path+files[0]+'.root')
-      res = files[0]
-      resplot = res.Get(plotscaffold)
-      for i in range (1,len(files)) :
-        otherFile = files[i]
-        #otherFile = r.TFile.Open(path+files[i]+'.root')
-        otherPlot = otherFile.Get(plotscaffold)
+      done = False
+      for fil in files :
+        otherPlot = fil.Get(plotscaffold)
+        #print plotscaffold
+
+       # if otherPlot.Integral()<=0 : continue
+        makeNonNegativeHistos(otherPlot)
+
+        if not done: 
+          done = True
+          resplot = otherPlot.Clone()
+        else : resplot.Add(otherPlot)
         
-        resplot.Add(otherPlot)
-        #otherFile.Close();
         del otherPlot
 
     if normalize==1 and resplot.Integral() > 0 : resplot.Scale (1. / resplot.Integral() )
@@ -46,10 +49,12 @@ def makePlot(hlist, path, files, plotscaffold, merge, normalize):
       #res = r.TFile.Open(path+files[0]+'.root')
       res = files[0]
       resplot = res.Get(plotscaffold)
+      makeNonNegativeHistos(resplot)
       for i in range (1,len(files)) :
         otherFile = files[i]
         #otherFile = r.TFile.Open(path+files[i]+'.root')
         otherPlot = otherFile.Get(plotscaffold)
+        makeNonNegativeHistos(otherPlot)
         
         resplot.Add(otherPlot)
         #otherFile.Close();
@@ -85,7 +90,7 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False,
           hlist[iplot].SetMarkerColor(markerColors[iplot % len(markerColors)])
           hlist[iplot].SetLineColor(markerColors[iplot % len(markerColors)])
         
-        if legends[iplot]=="VBFHHSM" or legends[iplot]=="ggHHSM" : hlist[iplot].SetLineStyle(r.kDashed) 
+        if legends[iplot]=="VBFHHSM" or legends[iplot]=="GGHHSM" : hlist[iplot].SetLineStyle(r.kDashed) 
         
         hlist[iplot].SetMarkerStyle(20)
         leg.AddEntry(hlist[iplot], legends[iplot], "PL")
@@ -250,6 +255,26 @@ def dataMCPlots (dataPlot, MClist, signalList, MClegends, plottingStuff, path, s
     
     c.Close(); del c
 
+def makeNonNegativeHistos (h):
+   integral = h.Integral()
+   sum_bin = 0
+   for b in range (1, h.GetNbinsX()+1):
+     if (h.GetBinContent(b) < 0):
+       h.SetBinContent (b, 0)
+     sum_bin += h.GetBinContent(b)
+   integralNew = h.Integral()        
+   if (integralNew != integral):
+     print "** INFO: removed neg bins from histo " , h.GetName(), integral, integralNew, sum_bin
+   
+   if math.isnan(sum_bin) :
+     h.Scale(0)
+     print "NaN obtained, scaled to 0", h.Integral()
+
+   # print h.GetName() , integral , integralNew
+   if integralNew == 0:
+     h.Scale(0)
+   else:
+     h.Scale(integral/integralNew) 
 
 
 

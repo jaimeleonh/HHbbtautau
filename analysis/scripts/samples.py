@@ -3,6 +3,11 @@ samples = {}
 samples["2017"] = {
 "GGHSM_xs":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_GGHSM_xs",
 "VBF_CV_1_C2V_1_C3_1":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_VBF_CV_1_C2V_1_C3_1",
+"VBF_CV_1_5_C2V_1_C3_1":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_VBF_CV_1_5_C2V_1_C3_1",
+"VBF_CV_1_C2V_1_C3_0":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_VBF_CV_1_C2V_1_C3_0",
+"VBF_CV_1_C2V_1_C3_2":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_VBF_CV_1_C2V_1_C3_2",
+"VBF_CV_1_C2V_0_C3_2":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_VBF_CV_1_C2V_0_C3_2",
+"VBF_CV_1_C2V_2_C3_1":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_VBF_CV_1_C2V_2_C3_1",
 "ttHJetToBB":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_ttHJetToBB",
 "ttHJetTononBB":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_ttHJetTononBB",
 "PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM":"/eos/home-j/jleonhol/HHbbtautau/2017/PrivateGluGlu12JetsHHTo2B2Taus2017_SKIM",
@@ -95,6 +100,16 @@ samples["2017"] = {
 "Tau2017D":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_Tau2017D",
 "Tau2017E":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_Tau2017E",
 "Tau2017F":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_Tau2017F",
+"SingleMuon2017B":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_SingleMuon2017B",
+"SingleMuon2017C":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_SingleMuon2017C",
+"SingleMuon2017D":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_SingleMuon2017D",
+"SingleMuon2017E":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_SingleMuon2017E",
+"SingleMuon2017F":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_SingleMuon2017F",
+"SingleElectron2017B":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_SingleElectron2017B",
+"SingleElectron2017C":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_SingleElectron2017C",
+"SingleElectron2017D":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_SingleElectron2017D",
+"SingleElectron2017E":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_SingleElectron2017E",
+"SingleElectron2017F":"/eos/home-c/camendol/SKIMS_Thesis2017/SKIM_SingleElectron2017F",
 }
 
 samples["2017_FC"] = {
@@ -131,4 +146,6 @@ samples["2017_FC"] = {
 "WJets_HT_400_600":"/eos/home-c/camendol/SKIMMED_Legacy2017_27mar2020_DNN/SKIM_WJets_HT_400_600",
 "WJets_HT_600_800":"/eos/home-c/camendol/SKIMMED_Legacy2017_27mar2020_DNN/SKIM_WJets_HT_600_800",
 "WJets_HT_800_1200":"/eos/home-c/camendol/SKIMMED_Legacy2017_27mar2020_DNN/SKIM_WJets_HT_800_1200",
+"VBFHH_CV_1_C2V_1_C3_2":"/eos/home-c/camendol/SKIMMED_Legacy2017_27mar2020_DNN/SKIM_VBFHH_CV_1_C2V_1_C3_2",
+"VBFHH_CV_1_C2V_1_C3_0":"/eos/home-c/camendol/SKIMMED_Legacy2017_27mar2020_DNN/SKIM_VBFHH_CV_1_C2V_1_C3_0",
 }

@@ -46,34 +46,36 @@ class OutputManager:
         self.variables   = []
         self.variables2D = []
         # self.samples     = []
-        self.data        = []
-        self.dataFiles   = []
+        self.data        = {}
+        self.dataFiles   = {}
         self.bkgs        = {} 
         self.bkgFiles    = {} 
         self.sigs        = []
         self.path        = ""
 
-
     def merge (self) : 
       for plot in self.variables : 
+        for channel in self.sel_def : 
+          for reg in self.sel_regions : 
+            cat = "baseline_"+channel+"_"+reg
+            for i, (data) in enumerate(self.data[channel]):
+              self.histos[data+"_"+cat+"_"+plot] = plotTools.makePlotReturn(self.path, self.dataFiles[channel][i] , plot+'_'+cat, False, -1)
         for cat in self.selections :
-          for i, (data) in enumerate(self.data):
-            self.histos[data+"_"+cat+"_"+plot] = plotTools.makePlotReturn(self.path, self.dataFiles[i] , plot+'_'+cat, False, -1)
           for merge in self.bkgFiles : 
             self.histos[merge+"_"+cat+"_"+plot] = plotTools.makePlotReturn(self.path, self.bkgFiles[merge] , plot+'_'+cat, True, -1)
 
 
 
 
-
-
     def makeQCD_SBtoSR (self, regionC, regionD, sel, var, removeNegBins = True):
         print "... computing C/D factor for QCD from: C =", regionC, ", D =", regionD, "in region ",sel
-        for idx, data in enumerate (self.data):
+        
+        for mysel in self.sel_def: 
+          if mysel in sel: break
+
+        for idx, data in enumerate (self.data[mysel]):
             hnameC = makeHistoName (data, sel+"_"+regionC, var)
             hnameD = makeHistoName (data, sel+"_"+regionD, var)
-            print hnameC
-            print hnameD
             if idx == 0: 
                 hregC = self.histos[hnameC].Clone(makeHistoName('regC',sel+'_'+regionC, var))
                 hregC.SetTitle(hregC.GetName())
@@ -111,14 +113,17 @@ class OutputManager:
         else:
             print "    >>  no"
         print "    >> doFitIf:", doFitIf , "fitFunction:", fitFunc , '\n'
-        
+       
+
+
         for var in self.variables:
             for sel in self.sel_def:
-                
+                mydata = self.data[sel]
+                sel = "baseline_"+sel 
                 # if var == 'MT2' and sel == 'defaultBtagLLNoIsoBBTTCut' : print "DOING ", var, sel
 
                 ## make shape hist
-                for idx, data in enumerate(self.data):
+                for idx, data in enumerate(mydata):
                     hname = makeHistoName(data, sel+'_'+shapeSB, var)
                     if idx == 0:
                         hQCD = self.histos[hname].Clone(makeHistoName(QCDname, sel+'_'+SR, var)) ## use SR name as this is where QCD refers to
@@ -140,7 +145,7 @@ class OutputManager:
                             hQCD.SetBinContent(ibin, 1.e-6)
 
                 ## now compute yield to be set
-                for idx, data in enumerate(self.data):
+                for idx, data in enumerate(mydata):
                     hname = makeHistoName(data, sel+'_'+yieldSB, var)
                     if idx == 0:
                         hyieldQCD = self.histos[hname].Clone(makeHistoName(QCDname+'yield', sel+'_'+yieldSB, var))
