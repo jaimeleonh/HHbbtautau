@@ -38,6 +38,7 @@ else :
     missingJobs = 0
     failedJobs = 0
     totalJobs = 0
+    crashedJobs = 0
     for fil in filelist :
       if not fil[-4:] == '.log' : continue 
       else :
@@ -55,6 +56,18 @@ else :
           continue
 
         failed = False
+        errorFile = options.userCopyPath + "/" + fil[0:-4]+'.0.error'
+        if os.path.isfile( errorFile ) : 
+          with open( errorFile  ) as a : 
+            for line in a : 
+              if "Break" in line : 
+                print bcolors.yellow + "Crashed job " + str(totalJobs-1) +" in cluster " +  fil[0:-4] + bcolors.reset
+                crashedJobs += 1
+                failed = True 
+                break
+         
+        if failed: continue       
+        
         with open (  options.userCopyPath + '/' + fil  ) as b : 
           for lin in b :
             if "SYSTEM_PERIODIC_REMOVE" in lin : 
@@ -70,6 +83,7 @@ else :
     print "\n", "*********************** SUMMARY **********************", "\n"
     print bcolors.red + str(missingJobs) + " missing job" + (missingJobs!=1)*"s" + bcolors.reset
     print bcolors.purple + str(failedJobs) + " failed job" + (failedJobs!=1)*"s" + bcolors.reset
+    print bcolors.yellow + str(crashedJobs) + " crashed job" + (crashedJobs!=1)*"s" + bcolors.reset
     print bcolors.green + str(totalJobs-missingJobs-failedJobs) + " succeeded job" + (totalJobs-missingJobs-failedJobs!=1)*"s" + bcolors.reset,'\n'
 
     print "******************************************************", "\n"
