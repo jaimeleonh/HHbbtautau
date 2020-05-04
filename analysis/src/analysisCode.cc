@@ -173,6 +173,7 @@ void analysisCode::Book()
     m_plots["DNN_VBFvsGGF_ETau"+ cat]    = new TH1F(("DNN_VBFvsGGF_ETau_"+ cat).c_str(), "DNN_VBFvsGGF_ETau; DNN_VBFvsGGF_ETau; Entries", 10, 0, 1);
     m_plots["DNNoutSM_kl_1"+ cat]    = new TH1F(("DNNoutSM_kl_1_"+ cat).c_str(), "DNNoutSM_kl_1; DNNoutSM_kl_1; Entries", 10,  0, 1);
     m_plots["BDToutSM_kl_1"+ cat]    = new TH1F(("BDToutSM_kl_1_"+ cat).c_str(), "BDToutSM_kl_1; BDToutSM_kl_1; Entries", 10, -1, 1);
+    m_plots["BDToutSM_kl_1_noweight"+ cat]    = new TH1F(("BDToutSM_kl_1_noweight_"+ cat).c_str(), "BDToutSM_kl_1; BDToutSM_kl_1; Entries", 10, -1, 1);
 
 
 
@@ -204,6 +205,7 @@ void analysisCode::Fill()
     double myweight = 1;
     if (isMCSample == 1){
       myweight = getWeights(mycat.first);
+      if (TMath::IsNaN(myweight)) myweight = 0; 
     }
     //Fill tau plots
     m_plots["tau1pt"+cat]->Fill(dau1_pt, myweight);
@@ -429,6 +431,7 @@ void analysisCode::Fill()
     if (VBFjj_mass > 500 && fabs(VBFjj_deltaEta)>3) m_plots["DNN_VBFvsGGF_ETau"+ cat] -> Fill(DNN_VBFvsGGF_ETau, myweight);
     m_plots["DNNoutSM_kl_1"+ cat] -> Fill(DNNoutSM_kl_1, myweight);
     m_plots["BDToutSM_kl_1"+ cat] -> Fill(BDToutSM_kl_1, myweight);
+    m_plots["BDToutSM_kl_1_noweight"+ cat] -> Fill(BDToutSM_kl_1);
 
 
 
@@ -440,7 +443,10 @@ void analysisCode::EndJob()
 {
   if (isMCSample == 1){
     for (auto &plot : m_plots) {
-      plot.second -> Scale ((double)lumi_ / (double)evt_den_ );
+      if (plot.second->Integral() == 0 || evt_den_ == 0) plot.second->Scale(0.);
+      else plot.second -> Scale ((double)lumi_ / (double)evt_den_ );
+
+
     }
   }
   m_outFile.cd();
@@ -627,7 +633,7 @@ std::vector <std::pair<std::string, std::string>> analysisCode::addRegions (std:
   std::vector <std::pair<std::string, std::string>> regions = {};
   for (auto & selection : categories) {
     //cout << selection << endl; 
-    bool SR          = (isOS != 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 ) 
+    /*bool SR          = (isOS != 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 ) 
                     || (isOS != 0 && dau1_iso < 0.1 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_etauh" )==0 )   
                     || (isOS != 0 && dau1_iso < 0.15 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_mutauh" )==0 );// signal region: opposite sign, isolated taus
     bool SStight     = (isOS == 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
@@ -645,21 +651,36 @@ std::vector <std::pair<std::string, std::string>> analysisCode::addRegions (std:
     bool SSinviso    = (isOS == 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 2 && dau2_deepTauVsJet < 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
                     || (isOS == 0 && dau1_iso < 0.1 && dau2_deepTauVsJet >= 2 && dau2_deepTauVsJet < 5 && strcmp(selection.c_str(), "baseline_etauh" )==0 )
                     || (isOS == 0 && dau1_iso < 0.15 && dau2_deepTauVsJet >= 2 && dau2_deepTauVsJet < 5 && strcmp(selection.c_str(), "baseline_mutauh" )==0 ); // D region
+  */  
     
-  /*  bool SR          = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )>-9999 );
-    bool SStight     = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )>-9999 );
-    bool OSrlx       = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && strcmp(selection.c_str(), "baseline_tauhtauh" )>-9999 );
-    bool SSrlx       = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && strcmp(selection.c_str(), "baseline_tauhtauh" )>-9999 );
-    bool OSinviso    = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )>-9999 );
-    bool SSinviso    = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )>-9999 );
-*/
-    /*bool SR          = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3);
+    bool SR          = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
+                     || (isOS != 0 && dau1_iso < 0.15 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_mutauh" )==0 )
+                     || (isOS != 0 && dau1_iso < 0.10 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_etauh" )==0);
+    bool SStight     = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
+                     || (isOS == 0 && dau1_iso < 0.15 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_mutauh" )==0 )
+                     || (isOS == 0 && dau1_iso < 0.10 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_etauh" )==0 );
+    bool OSrlx       = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
+                     || (isOS != 0 && dau1_iso < 0.15 && dau2_MVAisoNew >= 1 && strcmp(selection.c_str(), "baseline_mutauh" )==0 )
+                     || (isOS != 0 && dau1_iso < 0.10 && dau2_MVAisoNew >= 1 && strcmp(selection.c_str(), "baseline_etauh" )==0 );
+    bool SSrlx       = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
+                     || (isOS == 0 && dau1_iso < 0.15 && dau2_MVAisoNew >= 1 && strcmp(selection.c_str(), "baseline_mutauh" )==0 )
+                     || (isOS == 0 && dau1_iso < 0.10 && dau2_MVAisoNew >= 1 && strcmp(selection.c_str(), "baseline_etauh" )==0 );
+    bool OSinviso    = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
+                     || (isOS != 0 && dau1_iso < 0.15 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_mutauh" )==0 )
+                     || (isOS != 0 && dau1_iso < 0.10 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_etauh" )==0 );
+    bool SSinviso    = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
+                     || (isOS == 0 && dau1_iso < 0.15 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_mutauh" )==0 )
+                     || (isOS == 0 && dau1_iso < 0.10 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_etauh" )==0 );
+
+    
+    /*
+    bool SR          = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3);
     bool SStight     = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3);
     bool OSrlx       = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1);
     bool SSrlx       = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1);
     bool OSinviso    = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1);
     bool SSinviso    = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1);
-    */
+*/  
 
     if (SR) regions.push_back(make_pair(selection, selection+"_SR"));
     if (SStight) regions.push_back(make_pair(selection,selection+"_SStight"));
@@ -674,9 +695,10 @@ std::vector <std::pair<std::string, std::string>> analysisCode::addRegions (std:
 std::vector <std::string> analysisCode::addCategories () {
    std::vector <std::string> categories = {};
 
-   bool baselinetauhtauh = pairType == 2 && dau1_pt > 40 && abs (dau1_eta) < 2.1 && dau2_pt > 40 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1;   
+   bool baselinetauhtauh = pairType == 2 && dau1_pt > 20 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1;   
+   //bool baselinetauhtauh = pairType == 2 && dau1_pt > 40 && abs (dau1_eta) < 2.1 && dau2_pt > 40 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1;   
    bool baselineetauh    = pairType == 1 && dau1_pt > 20 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.3 && nleps == 0 && nbjetscand > 1;
-   bool baselinemutauh   = pairType == 0 && dau1_pt > 20 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.3 && nleps == 0 && nbjetscand > 1;
+   bool baselinemutauh   = pairType == 0 && dau1_pt > 22 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.3 && nleps == 0 && nbjetscand > 1;
 
 
    //bool baseline55     = (baselinetauhtauh || baselineetauh || baselinemutauh ) && tauH_SVFIT_mass > 50;
