@@ -11,6 +11,7 @@
 #include <TROOT.h>
 #include <TChain.h>
 #include <TFile.h>
+#include <TMath.h>
 #include <TH1.h>
 #include <TLeaf.h>
 
@@ -1706,9 +1707,9 @@ void analysisCode::Init(TTree *tree)
      fChain->SetBranchAddress("DNN_VBFvsGGF_MuTau", &DNN_VBFvsGGF_MuTau, &b_DNN_VBFvsGGF_MuTau);
    if (fChain->GetListOfBranches()->FindObject("DNN_VBFvsGGF_ETau"))    
      fChain->SetBranchAddress("DNN_VBFvsGGF_ETau", &DNN_VBFvsGGF_ETau, &b_DNN_VBFvsGGF_ETau);
-   if (fChain->GetListOfBranches()->FindObject("DNN_VBFvsGGF_TauTau"))    
+   if (fChain->GetListOfBranches()->FindObject("DNN_VBFvsGGF_TauTauTight"))    
      fChain->SetBranchAddress("DNN_VBFvsGGF_TauTauTight", &DNN_VBFvsGGF_TauTauTight, &b_DNN_VBFvsGGF_TauTauTight);
-   if (fChain->GetListOfBranches()->FindObject("DNN_VBFvsGGF_MuTau"))    
+   if (fChain->GetListOfBranches()->FindObject("DNN_VBFvsGGF_TauTauLoose"))    
      fChain->SetBranchAddress("DNN_VBFvsGGF_TauTauLoose", &DNN_VBFvsGGF_TauTauLoose, &b_DNN_VBFvsGGF_TauTauLoose);
    if (fChain->GetListOfBranches()->FindObject("DNNoutSM_kl_1"))    
      fChain->SetBranchAddress("DNNoutSM_kl_1", &DNNoutSM_kl_1, &b_DNNoutSM_kl_1);
