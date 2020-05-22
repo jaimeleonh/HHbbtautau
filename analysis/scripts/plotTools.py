@@ -13,7 +13,6 @@ import math
 #############################################################################################################################
 
 def makePlotReturn(path, files, plotscaffold, merge, normalize):
-    
     if not merge :
       res = files
       #res = r.TFile.Open(path + files)
@@ -23,7 +22,7 @@ def makePlotReturn(path, files, plotscaffold, merge, normalize):
       for fil in files :
         otherPlot = fil.Get(plotscaffold)
         #print plotscaffold
-
+        #otherPlot.SetTitle("")
        # if otherPlot.Integral()<=0 : continue
         makeNonNegativeHistos(otherPlot)
 
@@ -73,14 +72,23 @@ def makePlot(hlist, path, files, plotscaffold, merge, normalize):
 def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False, normalize=False): 
     print "Combining list of plots"
     if len(hlist) == 0: raise RuntimeError("Empty list of plots")
-    c   = r.TCanvas("c", "c", 800, 800)
+    c = r.TCanvas("c", "c", 800, 800)
 
-    maxim = -1; 
+    binWidth = hlist[0].GetBinWidth(1)
+    lowerEdge = hlist[0].GetBinCenter(1) - binWidth / 2
+    upperEdge = hlist[0].GetBinCenter(hlist[0].GetNbinsX()) + binWidth / 2
+   
+    maximum = 0
 
     gStyle.SetOptStat(0)
+    gStyle.SetTitleFontSize(.05);
+    gStyle.SetLabelSize(.03, "XY");
+
     leg = r.TLegend(plottingStuff['legxlow'], plottingStuff['legylow'], plottingStuff['legxhigh'], plottingStuff['legyhigh'])
     for iplot in range(len(hlist)):
         if hlist[iplot].Integral() > 0 :  hlist[iplot].Scale(1./ hlist[iplot].Integral())
+        if hlist[iplot].GetMaximum() > maximum: 
+          maximum = hlist[iplot].GetMaximum()
         if legends[iplot] in markerColorsMerge : 
           #hlist[iplot].SetFillColor(markerColorsMerge[legends[iplot]])
           hlist[iplot].SetMarkerColor(markerColorsMerge[legends[iplot]])
@@ -94,30 +102,45 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False,
         
         hlist[iplot].SetMarkerStyle(20)
         leg.AddEntry(hlist[iplot], legends[iplot], "PL")
-        hlist[iplot].Draw("histosame")
-        if ( hlist[iplot].GetMaximum() > maxim ) : 
-          hlist[0].GetYaxis().SetRangeUser(0.0001, hlist[iplot].GetMaximum()*1.5)
-          maxim = hlist[iplot].GetMaximum()
-        #hlist[iplot].Draw("P" + (iplot == 0) * "A" + (iplot != 0) * "same")
 
+    dummy_hist = r.TH1F("dummy", " ;" + hlist[0].GetXaxis().GetTitle() + "; Normalized entries / {:.1f}".format(binWidth), hlist[0].GetNbinsX(), lowerEdge, upperEdge)
+    dummy_hist.GetYaxis().SetRangeUser(0, 1.35 * maximum)
+    dummy_hist.GetYaxis().SetTitleOffset(1.4)
+    dummy_hist.Draw()
+   
+    for iplot in range(len(hlist)):
+        hlist[iplot].Draw("histosame")
+    
+    leg.SetFillColor(4001)
+    leg.SetBorderSize(0)
+    leg.SetNColumns(2)
     leg.Draw()
    
     r.gPad.Update()
     #hlist[0].GetYaxis().SetRangeUser(plottingStuff['lowlimityaxis'], plottingStuff['highlimityaxis'])
     
+    firstLabel = "#scale[1.5]{CMS} private work"
+    otherStuff = ["channel", "selection", "region"]
+    for elem in otherStuff:
+        if elem in plottingStuff.keys():
+            firstLabel += ", " 
+            firstLabel += plottingStuff[elem]
+
     firsttex = r.TLatex()
     firsttex.SetTextSize(0.03)
-    firsttex.DrawLatexNDC(0.11,0.91,"#scale[1.5]{CMS} Preliminary")
+    firsttex.DrawLatexNDC(0.11,0.91,firstLabel)
     firsttex.Draw("same");
 
     secondtext = r.TLatex()
     toDisplay = r.TString()
-    toDisplay  = r.TString("60.0 fb^{-1} 13 TeV")
+    toDisplay  = r.TString("41.6 fb^{-1} 13 TeV")
     secondtext.SetTextSize(0.035)
     secondtext.SetTextAlign(31)
     secondtext.DrawLatexNDC(0.90, 0.91, toDisplay.Data())
     secondtext.Draw("same")
 
+    r.gPad.SetTicks(1,1);
+    r.gPad.RedrawAxis();
 
     if logy: c.SetLogy()
 
@@ -166,30 +189,50 @@ def dataMCPlots (dataPlot, MClist, signalList, MClegends, plottingStuff, path, s
     dataPlot[0].SetMarkerSize(1)
     dataPlot[0].SetMarkerStyle(20)
     dataPlot[0].SetLineColor(r.kBlack)
-    binWidth=dataPlot[0].GetBinWidth(1)
-    dataPlot[0].SetTitle(" ; ; Entries / {:.1f}".format(binWidth))
-
-    #hs.Scale(dataPlot[0].Integral() / hs.Integral() )
-    #for iplot in range(1):
+    binWidth = dataPlot[0].GetBinWidth(1)
+    lowerEdge = dataPlot[0].GetBinCenter(1) - binWidth / 2
+    upperEdge = dataPlot[0].GetBinCenter(dataPlot[0].GetNbinsX()) + binWidth / 2
+    
+    maximum = dataPlot[0].GetMaximum()
     for iplot in range(len(MClist)):
-      #if dataPlot[0].Integral() > 0 : MClist[iplot].Scale( dataPlot[0].Integral() / nEntries )
+      if MClist[iplot].GetMaximum() > maximum: maximum = MClist[iplot].GetMaximum()
       if iplot == 0 : h = MClist[iplot].Clone()
       else : h.Add(MClist[iplot])
       hs.Add(MClist[iplot])
 
-    preliminary = r.TLatex(0.11,0.91,"#scale[1.5]{CMS} preliminary");
+    firstLabel = "#scale[1.5]{CMS} private work"
+    otherStuff = ["channel", "selection", "region"]
+    for elem in otherStuff:
+        if elem in plottingStuff.keys():
+            firstLabel += ", " 
+            firstLabel += plottingStuff[elem]
+
+    preliminary = r.TLatex(0.11,0.91,firstLabel);
+
     preliminary.SetTextSize(0.03)
     preliminary.SetNDC();
+    secondtext = r.TLatex()
+    toDisplay = r.TString()
+    secondtext = r.TLatex(0.76, 0.91, "41.6 fb^{-1}, 13 TeV")
+    secondtext.SetTextSize(0.03)
+    secondtext.SetNDC()
     #preliminary.SetTextFont(42);
 
     #c.Divide(1,2,0,0);
     pad1.cd();
+
+    unit = ""
+    if "(" in dataPlot[0].GetXaxis().GetTitle() and ")" in dataPlot[0].GetXaxis().GetTitle():
+        left = dataPlot[0].GetXaxis().GetTitle().index("(")+1
+        right = dataPlot[0].GetXaxis().GetTitle().index(")")
+        unit = dataPlot[0].GetXaxis().GetTitle()[left:right]
+
+    dummy_hist = r.TH1F("dummy", " ;" + dataPlot[0].GetXaxis().GetTitle() + "; Entries / {:.1f} {}".format(binWidth, unit), dataPlot[0].GetNbinsX(), lowerEdge, upperEdge)
+    dummy_hist.GetYaxis().SetRangeUser(0, 1.35*maximum)
+    dummy_hist.Draw()
     #c.GetPad(1).SetBottomMargin(0.1)
-    hs.Draw("histo")
-    dataPlot[0].Draw("P same")
-
-    
-
+    hs.Draw("histo, same")
+    dataPlot[0].Draw("P, same")
     
     for iplot in range(len(signalList)):
       if MClegends[iplot+len(MClist)] in markerColorsMerge : 
@@ -197,18 +240,31 @@ def dataMCPlots (dataPlot, MClist, signalList, MClegends, plottingStuff, path, s
       else: 
         print "Better add a color to the sample " +  MClegends[iplot+len(MClist)] + " and restart"
         sys.exit()
-      if signalList[iplot].Integral()!=0 and dataPlot[0].Integral()!=0 :  signalList[iplot].Scale(dataPlot[0].Integral()/(signalList[iplot].Integral()))
-      signalList[iplot].Scale(1./2.)
+      #if signalList[iplot].Integral()!=0 and dataPlot[0].Integral()!=0 :  signalList[iplot].Scale(dataPlot[0].Integral()/(signalList[iplot].Integral()))
+     
+      #NORMALISING
+      if "GGHHSM" in MClegends[iplot+len(MClist)] :  
+        signalList[iplot].Scale(10)          
+        MClegends[iplot+len(MClist)] += " (10pb^{-1})"
+      elif "VBFHHSM" in MClegends[iplot+len(MClist)] :
+        signalList[iplot].Scale(10)
+        MClegends[iplot+len(MClist)] += " (10pb^{-1})"
+      
       signalList[iplot].SetLineWidth(2)
       signalList[iplot].Draw("hist same")
       leg.AddEntry(signalList[iplot], MClegends[len(MClist)+iplot], "L")
     
+
+
+
+
     leg.AddEntry(dataPlot[0], "data", "PL")
     leg.SetFillColor(4001)
     leg.SetBorderSize(0)
     leg.SetNColumns(2)
     leg.Draw("same")
     preliminary.Draw();
+    secondtext.Draw("")
 
     r.gPad.SetTicks(1,1);
     r.gPad.RedrawAxis();
@@ -260,15 +316,15 @@ def makeNonNegativeHistos (h):
    sum_bin = 0
    for b in range (1, h.GetNbinsX()+1):
      if (h.GetBinContent(b) < 0):
-       h.SetBinContent (b, 0)
+       h.SetBinContent (b, 1E-4)
      sum_bin += h.GetBinContent(b)
    integralNew = h.Integral()        
-   if (integralNew != integral):
-     print "** INFO: removed neg bins from histo " , h.GetName(), integral, integralNew, sum_bin
+ #  if (integralNew != integral):
+ #    print "** INFO: removed neg bins from histo " , h.GetName(), integral, integralNew, sum_bin
    
    if math.isnan(sum_bin) :
      h.Scale(0)
-     print "NaN obtained, scaled to 0", h.Integral()
+ #    print "NaN obtained, scaled to 0", h.Integral()
 
    # print h.GetName() , integral , integralNew
    if integralNew == 0:

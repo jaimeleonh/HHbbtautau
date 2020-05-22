@@ -22,11 +22,15 @@ void analysisCode::Loop(bool info)
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       Long64_t ientry = LoadTree(jentry);
+  //    cout << "After LoadTree" << endl; 
       if (ientry < 0) break;
+      //if(jentry % 100 == 0)
       if(jentry % 100 == 0 && info==true)
         std::cout << "[analysisCode::Loop] processed : "
         << jentry << " entries\r" << std::flush;
+   //   cout << "Entry " << jentry << " before fChain->GetEntry(jentry)" << endl; 
       nb = fChain->GetEntry(jentry);   nbytes += nb;
+   //   cout << "Entry " << jentry << " before Fill()" << endl; 
       Fill();
    }
    std::cout << std::endl;
@@ -54,12 +58,17 @@ void analysisCode::Book()
 
   for (auto & cat : categories) {
     for (int i = 1; i<=2; i++) {
-      m_plots["tau" + std::to_string(i) + "pt" + cat]    = new TH1F(("tau" + std::to_string(i) + "_pt_"+ cat).c_str(), ("tau" + std::to_string(i) + "_pt; tau" + std::to_string(i) + " pt(GeV); Entries").c_str(), 50, 0, 200); 
-      m_plots["tauw" + std::to_string(i) + "pt" + cat]    = new TH1F(("tau" + std::to_string(i) + "_pt_noweight_"+ cat).c_str(), ("tau" + std::to_string(i) + "_pt; tau" + std::to_string(i) + " pt(GeV); Entries").c_str(), 50, 0, 200); 
+      m_plots["tau" + std::to_string(i) + "pt" + cat]    = new TH1F(("tau" + std::to_string(i) + "_pt_"+ cat).c_str(), ("tau" + std::to_string(i) + "_pt; tau" + std::to_string(i) + " pt(GeV); Entries").c_str(), 35, 40, 140); 
+      m_plots["tauTrig" + std::to_string(i) + "pt" + cat]    = new TH1F(("tau" + std::to_string(i) + "_pt_VBFtrigger_"+ cat).c_str(), ("tau" + std::to_string(i) + "_pt; tau" + std::to_string(i) + " pt(GeV); Entries").c_str(), 35, 40, 140); 
+      m_plots["tauw" + std::to_string(i) + "pt" + cat]    = new TH1F(("tau" + std::to_string(i) + "_pt_noweight_"+ cat).c_str(), ("tau" + std::to_string(i) + "_pt; tau" + std::to_string(i) + " pt(GeV); Entries").c_str(), 35, 40, 140); 
       m_plots["tau" + std::to_string(i) + "eta" + cat]    = new TH1F(("tau" + std::to_string(i) + "_eta_"+ cat).c_str(), ("tau" + std::to_string(i) + "_eta; tau" + std::to_string(i) + " eta; Entries").c_str(), 50, -2.5, 2.5); 
       m_plots["tau" + std::to_string(i) + "e" + cat]    = new TH1F(("tau" + std::to_string(i) + "_e_"+ cat).c_str(), ("tau" + std::to_string(i) + "_e; tau" + std::to_string(i) + " e; Entries").c_str(), 50, 0, 1000); 
       m_plots["tau" + std::to_string(i) + "iso" + cat]    = new TH1F(("tau" + std::to_string(i) + "_iso_"+ cat).c_str(), ("tau" + std::to_string(i) + "_iso; tau" + std::to_string(i) + " iso; Entries").c_str(), 50, 0, 1); 
       m_plots["tau" + std::to_string(i) + "z" + cat]    = new TH1F(("tau" + std::to_string(i) + "_z_"+ cat).c_str(), ("tau" + std::to_string(i) + "_z; tau" + std::to_string(i) + " z; Entries").c_str(), 50, -5, 5);
+      std::vector <std::string> DM = {"0", "1", "10", "11"};
+      for (auto & dm : DM) {
+        m_plots["tau" + std::to_string(i) + "DM" + dm + cat]    = new TH1F(("tau" + std::to_string(i) + "_dm"+ dm + "_" + cat).c_str(), ("tau" + std::to_string(i) + "_dm" + dm + "; tau" + std::to_string(i) + " dm" + dm + "; Entries").c_str(), 2, -0.5, 1.5);
+      }
 
       m_plots["bjet" + std::to_string(i) + "pt" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_pt_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_pt; bjet" + std::to_string(i) + " pt(GeV); Entries").c_str(), 50, 0, 50); 
       m_plots["bjet" + std::to_string(i) + "eta" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_eta_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_eta; bjet" + std::to_string(i) + " eta; Entries").c_str(), 50, -2.5, 2.5); 
@@ -78,6 +87,9 @@ void analysisCode::Book()
       m_plots["VBFjet" + std::to_string(i) + "z" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_z_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_z; VBFjet" + std::to_string(i) + " z; Entries").c_str(), 50, -5, 5);
 
     }
+
+    m_plots["met_pt"+ cat]   = new TH1F(("met_pt_"+ cat).c_str(), "met pt; met pt (GeV); Entries", 50, 0, 500); 
+
 
     m_plots["bjets_deltaEta"+ cat]    = new TH1F(("bjets_deltaEta_"+ cat).c_str(), "bjets_deltaEta; bjets_deltaEta ; Entries", 50, -0, 10); 
     m_plots["bjets_eta1eta2"+ cat]    = new TH1F(("bjets_eta1eta2_"+ cat).c_str(), "bjets_eta1eta2; bjets eta1#times eta2 ; Entries", 50, -10, 10); 
@@ -124,18 +136,22 @@ void analysisCode::Book()
     m_plots["tauH_eta"+ cat]  = new TH1F(("tauH_eta_"+ cat).c_str(), "tauH eta; tauH eta ; Entries", 50, -2.5, 2.5); 
     m_plots["tauH_phi"+ cat]  = new TH1F(("tauH_phi_"+ cat).c_str(), "tauH phi; tauH phi ; Entries", 50, -3.5, 3.5); 
     m_plots["tauH_z"+ cat]  = new TH1F(("tauH_z_"+ cat).c_str(), "tauH z; tauH z ; Entries", 50, -0.1, 1.1); 
-  
+    m_plots["ditau_dr"+ cat]  = new TH1F(("ditau_dr_"+ cat).c_str(), "ditau #Delta R; ditau #Delta R ; Entries", 50, 0, 10); 
+
     m_plots["tauH_SVFIT_mass"+ cat] = new TH1F(("tauH_SVFIT_mass_"+ cat).c_str(), "tauH SVFIT mass; tauH Mass (GeV); Entries", 50, 0, 250); 
     m_plots["tauH_SVFIT_pt"+cat]   = new TH1F(("tauH_SVFIT_pt_"+ cat).c_str(), "tauH SVFIT pt; tauH pt (GeV); Entries", 50, 0, 500); 
     m_plots["tauH_SVFIT_eta"+cat]  = new TH1F(("tauH_SVFIT_eta_"+ cat).c_str(), "tauH SVFIT eta; tauH eta ; Entries", 50, -2.5, 2.5); 
     m_plots["tauH_SVFIT_phi"+cat]  = new TH1F(("tauH_SVFIT_phi_"+ cat).c_str(), "tauH SVFIT phi; tauH phi ; Entries", 50, -3.5, 3.5); 
-  
   
     m_plots["bH_mass"+ cat]   = new TH1F(("bH_mass_"+ cat).c_str(), "bH mass; bH Mass (GeV); Entries", 50, 0, 250); 
     m_plots["bH_pt"+ cat]     = new TH1F(("bH_pt_"+ cat).c_str(), "bH pt (GeV); bH pt (GeV); Entries", 50, 0, 500); 
     m_plots["bH_eta"+ cat]    = new TH1F(("bH_eta_"+ cat).c_str(), "bH eta; bH eta ; Entries", 50, -2.5, 2.5); 
     m_plots["bH_phi"+ cat]    = new TH1F(("bH_phi_"+ cat).c_str(), "bH phi; bH phi ; Entries", 50, -3.5, 3.5); 
     m_plots["bH_z"+ cat]      = new TH1F(("bH_z_"+ cat).c_str(), "bH z; bH z ; Entries", 50, -0.1, 1.1); 
+    m_plots["dib_dr"+ cat]  = new TH1F(("dib_dr_"+ cat).c_str(), "dib #Delta R; dib #Delta R ; Entries", 50, 0, 10); 
+    
+    m_plots["btau_dr_min"+ cat]  = new TH1F(("btau_dr_min_"+ cat).c_str(), "btau min #Delta R; btau min #Delta R ; Entries", 50, 0, 10); 
+    m_plots["btau_dr_max"+ cat]  = new TH1F(("btau_dr_max_"+ cat).c_str(), "btau max #Delta R; btau max #Delta R ; Entries", 50, 0, 10); 
     
     m_plots["VBFjj_mass"+ cat] = new TH1F(("VBFjj_mass_"+ cat).c_str(), "VBFjj mass; VBFjj Mass (GeV); Entries", 50, 0, 2000); 
     m_plots["VBFjj_HT"+ cat] = new TH1F(("VBFjj_HT_"+ cat).c_str(), "VBFjj HT; VBFjj HT (GeV); Entries", 50, 0, 500); 
@@ -175,15 +191,8 @@ void analysisCode::Book()
     m_plots["BDToutSM_kl_1"+ cat]    = new TH1F(("BDToutSM_kl_1_"+ cat).c_str(), "BDToutSM_kl_1; BDToutSM_kl_1; Entries", 10, -1, 1);
     m_plots["BDToutSM_kl_1_noweight"+ cat]    = new TH1F(("BDToutSM_kl_1_noweight_"+ cat).c_str(), "BDToutSM_kl_1; BDToutSM_kl_1; Entries", 10, -1, 1);
 
-
-
-
-
-
-
-
-
   }
+  cout << "Finished adding plots" << endl;
 }
 
 void analysisCode::Fill()
@@ -204,11 +213,14 @@ void analysisCode::Fill()
     std::string cat = mycat.second; 
     double myweight = 1;
     if (isMCSample == 1){
+   //   cout << "Before weights" << endl;
       myweight = getWeights(mycat.first);
+   //   cout << "After weights" << endl;
       if (TMath::IsNaN(myweight)) myweight = 0; 
     }
     //Fill tau plots
     m_plots["tau1pt"+cat]->Fill(dau1_pt, myweight);
+    if (isVBFtrigger == 0) m_plots["tauTrig1pt"+cat]->Fill(dau1_pt, myweight);
     m_plots["tauw1pt"+cat]->Fill(dau1_pt);
     m_plots["tau2pt"+cat]->Fill(dau2_pt, myweight);
     m_plots["tau1eta"+cat]->Fill(dau1_eta, myweight);
@@ -219,6 +231,11 @@ void analysisCode::Fill()
     m_plots["tau2iso"+cat]->Fill(dau2_iso, myweight);
     m_plots["tau1z"+cat]->Fill(getCentrality(dau1_eta), myweight);
     m_plots["tau2z"+cat]->Fill(getCentrality(dau2_eta), myweight);
+    for (auto & i : {0,1,10,11}){
+      m_plots["tau1DM" + std::to_string(i) + cat]->Fill(dau1_decayMode == i, myweight);
+      m_plots["tau2DM" + std::to_string(i) + cat]->Fill(dau2_decayMode == i, myweight);
+    }
+    if (dau1_pt != -1 && dau2_pt != -1) m_plots["ditau_dr"+ cat]->Fill(getDeltaR(dau1_eta, dau1_phi, dau2_eta, dau2_phi), myweight);
     
     // Fill b plots
     if (bjet1_pt != -1) m_plots["bjet1pt"+cat]->Fill(bjet1_pt, myweight);
@@ -231,7 +248,11 @@ void analysisCode::Fill()
     if (bjet2_pt != -1) m_plots["bjet2z"+cat]->Fill(getCentrality(bjet2_eta), myweight);
     if (bjet1_pt != -1 && bjet2_pt != -1) m_plots["bjets_deltaEta"+cat]->Fill(std::fabs(bjet1_eta - bjet2_eta), myweight);
     if (bjet1_pt != -1 && bjet2_pt != -1) m_plots["bjets_eta1eta2"+cat]->Fill(bjet1_eta * bjet2_eta, myweight);
-    
+    if (bjet1_pt != -1 && bjet2_pt != -1) m_plots["dib_dr"+ cat]->Fill(getDeltaR(bjet1_eta, bjet1_phi, bjet2_eta, bjet2_phi), myweight);
+   
+    // met plots
+    m_plots["met_pt"+ cat]->Fill(met_et, myweight); 
+
     // Fill VBFjet plots
     if (VBFjet1_pt!=-999.) m_plots["VBFjet1pt"+cat]->Fill(VBFjet1_pt, myweight);
     if (VBFjet2_pt!=-999.) m_plots["VBFjet2pt"+cat]->Fill(VBFjet2_pt, myweight);
@@ -360,6 +381,8 @@ void analysisCode::Fill()
       //m_plots["bH_phi"]->Fill( -999. );
     }
     m_plots["VBFjj_HT"+cat]->Fill(VBFjj_HT, myweight); 
+    m_plots["btau_dr_min"+ cat]->Fill(btau_deltaRmin, myweight); 
+    m_plots["btau_dr_max"+ cat]->Fill(btau_deltaRmax, myweight); 
   
 
     if (VBFjet1_phi != -999 && VBFjet2_phi != -999) { 
@@ -443,6 +466,7 @@ void analysisCode::EndJob()
 {
   if (isMCSample == 1){
     for (auto &plot : m_plots) {
+      cout << plot.first << "-> evt_den: " << evt_den_ << ", integral: " << plot.second->Integral() << endl;  
       if (plot.second->Integral() == 0 || evt_den_ == 0) plot.second->Scale(0.);
       else plot.second -> Scale ((double)lumi_ / (double)evt_den_ );
 
@@ -633,7 +657,7 @@ std::vector <std::pair<std::string, std::string>> analysisCode::addRegions (std:
   std::vector <std::pair<std::string, std::string>> regions = {};
   for (auto & selection : categories) {
     //cout << selection << endl; 
-    /*bool SR          = (isOS != 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 ) 
+    bool SR          = (isOS != 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 ) 
                     || (isOS != 0 && dau1_iso < 0.1 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_etauh" )==0 )   
                     || (isOS != 0 && dau1_iso < 0.15 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_mutauh" )==0 );// signal region: opposite sign, isolated taus
     bool SStight     = (isOS == 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
@@ -651,8 +675,8 @@ std::vector <std::pair<std::string, std::string>> analysisCode::addRegions (std:
     bool SSinviso    = (isOS == 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 2 && dau2_deepTauVsJet < 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
                     || (isOS == 0 && dau1_iso < 0.1 && dau2_deepTauVsJet >= 2 && dau2_deepTauVsJet < 5 && strcmp(selection.c_str(), "baseline_etauh" )==0 )
                     || (isOS == 0 && dau1_iso < 0.15 && dau2_deepTauVsJet >= 2 && dau2_deepTauVsJet < 5 && strcmp(selection.c_str(), "baseline_mutauh" )==0 ); // D region
-  */  
     
+/*    
     bool SR          = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
                      || (isOS != 0 && dau1_iso < 0.15 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_mutauh" )==0 )
                      || (isOS != 0 && dau1_iso < 0.10 && dau2_MVAisoNew >= 3 && strcmp(selection.c_str(), "baseline_etauh" )==0);
@@ -671,7 +695,7 @@ std::vector <std::pair<std::string, std::string>> analysisCode::addRegions (std:
     bool SSinviso    = (isOS == 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
                      || (isOS == 0 && dau1_iso < 0.15 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_mutauh" )==0 )
                      || (isOS == 0 && dau1_iso < 0.10 && dau2_MVAisoNew >= 1 && dau2_MVAisoNew < 3 && strcmp(selection.c_str(), "baseline_etauh" )==0 );
-
+*/
     
     /*
     bool SR          = (isOS != 0 && dau1_MVAisoNew >= 3 && dau2_MVAisoNew >= 3);
@@ -695,7 +719,8 @@ std::vector <std::pair<std::string, std::string>> analysisCode::addRegions (std:
 std::vector <std::string> analysisCode::addCategories () {
    std::vector <std::string> categories = {};
 
-   bool baselinetauhtauh = pairType == 2 && dau1_pt > 20 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1;   
+   bool baselinetauhtauh = pairType == 2 && dau1_pt > 20 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.3 && nleps == 0 && nbjetscand > 1; // SAME DEF THAN MARCEL
+   //bool baselinetauhtauh = pairType == 2 && dau1_pt > 20 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1;   // DEFAULT
    //bool baselinetauhtauh = pairType == 2 && dau1_pt > 40 && abs (dau1_eta) < 2.1 && dau2_pt > 40 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1;   
    bool baselineetauh    = pairType == 1 && dau1_pt > 20 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.3 && nleps == 0 && nbjetscand > 1;
    bool baselinemutauh   = pairType == 0 && dau1_pt > 22 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.3 && nleps == 0 && nbjetscand > 1;

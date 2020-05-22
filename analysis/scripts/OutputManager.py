@@ -3,6 +3,7 @@ import collections
 import fnmatch
 import array
 import plotTools
+import math
 ROOT.gROOT.SetBatch(True)
 
 
@@ -33,6 +34,23 @@ def checkBinningCompatibility (newbinning, oldbinning):
         if not x in oldbinning: return False
     return True
 
+def makeNonNegativeHistos (h):
+   integral = h.Integral()
+   sum_bin = 0
+   for b in range (1, h.GetNbinsX()+1):
+     if (h.GetBinContent(b) < 0):
+       h.SetBinContent (b, 1E-4)
+     sum_bin += h.GetBinContent(b)
+   integralNew = h.Integral()        
+   
+   if math.isnan(sum_bin) :
+     h.Scale(0)
+
+   if integralNew == 0:
+     h.Scale(0)
+   else:
+     h.Scale(integral/integralNew) 
+
 class OutputManager:
     """ Handles the input from AnalysisHelper and manages the output to a file
     to be used for datacards and analysis"""
@@ -51,7 +69,9 @@ class OutputManager:
         self.bkgs        = {} 
         self.bkgFiles    = {} 
         self.sigs        = []
+        self.sigFiles    = []
         self.path        = ""
+        self.year        = ""
 
     def merge (self) : 
       for plot in self.variables : 
@@ -63,6 +83,8 @@ class OutputManager:
         for cat in self.selections :
           for merge in self.bkgFiles : 
             self.histos[merge+"_"+cat+"_"+plot] = plotTools.makePlotReturn(self.path, self.bkgFiles[merge] , plot+'_'+cat, True, -1)
+          for i, (sig) in enumerate(self.sigs):
+            self.histos[sig+"_"+cat+"_"+plot] = plotTools.makePlotReturn(self.path, self.sigFiles[i] , plot+'_'+cat, False, -1)
 
 
 
@@ -99,7 +121,7 @@ class OutputManager:
                     if hregD.GetBinContent(ibin) < 1.e-6:
                         hregD.SetBinContent(ibin, 1.e-6)
         SBtoSRdyn = hregC.Integral()/hregD.Integral()
-        print "... C/D = ", SBtoSRdyn                  
+        print "... C =", hregC.Integral(), "D=", hregD.Integral(),"C/D = ", SBtoSRdyn                  
         return SBtoSRdyn
 
                     # if var == 'MT2' and sel == 'defaultBtagLLNoIsoBBTTCut' : print ">> -- bkg - SHAPE: " , hname, hQCD.Integral()
@@ -293,3 +315,77 @@ class OutputManager:
                 htoadd = inFile.Get(htoadd_name)
                 self.histos[htoadd_name] = htoadd.Clone(htoadd_name)
                 return self.histos[htoadd_name]
+
+
+    def makeVBFrew(self, inputSigs, target_kl, target_cv, target_c2v, target_xs):
+        from VBFReweightModules import inputSample, VBFReweight, printProgressBar 
+        print "-- VBF reweighting --"
+        print "Input samples:", inputSigs
+        print "Target kl    :", target_kl
+        print "Target cv    :", target_cv
+        print "Target c2v   :", target_c2v
+        print "Target Cross Section:", target_xs, "[pb]"
+
+        totIterations = len(target_kl) * len(target_cv) * len(target_c2v) * len(self.variables) * len(self.sel_def)
+        nIteration = 0
+
+        # Loop on variables and selections to reweight all the histograms
+        for var in self.variables:
+            for sel in self.sel_def:
+                sel = "baseline_" + sel
+                # For each slection/variable get the six input signal histograms
+                s0_name = makeHistoName(inputSigs[0], sel+'_SR', var)
+                s1_name = makeHistoName(inputSigs[1], sel+'_SR', var)
+                s2_name = makeHistoName(inputSigs[2], sel+'_SR', var)
+                s3_name = makeHistoName(inputSigs[3], sel+'_SR', var)
+                s4_name = makeHistoName(inputSigs[4], sel+'_SR', var)
+                s5_name = makeHistoName(inputSigs[5], sel+'_SR', var)
+
+                h_s0 = self.histos[s0_name].Clone(makeHistoName('S0', sel+'_SR', var))
+                h_s1 = self.histos[s1_name].Clone(makeHistoName('S1', sel+'_SR', var))
+                h_s2 = self.histos[s2_name].Clone(makeHistoName('S2', sel+'_SR', var))
+                h_s3 = self.histos[s3_name].Clone(makeHistoName('S3', sel+'_SR', var))
+                h_s4 = self.histos[s4_name].Clone(makeHistoName('S4', sel+'_SR', var))
+                h_s5 = self.histos[s5_name].Clone(makeHistoName('S5', sel+'_SR', var))
+
+                # Create a list of inputSamples
+                if self.year == "2017":
+                  inputList = [
+                    inputSample(  1, 1, 1, 0.001499, h_s0 ), # node 1
+                    inputSample(  1, 1, 0, 0.003947, h_s1 ), # node 2
+                    inputSample(  1, 1, 2, 0.001243, h_s2 ), # node 3
+                    inputSample(  1, 2, 1, 0.012719, h_s3 ), # node 4
+                    inputSample(1.5, 1, 1, 0.057943, h_s4 ), # node 5
+                    inputSample(  1, 0, 2,   0.0178, h_s5 ), # node 19
+                  ]
+                elif self.year == "2017_may":
+                  inputList = [
+                    inputSample(  1, 1, 1, 0.001499, h_s0 ), # node 1
+                    inputSample(  1, 1, 2, 0.001243, h_s1 ), # node 3
+                    inputSample(  1, 1, 0, 0.003947, h_s2 ), # node 2
+                    inputSample(1.5, 1, 1, 0.057943, h_s3 ), # node 5
+                    inputSample(0.5, 1, 1, 0.010493, h_s4 ), # node X
+                    inputSample(  1, 2, 1, 0.012719, h_s5 ), # node 4
+                  ]
+
+
+
+                # Instantiate a VBFReweight object
+                VBFreweighter = VBFReweight(inputList)
+
+                # Get the modeled histogram for each (cv,c2v,kl) target point
+                for cv in target_cv:
+                    for c2v in target_c2v:
+                        for kl in target_kl:
+
+                            modeled_xs, modeled_histo = VBFreweighter.modelSignal(cv,c2v,kl,target_xs)
+
+                            newName = makeHistoName(modeled_histo.GetName(), sel+'_SR', var)
+                            modeled_histo.SetNameTitle(newName,newName)
+                            modeled_histo.SetTitle("")
+                            makeNonNegativeHistos(modeled_histo)
+                            self.histos[modeled_histo.GetName()] = modeled_histo
+                             
+                            # Print a progression bar
+                            nIteration +=1
+                            printProgressBar(nIteration, totIterations, 'VBF Reweighting:', 'Done', 0, 50)
