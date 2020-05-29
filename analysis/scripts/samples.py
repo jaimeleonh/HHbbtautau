@@ -198,6 +198,19 @@ samples["2017_may"] = {
 "VBF_CV_1_C2V_1_C3_2":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020/SKIMMED_Legacy2017_06May2020/SKIM_VBFHH_CV_1_C2V_1_C3_2",
 "VBF_CV_1_C2V_1_C3_0":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020/SKIMMED_Legacy2017_06May2020/SKIM_VBFHH_CV_1_C2V_1_C3_0",
 "VBF_CV_1_5_C2V_1_C3_1":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020/SKIMMED_Legacy2017_06May2020/SKIM_VBFHH_CV_1_5_C2V_1_C3_1",
-"VBF_CV_0_5_C2V_1_C3_1":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020/SKIMMED_Legacy2017_06May2020/SKIM_VBFHH_CV_0_5_C2V_1_C3_1",
+"VBF_CV_1_C2V_0_C3_2":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020/SKIMMED_Legacy2017_06May2020/SKIM_VBFHH_CV_1_C2V_0_C3_2",
 "VBF_CV_1_C2V_2_C3_1":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020/SKIMMED_Legacy2017_06May2020/SKIM_VBFHH_CV_1_C2V_2_C3_1",
+"GGHHNLO":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020/SKIMMED_Legacy2017_06May2020/SKIM_GGHH_node_cHHH1"
 }
+
+samples["2017_vbf"] = {
+"GGHHSM":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020_v2/HHLegacy_2017_v2/SKIMMED_Legacy2017_Signals_28May2020/SKIM_GGHHSM",
+"VBFHHSM":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020_v2/HHLegacy_2017_v2/SKIMMED_Legacy2017_Signals_28May2020/SKIM_VBFHHSM",
+"VBF_CV_1_C2V_1_C3_2":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020_v2/HHLegacy_2017_v2/SKIMMED_Legacy2017_Signals_28May2020/SKIM_VBFHH_CV_1_C2V_1_C3_2",
+"VBF_CV_1_C2V_1_C3_0":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020_v2/HHLegacy_2017_v2/SKIMMED_Legacy2017_Signals_28May2020/SKIM_VBFHH_CV_1_C2V_1_C3_0",
+"VBF_CV_1_5_C2V_1_C3_1":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020_v2/HHLegacy_2017_v2/SKIMMED_Legacy2017_Signals_28May2020/SKIM_VBFHH_CV_1_5_C2V_1_C3_1",
+"VBF_CV_1_C2V_0_C3_2":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020_v2/HHLegacy_2017_v2/SKIMMED_Legacy2017_Signals_28May2020/SKIM_VBFHH_CV_1_C2V_0_C3_2",
+"VBF_CV_1_C2V_2_C3_1":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020_v2/HHLegacy_2017_v2/SKIMMED_Legacy2017_Signals_28May2020/SKIM_VBFHH_CV_1_C2V_2_C3_1",
+"GGHHNLO":"/eos/user/f/fbrivio/Hhh_1718/SKIMS_May2020_v2/HHLegacy_2017_v2/SKIMMED_Legacy2017_Signals_28May2020/SKIM_GGHH_node_cHHH1"
+}
+

@@ -17,8 +17,10 @@ files["2017"] += ["ST_tW_antitop", "ST_tchannel_antitop", "ST_tW_top", "ST_tchan
 
 files["2017_FC"] += ["DYJets_0j0b", "DYJets_1j0b", "DYJets_1j1b", "DYJets_2j0b", "DYJets_2j1b", "DYJets_2j2b", "DYJets_3j0b", "DYJets_3j1b", "DYJets_3j2b", "DYJets_3j3b", "DYJets_4j0b", "DYJets_4j1b", "DYJets_4j2b", "DYJets_4j3b", "DYJets_4j4b", "GGHHSM", "TTfullyHad", "TTfullyLep", "TTsemiLep", "VBFHHSM", "WJets_HT_0_100", "WJets_HT_100_200", "WJets_HT_1200_2500", "WJets_HT_200_400", "WJets_HT_2500_Inf", "WJets_HT_400_600", "WJets_HT_600_800", "WJets_HT_800_1200"]
 
-files["2017_may"] += ["DYJets_1j1b", "DYJets_2j0b", "DYJets_2j1b", "DYJets_2j2b", "DYJets_3j0b", "DYJets_3j1b", "DYJets_3j2b", "DYJets_3j3b", "DYJets_4j0b", "DYJets_4j1b", "DYJets_4j2b", "DYJets_4j3b", "DYJets_4j4b", "GGHHSM", "TTfullyHad", "TTfullyLep", "TTsemiLep", "VBFHHSM", "WJets_HT_0_70", "WJets_HT_70_100", "WJets_HT_100_200", "WJets_HT_1200_2500", "WJets_HT_200_400", "WJets_HT_2500_Inf", "WJets_HT_400_600", "WJets_HT_600_800", "WJets_HT_800_1200","VBF_CV_1_C2V_1_C3_2", "VBF_CV_1_C2V_1_C3_0", "VBF_CV_1_5_C2V_1_C3_1", "VBF_CV_0_5_C2V_1_C3_1", "VBF_CV_1_C2V_2_C3_1"]
-#files["2017_may"] += ["DYJets_0j0b", "DYJets_1j0b", "DYJets_1j1b", "DYJets_2j0b", "DYJets_2j1b", "DYJets_2j2b", "DYJets_3j0b", "DYJets_3j1b", "DYJets_3j2b", "DYJets_3j3b", "DYJets_4j0b", "DYJets_4j1b", "DYJets_4j2b", "DYJets_4j3b", "DYJets_4j4b", "GGHHSM", "TTfullyHad", "TTfullyLep", "TTsemiLep", "VBFHHSM", "WJets_HT_0_70", "WJets_HT_70_100", "WJets_HT_100_200", "WJets_HT_1200_2500", "WJets_HT_200_400", "WJets_HT_2500_Inf", "WJets_HT_400_600", "WJets_HT_600_800", "WJets_HT_800_1200"]
+files["2017_may"] += ["DYJets_0j0b", "DYJets_1j0b", "DYJets_1j1b", "DYJets_2j0b", "DYJets_2j1b", "DYJets_2j2b", "DYJets_3j0b", "DYJets_3j1b", "DYJets_3j2b", "DYJets_3j3b", "DYJets_4j0b", "DYJets_4j1b", "DYJets_4j2b", "DYJets_4j3b", "DYJets_4j4b", "GGHHSM", "TTfullyHad", "TTfullyLep", "TTsemiLep", "VBFHHSM", "WJets_HT_0_70", "WJets_HT_70_100", "WJets_HT_100_200", "WJets_HT_1200_2500", "WJets_HT_200_400", "WJets_HT_2500_Inf", "WJets_HT_400_600", "WJets_HT_600_800", "WJets_HT_800_1200", "VBF_CV_1_C2V_1_C3_2", "VBF_CV_1_C2V_1_C3_0", "VBF_CV_1_5_C2V_1_C3_1", "VBF_CV_1_C2V_0_C3_2", "VBF_CV_1_C2V_2_C3_1", "GGHHNLO"]
+
+files["2017_vbf"] = ["GGHHSM", "GGHHNLO", 'VBFHHSM', 'VBF_CV_1_C2V_1_C3_0', 'VBF_CV_1_C2V_1_C3_2', 'VBF_CV_1_C2V_2_C3_1', 'VBF_CV_1_5_C2V_1_C3_1', 'VBF_CV_1_C2V_0_C3_2']
+
   
   
 mergingCategories = {"2017": OrderedDict(), "2017_FC": OrderedDict(), "2017_may": OrderedDict(),}
@@ -37,19 +39,25 @@ mergingCategories["2017_FC"]["DY+Jets"]= ["DYJets_0j0b", "DYJets_1j0b", "DYJets_
 ## From May 2020
 #mergingCategories["2017_FC"]["W+Jets"] = ["WJets_HT_0_70","WJets_HT_70_100","WJets_HT_1200_2500","WJets_HT_100_200", "WJets_HT_2500_Inf", "WJets_HT_200_400", "WJets_HT_400_600", "WJets_HT_600_800", "WJets_HT_800_1200"]
 mergingCategories["2017_may"]["TT"] = ["TTfullyHad", "TTsemiLep", "TTfullyLep"]
-#mergingCategories["2017_may"]["DY+Jets"]= ["DYJets_0j0b", "DYJets_1j0b", "DYJets_1j1b", "DYJets_2j0b", "DYJets_2j1b", "DYJets_2j2b", "DYJets_3j0b", "DYJets_3j1b", "DYJets_3j2b", "DYJets_3j3b", "DYJets_4j0b", "DYJets_4j1b", "DYJets_4j2b", "DYJets_4j3b", "DYJets_4j4b"]
-mergingCategories["2017_may"]["DY+Jets"]= ["DYJets_1j1b", "DYJets_2j0b", "DYJets_2j1b", "DYJets_2j2b", "DYJets_3j0b", "DYJets_3j1b", "DYJets_3j2b", "DYJets_3j3b", "DYJets_4j0b", "DYJets_4j1b", "DYJets_4j2b", "DYJets_4j3b", "DYJets_4j4b"]
+mergingCategories["2017_may"]["DY+Jets"]= ["DYJets_0j0b", "DYJets_1j0b", "DYJets_1j1b", "DYJets_2j0b", "DYJets_2j1b", "DYJets_2j2b", "DYJets_3j0b", "DYJets_3j1b", "DYJets_3j2b", "DYJets_3j3b", "DYJets_4j0b", "DYJets_4j1b", "DYJets_4j2b", "DYJets_4j3b", "DYJets_4j4b"]
+
+mergingCategories["2017_vbf"] = OrderedDict()
+
+
+
+
 
 dataCategories = {"2017": {}, "2017_FC": {}, "2017_may":{}}
 dataCategories["2017"] = {"tauhtauh":['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F',],
-                          "mutauh":['SingleMuon2017B','SingleMuon2017C','SingleMuon2017D','SingleMuon2017E','SingleMuon2017F',],
-                          "etauh":['SingleElectron2017B','SingleElectron2017C','SingleElectron2017D','SingleElectron2017E','SingleElectron2017F',],
+                          #"mutauh":['SingleMuon2017B','SingleMuon2017C','SingleMuon2017D','SingleMuon2017E','SingleMuon2017F',],
+                          #"etauh":['SingleElectron2017B','SingleElectron2017C','SingleElectron2017D','SingleElectron2017E','SingleElectron2017F',],
                          }
 dataCategories["2017_FC"] = {"tauhtauh":['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F']}
 dataCategories["2017_may"] = {"tauhtauh":['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F',],
 #                              "mutauh":['SingleMuon2017B','SingleMuon2017C','SingleMuon2017D','SingleMuon2017E','SingleMuon2017F',],
 #                              "etauh":['SingleElectron2017B','SingleElectron2017C','SingleElectron2017D','SingleElectron2017E','SingleElectron2017F',],
                              }
+dataCategories["2017_vbf"] = OrderedDict()
 
 signal = {"2017":OrderedDict(), "2017_FC":OrderedDict(), "2017_may": OrderedDict(),}
 signal["2017"]['GGHHSM'] = ['GGHSM_xs']
@@ -61,7 +69,14 @@ signal["2017_FC"]['GGHHSM'] = ['GGHHSM']
 signal["2017_FC"]['VBFHHSM'] = ['VBFHHSM']
 
 ## From May 2020
-signal["2017_may"]['GGHHSM'] = ['GGHHSM']
+signal["2017_may"]['GGHHSM_LO'] = ['GGHHSM']
+signal["2017_may"]['GGHHSM_NLO'] = ['GGHHNLO']
 signal["2017_may"]['VBFHHSM'] = ['VBFHHSM']
-signal["2017_may"]['VBF'] = ["VBFHHSM","VBF_CV_1_C2V_1_C3_2", "VBF_CV_1_C2V_1_C3_0", "VBF_CV_1_5_C2V_1_C3_1", "VBF_CV_0_5_C2V_1_C3_1", "VBF_CV_1_C2V_2_C3_1"]
+signal["2017_may"]['VBF'] = ['VBFHHSM', 'VBF_CV_1_C2V_1_C3_0', 'VBF_CV_1_C2V_1_C3_2', 'VBF_CV_1_C2V_2_C3_1', 'VBF_CV_1_5_C2V_1_C3_1', 'VBF_CV_1_C2V_0_C3_2']
 
+## From May 2020 - VBF Slides
+signal["2017_vbf"] = OrderedDict()
+signal["2017_vbf"]['GGHHSM_LO'] = ['GGHHSM']
+signal["2017_vbf"]['GGHHSM_NLO'] = ['GGHHNLO']
+signal["2017_vbf"]['VBFHHSM'] = ['VBFHHSM']
+signal["2017_vbf"]['VBF'] = ['VBFHHSM', 'VBF_CV_1_C2V_1_C3_0', 'VBF_CV_1_C2V_1_C3_2', 'VBF_CV_1_C2V_2_C3_1', 'VBF_CV_1_5_C2V_1_C3_1', 'VBF_CV_1_C2V_0_C3_2']

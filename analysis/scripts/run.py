@@ -23,6 +23,7 @@ parser.add_argument('-l','--launch', action='store_false', default = True)
 parser.add_argument('-dmc','--dataMC', action='store_true', default = False)
 parser.add_argument('-d','--directory', dest='userCopyPath', default = '')
 parser.add_argument('-rew','--reweightVBF', action='store_true', default = False)
+parser.add_argument('-vbf','--VBFtask', action='store_true', default = False)
 my_namespace = parser.parse_args()
 
 if my_namespace.ntuples == True or my_namespace.runInCondor == True:
@@ -49,7 +50,7 @@ myCategories = [x[0] + '_' + x[1] for x in list(itertools.product(selections, re
 
 #########################################################################################
 #########################################################################################
-year = '2017_may'
+year = '2017_vbf'
 #########################################################################################
 #########################################################################################
 
@@ -59,6 +60,7 @@ allSelectionCfg = {}
 allSelectionCfg["2017"] = './config/selectionCfg_2017.cfg'
 allSelectionCfg["2017_FC"] = './config/selectionCfg_2017_new.cfg'
 allSelectionCfg["2017_may"] = './config/selectionCfg_2017_may.cfg'
+allSelectionCfg["2017_vbf"] = './config/selectionCfg_2017_may.cfg'
 
 selectionCfg = allSelectionCfg[year]
 
@@ -79,10 +81,10 @@ files = allFiles[year]
 #files = ["GGHHSM","VBFHHSM","VBFHH_CV_1_C2V_1_C3_2","VBFHH_CV_1_C2V_1_C3_0"]
 
 dataFiles = []
-dataFiles = ['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F', 
+#dataFiles = ['Tau2017B','Tau2017C','Tau2017D','Tau2017E','Tau2017F', 
             # 'SingleMuon2017B','SingleMuon2017C','SingleMuon2017D','SingleMuon2017E','SingleMuon2017F',
             # 'SingleElectron2017B','SingleElectron2017C','SingleElectron2017D','SingleElectron2017E','SingleElectron2017F',
-            ]
+#            ]
 
 ########################## MERGING CATEGORIES ########################
 signal = allSignals[year]
@@ -93,6 +95,8 @@ data = dataCategories[year]
 selections = data.keys()
 
 categories = ["baseline_{}_".format(sel) for sel in selections]
+
+if my_namespace.VBFtask: categories = ["VBFloose", "VBF_baseline", "VBF_loose_baseline"]
 
 if my_namespace.copy and my_namespace.userCopyPath == '' :
   print "If you want to copy sth, add a path!"
@@ -108,7 +112,7 @@ if (my_namespace.copy == True) :
     if my_namespace.dataMC or my_namespace.merge or my_namespace.reweightVBF:  
       rc = call('mkdir ' + copyPath +  '/' + cat + 'SR/' , shell=True)
       rc = call('cp -r /eos/home-j/jleonhol/backup/index_HHbbtautau_php ' + copyPath + '/' + cat + 'SR/index.php' , shell=True)
-    else : 
+    else: 
       rc = call('mkdir ' + copyPath +  '/' + cat + '/' , shell=True)
       rc = call('cp -r /eos/home-j/jleonhol/backup/index_HHbbtautau_php ' + copyPath + '/' + cat + '/index.php' , shell=True)
 
@@ -222,7 +226,42 @@ else :  #plots we obtained before looking at Chiara's thesis
   whatToPlot += ['HHkinsvfit_bHmass','HHsvfit_deltaPhi', 'HHKin_mass_raw', 'HHKin_chi2'] 
   whatToPlot += ['VBFjb_deltaR', 'VBFjTau_deltaR']
 
-# whatToPlot = ["tau1_pt", "tau1_pt_VBFtrigger"]
+# VBF vs ggH task 
+if my_namespace.VBFtask:
+    whatToPlot = ["HH_pt", "HH_mass", "tauH_pt", "tauH_eta", "bH_pt", "bH_eta", "HH_costhetaCS", "HH_costhetaCS_rev", "HH_costhetaCS_svfit",
+                  "costheta_b1_b2", "costheta_tau1_tau2", "VBFjj_mass", "VBFjj_mass_5000", "VBFjj_deltaEta", 
+                  "VBFjet1_pt", "VBFjet2_pt", "VBFjet1_eta", "VBFjet2_eta", "centrality_bb", 
+                  "centrality_tautau", "VBFjTau_deltaR", "VBFjb_deltaR", "btau_dr_min", "btau_dr_max", "HHKin_mass_raw", "HHkinsvfit_mass", 
+                  "VBFjj_deltaPhi", "VBFjj_deltaR", "deta_hbb_svfit"
+                ]
+
+    #pt / mass
+    whatToPlot += ["tau1_pt_m", "tau2_pt_m", "bjet1_pt_m", "bjet2_pt_m", "VBFjet1_pt_m", "VBFjet2_pt_m",
+                   "bH_pt_m", "tauH_pt_m"]
+
+    # centralities
+    whatToPlot += ["tau1_z", "tau2_z", "bjet1_z", "bjet2_z", "tauH_z", "bH_z", "HH_z"]
+
+
+    mySignalFiles = {} 
+    for signalS in signal:
+        if signalS == "VBF": continue
+        mySignalFiles[signalS] = []
+        for sample in signal[signalS] : 
+            mySignalFiles[signalS].append(r.TFile.Open(eosPath + year + '/' +sample+'.root'))
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 plottingStuff = { 'lowlimityaxis' : 0,
             'highlimityaxis' : 1,
@@ -235,13 +274,9 @@ plottingStuff = { 'lowlimityaxis' : 0,
 	          'legyhigh': 0.85,
 	          'markertypedir':{},
 	          'markercolordir':{},
-            'category':'',
-            'selection':'',
-            'region':''
    	        }   
 
 t0 = 0
-
 
 
 if my_namespace.merge == True or my_namespace.dataMC == True or my_namespace.reweightVBF == True:
@@ -304,7 +339,7 @@ if my_namespace.merge == True or my_namespace.dataMC == True or my_namespace.rew
         computeSBtoSR = computeSBtoSRdyn
         )
 
-  else:
+if my_namespace.reweightVBF:
     myVBFSamples = []
     target_kl  = [1]
     target_cv  = [1]
@@ -352,7 +387,6 @@ if my_namespace.dataMC == True :
         print 'Copying ' +  plotPath + plot + '_' + fullCat + '.* to ' + copyPath + '/' + fullCat 
       
   sys.exit()
-
 
 if my_namespace.merge == True : 
   for plot in whatToPlot :
@@ -405,6 +439,36 @@ if my_namespace.reweightVBF == True :
           rc = call('cp ' + plotPath + plot + '_' + fullCat + ext + ' ' + copyPath + '/' + fullCat + '/', shell=True)
         print 'Copying ' +  plotPath + plot + '_' + fullCat + '.* to ' + copyPath + '/' + fullCat 
   sys.exit()
+
+if my_namespace.VBFtask == True : 
+  for plot in whatToPlot :
+    for cat in categories : 
+      listOfPlots = []
+      legends = []
+      for merge in signal : 
+        if merge == "VBF" : continue
+        legends.append(merge)
+        plotTools.makePlot(listOfPlots, eosPath + year + '/', mySignalFiles[merge] , plot+'_'+cat+"_", True, -1)
+      plottingStuff['legxlow'] = 0.2575 + 1 * 0.1975
+      plottingStuff['legylow'] = 0.75
+      plottingStuff['legxhigh'] = 0.85
+      plottingStuff['legyhigh'] = 0.85
+      if cat == "VBFloose": plottingStuff["selection"] = "VBF loose"
+      elif cat == "VBF_loose_baseline": plottingStuff["selection"] = "VBF loose baseline"
+      elif cat == "VBF_baseline": plottingStuff["selection"] = "VBF baseline"
+          
+      
+      plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False, normalize=True) 
+      plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=True, normalize=True) 
+      if my_namespace.copy == True: 
+        for ext in ['.png','.pdf'] : 
+        #for ext in ['.png','.pdf','.root'] : 
+          rc = call('cp ' + plotPath + plot + '_' + cat + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
+          rc = call('cp ' + plotPath + plot + '_' + cat + "_logy"+ ext + ' ' + copyPath + '/' + cat + '/', shell=True)
+        print 'Copying ' +  plotPath + plot + '_' + cat + '.* to ' + copyPath + '/' + cat 
+  sys.exit()
+
+
 
 
 #FIXME: Remove merge and dmc from here

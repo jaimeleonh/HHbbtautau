@@ -349,27 +349,16 @@ class OutputManager:
                 h_s5 = self.histos[s5_name].Clone(makeHistoName('S5', sel+'_SR', var))
 
                 # Create a list of inputSamples
-                if self.year == "2017":
-                  inputList = [
+                inputList = [
                     inputSample(  1, 1, 1, 0.001499, h_s0 ), # node 1
                     inputSample(  1, 1, 0, 0.003947, h_s1 ), # node 2
                     inputSample(  1, 1, 2, 0.001243, h_s2 ), # node 3
                     inputSample(  1, 2, 1, 0.012719, h_s3 ), # node 4
                     inputSample(1.5, 1, 1, 0.057943, h_s4 ), # node 5
                     inputSample(  1, 0, 2,   0.0178, h_s5 ), # node 19
-                  ]
-                elif self.year == "2017_may":
-                  inputList = [
-                    inputSample(  1, 1, 1, 0.001499, h_s0 ), # node 1
-                    inputSample(  1, 1, 2, 0.001243, h_s1 ), # node 3
-                    inputSample(  1, 1, 0, 0.003947, h_s2 ), # node 2
-                    inputSample(1.5, 1, 1, 0.057943, h_s3 ), # node 5
-                    inputSample(0.5, 1, 1, 0.010493, h_s4 ), # node X
-                    inputSample(  1, 2, 1, 0.012719, h_s5 ), # node 4
-                  ]
-
-
-
+                    #inputSample(0.5, 1, 1, 0.010493, h_s5 ), # node X
+                ]
+                
                 # Instantiate a VBFReweight object
                 VBFreweighter = VBFReweight(inputList)
 
@@ -388,4 +377,4 @@ class OutputManager:
                              
                             # Print a progression bar
                             nIteration +=1
-                            printProgressBar(nIteration, totIterations, 'VBF Reweighting:', 'Done', 0, 50)
+                            # printProgressBar(nIteration, totIterations, 'VBF Reweighting:', 'Done', 0, 50)

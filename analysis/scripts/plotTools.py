@@ -98,13 +98,14 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False,
           hlist[iplot].SetMarkerColor(markerColors[iplot % len(markerColors)])
           hlist[iplot].SetLineColor(markerColors[iplot % len(markerColors)])
         
-        if legends[iplot]=="VBFHHSM" or legends[iplot]=="GGHHSM" : hlist[iplot].SetLineStyle(r.kDashed) 
+        #if legends[iplot]=="VBFHHSM" or legends[iplot]=="GGHHSM" : hlist[iplot].SetLineStyle(r.kDashed) 
         
         hlist[iplot].SetMarkerStyle(20)
         leg.AddEntry(hlist[iplot], legends[iplot], "PL")
 
-    dummy_hist = r.TH1F("dummy", " ;" + hlist[0].GetXaxis().GetTitle() + "; Normalized entries / {:.1f}".format(binWidth), hlist[0].GetNbinsX(), lowerEdge, upperEdge)
-    dummy_hist.GetYaxis().SetRangeUser(0, 1.35 * maximum)
+    dummy_hist = r.TH1F("dummy", " ;" + hlist[0].GetXaxis().GetTitle() + "; Normalized entries / {:.2f}".format(binWidth), hlist[0].GetNbinsX(), lowerEdge, upperEdge)
+    dummy_hist.GetYaxis().SetRangeUser(0, 1.35 * maximum) if not logy else dummy_hist.GetYaxis().SetRangeUser(1E-3, 100 * maximum)
+    # if logy: dummy_hist.SetMinimum(1E-3)
     dummy_hist.GetYaxis().SetTitleOffset(1.4)
     dummy_hist.Draw()
    
@@ -123,7 +124,7 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False,
     otherStuff = ["channel", "selection", "region"]
     for elem in otherStuff:
         if elem in plottingStuff.keys():
-            firstLabel += ", " 
+            firstLabel += "," + (elem != "#tau#tau") * " "
             firstLabel += plottingStuff[elem]
 
     firsttex = r.TLatex()
@@ -227,7 +228,7 @@ def dataMCPlots (dataPlot, MClist, signalList, MClegends, plottingStuff, path, s
         right = dataPlot[0].GetXaxis().GetTitle().index(")")
         unit = dataPlot[0].GetXaxis().GetTitle()[left:right]
 
-    dummy_hist = r.TH1F("dummy", " ;" + dataPlot[0].GetXaxis().GetTitle() + "; Entries / {:.1f} {}".format(binWidth, unit), dataPlot[0].GetNbinsX(), lowerEdge, upperEdge)
+    dummy_hist = r.TH1F("dummy", " ;" + dataPlot[0].GetXaxis().GetTitle() + "; Entries / {:.2f} {}".format(binWidth, unit), dataPlot[0].GetNbinsX(), lowerEdge, upperEdge)
     dummy_hist.GetYaxis().SetRangeUser(0, 1.35*maximum)
     dummy_hist.Draw()
     #c.GetPad(1).SetBottomMargin(0.1)

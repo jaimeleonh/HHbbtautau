@@ -169,6 +169,7 @@ class VBFReweight:
         eval_coeffs = []
         for coeff in self.coefficients:
             eval_coeffs.append(coeff.evalf(subs={self.CV:t_cv, self.C2V:t_c2v, self.kl:t_kl}))
+        print eval_coeffs
 
         # Get a clone of the input histograms to be scaled and summed
         hists = []
@@ -180,7 +181,8 @@ class VBFReweight:
             if target_xs == -1:
                 scaleTo(hists[i], eval_coeffs[i])
             else:
-                scaleTo(hists[i], eval_coeffs[i] * target_xs / sample.val_xs)
+                scaleTo(hists[i], eval_coeffs[i] * target_xs)
+                #scaleTo(hists[i], eval_coeffs[i] * target_xs / sample.val_xs)
 
         # Get the final histogram by adding the six hists
         for i,histo in enumerate(hists):

@@ -1028,6 +1028,7 @@ public :
    virtual Float_t  getDeltaRboosted(const LorentzVector& v_0, const LorentzVector& v_1, const LorentzVector& ref);
    virtual Float_t  getCentrality(Float_t eta);
    virtual Float_t  getHHCentrality();
+   virtual Float_t  getSystemCentrality(Float_t, Float_t, Float_t);
    virtual Float_t  getDeltaEtaPlus();
    virtual Float_t  getDeltaEtaMinus();
    virtual Float_t  getAHH();
@@ -1036,6 +1037,7 @@ public :
    virtual std::vector <std::string> addCategories();
    virtual std::vector <std::pair<std::string, std::string>> addRegions (std::vector<std::string> regions);
    virtual void Show(Long64_t entry = -1);
+   virtual Float_t  getCosThetaStar_CS(const LorentzVector& h1, const LorentzVector& h2, float ebeam);
 
    TFile m_outFile; 
    std::map <std::string, TH1F*> m_plots;
@@ -2148,8 +2150,11 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchStatus("DNN_VBFvsGGF_MuTau", 1);
    fChain->SetBranchStatus("BDToutSM_kl_1", 1);
    fChain->SetBranchStatus("BDT_topPairMasses", 1);
+   
    fChain->SetBranchStatus("dau1_pt", 1);
    fChain->SetBranchStatus("dau2_pt", 1);
+   fChain->SetBranchStatus("dau1_phi", 1);
+   fChain->SetBranchStatus("dau2_phi", 1);
    fChain->SetBranchStatus("dau1_eta", 1);
    fChain->SetBranchStatus("dau2_eta", 1);
    fChain->SetBranchStatus("dau1_e", 1);
@@ -2158,13 +2163,19 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchStatus("dau2_iso", 1);
    fChain->SetBranchStatus("dau1_decayMode", 1);
    fChain->SetBranchStatus("dau2_decayMode", 1);
+   
    fChain->SetBranchStatus("bjet1_pt", 1);
    fChain->SetBranchStatus("bjet2_pt", 1);
+   fChain->SetBranchStatus("bjet1_phi", 1);
+   fChain->SetBranchStatus("bjet2_phi", 1);
    fChain->SetBranchStatus("bjet1_eta", 1);
    fChain->SetBranchStatus("bjet2_eta", 1);
    fChain->SetBranchStatus("bjet1_e", 1);
    fChain->SetBranchStatus("bjet2_e", 1);
+   
    fChain->SetBranchStatus("met_et", 1);
+   fChain->SetBranchStatus("met_phi", 1);
+   
    fChain->SetBranchStatus("VBFjet1_pt", 1);
    fChain->SetBranchStatus("VBFjet2_pt", 1);
    fChain->SetBranchStatus("VBFjet1_eta", 1);
@@ -2173,8 +2184,11 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchStatus("VBFjet2_phi", 1);
    fChain->SetBranchStatus("VBFjet1_e", 1);
    fChain->SetBranchStatus("VBFjet2_e", 1);
+   
+   fChain->SetBranchStatus("VBFjj_HT", 1);
    fChain->SetBranchStatus("VBFjj_deltaEta", 1);
    fChain->SetBranchStatus("VBFjj_mass", 1);
+   
    fChain->SetBranchStatus("jet3_pt", 1);
    fChain->SetBranchStatus("jet4_pt", 1);
    fChain->SetBranchStatus("jet3_eta", 1);
@@ -2183,13 +2197,16 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchStatus("jet4_e", 1);
    fChain->SetBranchStatus("jj_deltaEta", 1);
    fChain->SetBranchStatus("jj_mass", 1);
+   
    fChain->SetBranchStatus("jet5_VBF_pt", 1);
    fChain->SetBranchStatus("jet5_VBF_eta", 1);
    fChain->SetBranchStatus("jet5_VBF_e", 1);
+   
    fChain->SetBranchStatus("HH_mass", 1);
    fChain->SetBranchStatus("HH_eta", 1);
    fChain->SetBranchStatus("HH_phi", 1);
    fChain->SetBranchStatus("HH_pt", 1);
+   
    fChain->SetBranchStatus("HHKin_mass_raw", 1);
    fChain->SetBranchStatus("HHKin_chi2", 1);
    fChain->SetBranchStatus("HHsvfit_mass", 1);
@@ -2201,22 +2218,29 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchStatus("HHkinsvfit_phi", 1);
    fChain->SetBranchStatus("HHkinsvfit_pt", 1);
    fChain->SetBranchStatus("HHkinsvfit_bHmass", 1);
+   fChain->SetBranchStatus("HHkinsvfit_m", 1);
    fChain->SetBranchStatus("HH_deltaPhi", 1);
    fChain->SetBranchStatus("HH_deltaEta", 1);
    fChain->SetBranchStatus("HH_deltaR", 1);
+   
    fChain->SetBranchStatus("tauH_mass", 1);
    fChain->SetBranchStatus("tauH_pt", 1);
    fChain->SetBranchStatus("tauH_eta", 1);
+   fChain->SetBranchStatus("tauH_e", 1);
    fChain->SetBranchStatus("tauH_phi", 1);
    fChain->SetBranchStatus("tauH_SVFIT_mass", 1);
    fChain->SetBranchStatus("tauH_SVFIT_pt", 1);
    fChain->SetBranchStatus("tauH_SVFIT_eta", 1);
    fChain->SetBranchStatus("tauH_SVFIT_phi", 1);
+   
    fChain->SetBranchStatus("bH_mass", 1);
    fChain->SetBranchStatus("bH_pt", 1);
    fChain->SetBranchStatus("bH_eta", 1);
+   fChain->SetBranchStatus("bH_e", 1);
    fChain->SetBranchStatus("bH_phi", 1);
-   fChain->SetBranchStatus("VBFjj_HT", 1);
+  
+   fChain->SetBranchStatus("btau_deltaRmin", 1); 
+   fChain->SetBranchStatus("btau_deltaRmax", 1); 
 
    // Weights
    fChain->SetBranchStatus("MC_weight", 1);
@@ -2227,9 +2251,11 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchStatus("DYscale_MTT", 1);
    fChain->SetBranchStatus("prescaleWeight", 1);
    fChain->SetBranchStatus("FakeRateSF_deep", 1);
+   fChain->SetBranchStatus("VBFtrigSF", 1);
    
    // baseline and regions
    fChain->SetBranchStatus("isOS", 1);
+   fChain->SetBranchStatus("isVBF", 1);
    fChain->SetBranchStatus("dau1_deepTauVsJet", 1);
    fChain->SetBranchStatus("dau2_deepTauVsJet", 1);
    fChain->SetBranchStatus("dau1_iso", 1);
@@ -2237,7 +2263,7 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchStatus("nleps", 1);
    fChain->SetBranchStatus("nbjetscand", 1);
    fChain->SetBranchStatus("isVBFtrigger", 1);
-
+   fChain->SetBranchStatus("bjet1_bID_deepFlavor", 1);
    Notify();
 }
 

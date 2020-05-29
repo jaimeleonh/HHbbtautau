@@ -12,9 +12,10 @@ markerColors = [
 
 markerColorsMerge = {
     "GGHHSM":r.kRed,
-    "ggHSM":r.kRed,
-    "VBFHHSM":r.kBlue,
-    "VBFSM":r.kBlue,
+    "GGHHSM_LO":r.kBlack,
+    "GGHHSM_NLO":r.kBlue,
+    #"VBFHHSM":r.kBlue,
+    "VBFHHSM":r.kGreen+2, #  NADYA
     "TT":r.kYellow+2, 
     "QCD":r.kOrange-3, 
     "DY+Jets":r.kGreen+2,
