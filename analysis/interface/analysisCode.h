@@ -531,6 +531,10 @@ public :
    Float_t         DNN_VBFvsGGF_ETau;   
    Float_t         DNN_VBFvsGGF_TauTauTight;   
    Float_t         DNN_VBFvsGGF_TauTauLoose;   
+   // ggH + jets by Chiara
+   Int_t           NGenJets;
+   Float_t         prodgenjet1_pt;
+   Float_t         prodgenjet2_pt;
 
    // List of branches
    TBranch        *b_MC_weight;   //!
@@ -1008,9 +1012,12 @@ public :
    TBranch        *b_DNN_VBFvsGGF_ETau;   //!
    TBranch        *b_DNN_VBFvsGGF_TauTauTight;   //!
    TBranch        *b_DNN_VBFvsGGF_TauTauLoose;   //!
+   TBranch        *b_NGenJets;
+   TBranch        *b_prodgenjet1_pt;
+   TBranch        *b_prodgenjet2_pt;
 
    //analysisCode(int a=0, const TString & outName = "");
-   analysisCode(const TString & inSample = "", const TString & outName = "", const std::string & selCfgName = "", const TString & sampleName = "", const int & MC = -1, const int & lumi = -1);
+   analysisCode(const TString & inSample = "", const TString & outName = "", const std::string & selCfgName = "", const TString & sampleName = "", const int & MC = -1, const int & lumi = -1, const int & ngenjets = -1);
    //analysisCode(TTree *tree=0);
    virtual ~analysisCode();
    virtual Int_t    Cut(Long64_t entry);
@@ -1043,10 +1050,12 @@ public :
    std::map <std::string, TH1F*> m_plots;
    int evt_den_;
    int lumi_;
-   int isMCSample; 
+   int isMCSample;
+   int numberOfGenJets_;  
    std::string mySampleName;  
    std::unique_ptr<CfgParser> cutCfg_;
    std::unique_ptr<TChain> tree;
+   std::map<std::string, int> stats; 
 };
 
 #endif
@@ -1072,7 +1081,7 @@ public :
 
 analysisCode::analysisCode(const TString & inSample, const TString & outName, 
                            const std::string & selCfgName, const TString & sampleName,
-                           const int & MC, const int & lumi) : fChain(0), m_outFile(outName, "RECREATE")
+                           const int & MC, const int & lumi, const int & ngenjets) : fChain(0), m_outFile(outName, "RECREATE")
 {
    //TChain *tree = new TChain("HTauTauTree");
    tree = unique_ptr<TChain>(new TChain(("HTauTauTree")));
@@ -1085,6 +1094,7 @@ analysisCode::analysisCode(const TString & inSample, const TString & outName,
    isMCSample = MC;
    evt_den_ = 0;
    lumi_ = lumi;  
+   numberOfGenJets_ = ngenjets; 
 
    ifstream file(inSample + "/goodfiles.txt");
    if (file.good()) {
@@ -1555,6 +1565,9 @@ void analysisCode::Init(TTree *tree)
    nRealTaus = 0;
    BDToutSM_kl_1 = 0;
    DNNoutSM_kl_1 = 0;
+   NGenJets      = 0; 
+   prodgenjet1_pt      = 0; 
+   prodgenjet2_pt      = 0; 
    
    // Set branch addresses and branch pointers
    if (!tree) return;
@@ -2137,6 +2150,13 @@ void analysisCode::Init(TTree *tree)
      fChain->SetBranchAddress("DNN_VBFvsGGF_TauTauLoose", &DNN_VBFvsGGF_TauTauLoose, &b_DNN_VBFvsGGF_TauTauLoose);
    if (fChain->GetListOfBranches()->FindObject("DNNoutSM_kl_1"))    
      fChain->SetBranchAddress("DNNoutSM_kl_1", &DNNoutSM_kl_1, &b_DNNoutSM_kl_1);
+   
+   if (fChain->GetListOfBranches()->FindObject("NGenJets")) 
+     fChain->SetBranchAddress("NGenJets", &NGenJets, &b_NGenJets);
+   if (fChain->GetListOfBranches()->FindObject("prodgenjet1_pt")) 
+     fChain->SetBranchAddress("prodgenjet1_pt", &prodgenjet1_pt, &b_prodgenjet1_pt);
+   if (fChain->GetListOfBranches()->FindObject("prodgenjet2_pt")) 
+     fChain->SetBranchAddress("prodgenjet2_pt", &prodgenjet2_pt, &b_prodgenjet2_pt);
 
    fChain->SetBranchStatus("*", 0);
    if (fChain->GetListOfBranches()->FindObject("DNN_VBFvsGGF_TauTauLoose"))    
@@ -2150,7 +2170,18 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchStatus("DNN_VBFvsGGF_MuTau", 1);
    fChain->SetBranchStatus("BDToutSM_kl_1", 1);
    fChain->SetBranchStatus("BDT_topPairMasses", 1);
-   
+   fChain->SetBranchStatus("BDT_topPairMasses2", 1);
+  
+   // genjets
+   if (fChain->GetListOfBranches()->FindObject("NGenJets")) 
+     fChain->SetBranchStatus("NGenJets", 1);
+   if (fChain->GetListOfBranches()->FindObject("prodgenjet1_pt")) 
+     fChain->SetBranchStatus("prodgenjet1_pt",1);
+   if (fChain->GetListOfBranches()->FindObject("prodgenjet2_pt")) 
+     fChain->SetBranchStatus("prodgenjet2_pt",1);
+   if (fChain->GetListOfBranches()->FindObject("genMHH")) 
+     fChain->SetBranchStatus("genMHH",1);
+
    fChain->SetBranchStatus("dau1_pt", 1);
    fChain->SetBranchStatus("dau2_pt", 1);
    fChain->SetBranchStatus("dau1_phi", 1);
@@ -2192,7 +2223,7 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchStatus("jet3_pt", 1);
    fChain->SetBranchStatus("jet4_pt", 1);
    fChain->SetBranchStatus("jet3_eta", 1);
-   fChain->SetBranchStatus("jet3_eta", 1);
+   fChain->SetBranchStatus("jet4_eta", 1);
    fChain->SetBranchStatus("jet3_e", 1);
    fChain->SetBranchStatus("jet4_e", 1);
    fChain->SetBranchStatus("jj_deltaEta", 1);
@@ -2222,6 +2253,7 @@ void analysisCode::Init(TTree *tree)
    fChain->SetBranchStatus("HH_deltaPhi", 1);
    fChain->SetBranchStatus("HH_deltaEta", 1);
    fChain->SetBranchStatus("HH_deltaR", 1);
+   fChain->SetBranchStatus("HH_z", 1);
    
    fChain->SetBranchStatus("tauH_mass", 1);
    fChain->SetBranchStatus("tauH_pt", 1);

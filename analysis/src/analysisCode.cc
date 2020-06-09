@@ -49,12 +49,14 @@ void analysisCode::Book()
 
   for (auto & cat : selections ) {
     for (auto & reg : regions ) {
+      stats[cat + "_" + reg] = 0; 
       categories.push_back(cat + "_" +reg);
     }
   }
   m_outFile.cd();
 
   cout << "Creating all plots" << endl; 
+  m_plots["NGenJets"]    = new TH1F("NGenJets", "NGenJets; ;NGenJets Entries", 4, -1.5, 2.5);
 
   for (auto & cat : categories) {
     for (int i = 1; i<=2; i++) {
@@ -71,7 +73,7 @@ void analysisCode::Book()
         m_plots["tau" + std::to_string(i) + "DM" + dm + cat]    = new TH1F(("tau" + std::to_string(i) + "_dm"+ dm + "_" + cat).c_str(), ("#tau_{" + std::to_string(i) + "}_dm" + dm + "; tau" + std::to_string(i) + " dm" + dm + "; Entries").c_str(), 2, -0.5, 1.5);
       }
 
-      m_plots["bjet" + std::to_string(i) + "pt" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_pt_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_pt; b_{" + std::to_string(i) + "} pt(GeV); Entries").c_str(), 50, 0, 50); 
+      m_plots["bjet" + std::to_string(i) + "pt" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_pt_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_pt; b_{" + std::to_string(i) + "} pt(GeV); Entries").c_str(), 50, 20, 200); 
       m_plots["bjet" + std::to_string(i) + "pt/m" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_pt_m_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_pt / bH_mass; b_{" + std::to_string(i) + "} pt / H(bb) Mass; Entries").c_str(), 50, 0, 2); 
       m_plots["bjet" + std::to_string(i) + "eta" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_eta_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_eta; b_{" + std::to_string(i) + "} eta; Entries").c_str(), 50, -2.5, 2.5); 
       m_plots["bjet" + std::to_string(i) + "e" + cat]    = new TH1F(("bjet" + std::to_string(i) + "_e_"+ cat).c_str(), ("bjet" + std::to_string(i) + "_e; b_{" + std::to_string(i) + "} e; Entries").c_str(), 50, 0, 1000); 
@@ -89,10 +91,13 @@ void analysisCode::Book()
       m_plots["VBFjet" + std::to_string(i) + "phi" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_phi_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_phi; VBFjet_{" + std::to_string(i) + "} phi; Entries").c_str(), 50, -3.5, 3.5); 
       m_plots["VBFjet" + std::to_string(i) + "z" + cat]    = new TH1F(("VBFjet" + std::to_string(i) + "_z_"+ cat).c_str(), ("VBFjet" + std::to_string(i) + "_z; VBFjet_{" + std::to_string(i) + "} z; Entries").c_str(), 50, -5, 5);
 
+      m_plots["prodgenjet" + std::to_string(i) + "pt" + cat]    = new TH1F(("prodgenjet" + std::to_string(i) + "_pt_"+ cat).c_str(), ("prodgenjet" + std::to_string(i) + "_pt; prodgenjet_{" + std::to_string(i) + "} pt(GeV); Entries").c_str(), 50, 0, 200); 
     }
 
     m_plots["met_pt"+ cat]   = new TH1F(("met_pt_"+ cat).c_str(), "met pt; met pt (GeV); Entries", 50, 0, 500); 
 
+    m_plots["NGenJets"+ cat]    = new TH1F(("NGenJets_"+cat).c_str(), "NGenJets; NGenJets; Entries", 4, -1.5, 2.5);
+    m_plots["genMHH"+ cat]   = new TH1F(("genMHH_"+ cat).c_str(), "genHH mass; genHH Mass (GeV); Entries", 50, 0, 2000); 
 
     m_plots["bjets_deltaEta"+ cat]    = new TH1F(("bjets_deltaEta_"+ cat).c_str(), "bjets_deltaEta; #Delta #eta (b_1, b_2) ; Entries", 50, -0, 10); 
     m_plots["bjets_eta1eta2"+ cat]    = new TH1F(("bjets_eta1eta2_"+ cat).c_str(), "bjets_eta1eta2;  #eta(b_1) #times #eta(b_2) ; Entries", 50, -10, 10); 
@@ -114,13 +119,14 @@ void analysisCode::Book()
     m_plots["HH_phi"+ cat]    = new TH1F(("HH_phi_"+ cat).c_str(), "HH phi; HH phi; Entries", 50, -3.5, 3.5); 
     m_plots["HH_pt"+ cat]   = new TH1F(("HH_pt_"+ cat).c_str(), "HH pt; HH pt (GeV); Entries", 50, 0, 500); 
     m_plots["HH_z"+ cat]   = new TH1F(("HH_z_"+ cat).c_str(), "HH z; HH z; Entries", 50, -5, 5); 
+    m_plots["HH_z_nt"+ cat]   = new TH1F(("HH_z_nt_"+ cat).c_str(), "HH z; HH z; Entries", 50, -5, 5); 
     m_plots["HH_AHH"+ cat]   = new TH1F(("HH_AHH_"+ cat).c_str(), "HH AHH; HH AHH; Entries", 50, -0.1, 1.1); 
     m_plots["HH_costhetaCS"+ cat]   = new TH1F(("HH_costhetaCS_"+ cat).c_str(), "HH abs(costhetaCS); HH abs(cos#theta_{CS}); Entries", 50, -0.1, 1.1); 
     m_plots["HH_costhetaCS_rev"+ cat]   = new TH1F(("HH_costhetaCS_rev_"+ cat).c_str(), "HH abs(costhetaCS); HH abs(cos#theta_{CS}); Entries", 50, -0.1, 1.1); 
     m_plots["HH_costhetaCS_svfit"+ cat]   = new TH1F(("HH_costhetaCS_svfit_"+ cat).c_str(), "HH abs(costhetaCS); HH abs(cos#theta_{CS}); Entries", 50, -0.1, 1.1); 
     
   
-    m_plots["HH_deltaPhi"+ cat] = new TH1F(("HH_deltaPhi_"+ cat).c_str(), "HH_deltaPhi; HH_deltaPhi ; Entries", 50, -0.5, 3.5);
+    m_plots["HH_deltaPhi"+ cat] = new TH1F(("HH_deltaPhi_"+ cat).c_str(), "HH_deltaPhi; HH_deltaPhi ; Entries", 15, -3.14159, 3.14159);
     m_plots["HH_deltaEta"+ cat]    = new TH1F(("HH_deltaEta_"+ cat).c_str(), "HH_deltaEta; HH_deltaEta ; Entries", 50, -0.5, 10); 
     m_plots["HH_deltaR"+ cat]    = new TH1F(("HH_deltaR_"+ cat).c_str(), "HH_deltaR; HH_deltaR ; Entries", 50, 0, 10); 
 
@@ -128,7 +134,7 @@ void analysisCode::Book()
     m_plots["HHsvfit_eta"+ cat]    = new TH1F(("HHsvfit_eta_"+ cat).c_str(), "HH eta; HH eta; Entries", 50, -2.5, 2.5); 
     m_plots["HHsvfit_phi"+ cat]    = new TH1F(("HHsvfit_phi_"+ cat).c_str(), "HH phi; HH phi; Entries", 50, -3.5, 3.5); 
     m_plots["HHsvfit_pt"+ cat]   = new TH1F(("HHsvfit_pt_"+ cat).c_str(), "HH pt; HH pt (GeV); Entries", 50, 0, 500); 
-    m_plots["HHsvfit_deltaPhi"+ cat] = new TH1F(("HHsvfit_deltaPhi_"+ cat).c_str(), "HH_deltaPhi; HH_deltaPhi ; Entries", 50, -0.5, 3.5);
+    m_plots["HHsvfit_deltaPhi"+ cat] = new TH1F(("HHsvfit_deltaPhi_"+ cat).c_str(), "HH_deltaPhi; HH_deltaPhi ; Entries", 15, -3.14159, 3.14159);
   
     m_plots["HHKin_mass_raw"+ cat]   = new TH1F(("HHKin_mass_raw_"+ cat).c_str(), "HHKin mass; HHKin Mass (GeV); Entries", 50, 0, 2000); 
     m_plots["HHkinsvfit_mass"+ cat]   = new TH1F(("HHkinsvfit_mass_"+ cat).c_str(), "HH mass; HH Kin SVFit Mass (GeV); Entries", 50, 0, 2000); 
@@ -145,6 +151,7 @@ void analysisCode::Book()
     m_plots["tauH_phi"+ cat]  = new TH1F(("tauH_phi_"+ cat).c_str(), "tauH phi; H(#tau#tau) phi ; Entries", 50, -3.5, 3.5); 
     m_plots["tauH_z"+ cat]  = new TH1F(("tauH_z_"+ cat).c_str(), "tauH z; H(#tau#tau) z ; Entries", 50, -0.1, 1.1); 
     m_plots["ditau_dr"+ cat]  = new TH1F(("ditau_dr_"+ cat).c_str(), "ditau #Delta R; #Delta R (#tau_{1}, #tau_{2}) ; Entries", 50, 0, 10); 
+    m_plots["ditau_deltaPhi"+ cat]  = new TH1F(("ditau_deltaPhi_"+ cat).c_str(), "ditau #Delta #phi; #Delta #phi (#tau_{1}, #tau_{2}); Entries", 15, -3.14159, 3.14159); 
 
     m_plots["tauH_SVFIT_mass"+ cat] = new TH1F(("tauH_SVFIT_mass_"+ cat).c_str(), "tauH SVFIT mass; H(#tau#tau) SVFit Mass (GeV); Entries", 50, 0, 250); 
     m_plots["tauH_SVFIT_pt"+cat]   = new TH1F(("tauH_SVFIT_pt_"+ cat).c_str(), "tauH SVFIT pt; H(#tau#tau) SVFit pt (GeV); Entries", 50, 0, 500); 
@@ -159,6 +166,7 @@ void analysisCode::Book()
     m_plots["bH_phi"+ cat]    = new TH1F(("bH_phi_"+ cat).c_str(), "bH phi; H(bb) phi ; Entries", 50, -3.5, 3.5); 
     m_plots["bH_z"+ cat]      = new TH1F(("bH_z_"+ cat).c_str(), "bH z; H(bb) z ; Entries", 50, -0.1, 1.1); 
     m_plots["dib_dr"+ cat]  = new TH1F(("dib_dr_"+ cat).c_str(), "dib #Delta R; #Delta R (b_{1}, b_{2}); Entries", 50, 0, 10); 
+    m_plots["dib_deltaPhi"+ cat]  = new TH1F(("dib_deltaPhi_"+ cat).c_str(), "dib #Delta #phi; #Delta #phi (b_{1}, b_{2}); Entries", 15, -3.14159, 3.14159); 
     m_plots["costheta_b1_b2"+ cat] = new TH1F(("costheta_b1_b2_"+ cat).c_str(), "b1-b2 abs(cos#theta); b_{1}-b_{2} abs(cos#theta) ; Entries", 50, -0.1, 1.1); 
     
     m_plots["btau_dr_min"+ cat]  = new TH1F(("btau_dr_min_"+ cat).c_str(), "b#tau min #Delta R; b#tau min #Delta R ; Entries", 50, 0, 5); 
@@ -167,9 +175,9 @@ void analysisCode::Book()
     m_plots["VBFjj_mass"+ cat] = new TH1F(("VBFjj_mass_"+ cat).c_str(), "VBFjj mass; VBFjj Mass (GeV); Entries", 50, 0, 2000); 
     m_plots["VBFjj_mass_5000"+ cat] = new TH1F(("VBFjj_mass_5000_"+ cat).c_str(), "VBFjj mass; VBFjj Mass (GeV); Entries", 100, 0, 5000); 
     m_plots["VBFjj_HT"+ cat] = new TH1F(("VBFjj_HT_"+ cat).c_str(), "VBFjj HT; VBFjj HT (GeV); Entries", 50, 0, 500); 
-    m_plots["VBFjj_deltaPhi"+ cat]    = new TH1F(("VBFjj_deltaPhi_"+ cat).c_str(), "VBFjj_deltaPhi; VBFjj_deltaPhi ; Entries", 70, -3.5, 3.5); 
+    m_plots["VBFjj_deltaPhi"+ cat]    = new TH1F(("VBFjj_deltaPhi_"+ cat).c_str(), "VBFjj_deltaPhi; VBFjj_deltaPhi ; Entries", 15, -3.14159, 3.14159); 
     m_plots["VBFjj_deltaR"+ cat]    = new TH1F(("VBFjj_deltaR_"+ cat).c_str(), "VBFjj_deltaR; #DeltaR VBF dijet ; Entries", 50, 0, 10); 
-    m_plots["VBFgenjj_deltaPhi"+ cat]    = new TH1F(("VBFgenjj_deltaPhi_"+ cat).c_str(), "VBFgenjj_deltaPhi; VBFgenjj_deltaPhi ; Entries", 70, -3.5, 3.5); 
+    m_plots["VBFgenjj_deltaPhi"+ cat]    = new TH1F(("VBFgenjj_deltaPhi_"+ cat).c_str(), "VBFgenjj_deltaPhi; VBFgenjj_deltaPhi ; Entries", 15, -3.14159, 3.14159); 
   
     m_plots["VBFjTau_deltaR"+ cat]    = new TH1F(("VBFjTau_deltaR_"+ cat).c_str(), "VBFjTau_deltaR; Min #Delta R (VBFj,#tau) ; Entries", 50, 0, 6); 
     m_plots["VBFjb_deltaR"+ cat]    = new TH1F(("VBFjb_deltaR_"+ cat).c_str(), "VBFjb_deltaR; Min #Delta R (VBFj,b) ; Entries", 50, 0, 6); 
@@ -193,7 +201,8 @@ void analysisCode::Book()
     m_plots["boosted"+ cat]    = new TH1F(("boosted_"+ cat).c_str(), "boosted; boosted; Entries", 3, -1.5, 1.5);
     m_plots["channel"+ cat]    = new TH1F(("channel_"+ cat).c_str(), "channel / pairType; channel; Entries", 5, -0.5, 4.5);
     m_plots["BDT_topPairMasses"+ cat]    = new TH1F(("BDT_topPairMasses_"+ cat).c_str(), "BDT_topPairMasses; BDT_topPairMasses; Entries", 50, 50, 250);
-
+    m_plots["BDT_topPairMasses2"+ cat]    = new TH1F(("BDT_topPairMasses2_"+ cat).c_str(), "BDT_topPairMasses2; BDT_topPairMasses2; Entries", 50, 50, 250);
+    
 
     // CHIARA's DNNs
     m_plots["DNN_VBFvsGGF_TauTauTight"+ cat]    = new TH1F(("DNN_VBFvsGGF_TauTauTight_"+ cat).c_str(), "DNN_VBFvsGGF_TauTauTight; DNN_VBFvsGGF_TauTauTight ; Entries", 10, 0, 1);
@@ -215,7 +224,12 @@ void analysisCode::Book()
 
 void analysisCode::Fill()
 {
- 
+  if (numberOfGenJets_ > -1){
+    if (NGenJets != numberOfGenJets_) return;
+  }
+  m_plots["NGenJets"]->Fill(NGenJets);
+
+
   //cout << "Adding categories" << endl; 
   std::vector <std::string> selections = addCategories();
 
@@ -226,16 +240,23 @@ void analysisCode::Fill()
     categories.push_back(make_pair(cat,cat+"_"));
   }
   categories.push_back(make_pair("noSelection","noSelection_"));
+  
+  //cout << "After regions" << endl;
 
   for (auto & mycat : categories ) {
     std::string cat = mycat.second; 
+    stats[cat]++; 
     double myweight = 1;
     if (isMCSample == 1){
-   //   cout << "Before weights" << endl;
+    //  cout << "Before weights" << endl;
       myweight = getWeights(mycat.first);
-   //   cout << "After weights" << endl;
+    //  cout << "After weights" << endl;
       if (TMath::IsNaN(myweight)) myweight = 0; 
     }
+    
+    m_plots["NGenJets"+ cat]->Fill(NGenJets);
+    
+    
     //Fill tau plots
     m_plots["tau1pt"+cat]->Fill(dau1_pt, myweight);
     m_plots["tau1pt/m"+cat]->Fill(dau1_pt / tauH_mass, myweight);
@@ -255,9 +276,15 @@ void analysisCode::Fill()
       m_plots["tau1DM" + std::to_string(i) + cat]->Fill(dau1_decayMode == i, myweight);
       m_plots["tau2DM" + std::to_string(i) + cat]->Fill(dau2_decayMode == i, myweight);
     }
-    if (dau1_pt != -1 && dau2_pt != -1) m_plots["ditau_dr"+ cat]->Fill(getDeltaR(dau1_eta, dau1_phi, dau2_eta, dau2_phi), myweight);
+    if (dau1_pt != -1 && dau2_pt != -1){
+        m_plots["ditau_dr"+ cat]->Fill(getDeltaR(dau1_eta, dau1_phi, dau2_eta, dau2_phi), myweight);
+        m_plots["ditau_deltaPhi"+ cat]->Fill(getDeltaPhi(dau1_phi, dau2_phi)); 
+    }
+
+    m_plots["prodgenjet1pt" + cat]->Fill(prodgenjet1_pt); 
+    m_plots["prodgenjet2pt" + cat]->Fill(prodgenjet2_pt); 
     
-    // Fill b plots
+      // Fill b plots
     if (bjet1_pt != -1) m_plots["bjet1pt"+cat]->Fill(bjet1_pt, myweight);
     if (bjet2_pt != -1) m_plots["bjet2pt"+cat]->Fill(bjet2_pt, myweight);
     if (bjet1_pt != -1) m_plots["bjet1pt/m"+cat]->Fill(bjet1_pt / bH_mass, myweight);
@@ -270,7 +297,10 @@ void analysisCode::Fill()
     if (bjet2_pt != -1) m_plots["bjet2z"+cat]->Fill(getCentrality(bjet2_eta), myweight);
     if (bjet1_pt != -1 && bjet2_pt != -1) m_plots["bjets_deltaEta"+cat]->Fill(std::fabs(bjet1_eta - bjet2_eta), myweight);
     if (bjet1_pt != -1 && bjet2_pt != -1) m_plots["bjets_eta1eta2"+cat]->Fill(bjet1_eta * bjet2_eta, myweight);
-    if (bjet1_pt != -1 && bjet2_pt != -1) m_plots["dib_dr"+ cat]->Fill(getDeltaR(bjet1_eta, bjet1_phi, bjet2_eta, bjet2_phi), myweight);
+    if (bjet1_pt != -1 && bjet2_pt != -1) {
+        m_plots["dib_dr"+ cat]->Fill(getDeltaR(bjet1_eta, bjet1_phi, bjet2_eta, bjet2_phi), myweight);
+        m_plots["dib_deltaPhi"+ cat]->Fill(getDeltaPhi(bjet1_phi, bjet2_phi)); 
+    }
    
     // met plots
     m_plots["met_pt"+ cat]->Fill(met_et, myweight); 
@@ -312,6 +342,7 @@ void analysisCode::Fill()
     if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1e"+cat]->Fill(jet5_VBF_e, myweight);
     if (jet5_VBF_pt!=-999.) m_plots["additionalVBFjet1z"+cat]->Fill(getCentrality(jet5_VBF_eta), myweight);
 
+    m_plots["genMHH"+cat]->Fill( genMHH, myweight );
 
     if (HH_eta != -1. && HH_phi != -1. && HH_pt != -1.) { 
       m_plots["HH_mass"+cat]->Fill( HH_mass, myweight );
@@ -319,6 +350,7 @@ void analysisCode::Fill()
       m_plots["HH_phi"+cat]->Fill( HH_phi, myweight );
       m_plots["HH_pt"+cat]->Fill( HH_pt, myweight );
       m_plots["HH_z"+cat]->Fill( getHHCentrality(), myweight);
+      m_plots["HH_z_nt"+cat]->Fill( HH_z, myweight);
       m_plots["HH_AHH"+cat]->Fill( getAHH(), myweight);
     } else {
       //m_plots["HH_mass"]->Fill( -999. );
@@ -389,7 +421,7 @@ void analysisCode::Fill()
       m_plots["tauH_SVFIT_eta"+cat]->Fill( tauH_SVFIT_eta, myweight );
       m_plots["tauH_SVFIT_phi"+cat]->Fill( tauH_SVFIT_phi, myweight );
     } else {
-      //m_plots["tauH_SVFIT_mass"]->Fill( -999. );
+      
       //m_plots["tauH_SVFIT_pt"]->Fill( -999. );
       //m_plots["tauH_SVFIT_eta"]->Fill( -999. );
       //m_plots["tauH_SVFIT_phi"]->Fill( -999. );
@@ -441,9 +473,9 @@ void analysisCode::Fill()
     if (minDeltaRVBFjb!=9999) m_plots["VBFjb_deltaR"+cat]->Fill(minDeltaRVBFjb, myweight);
 
 
-    if (getDeltaR( bH_eta, bH_phi, tauH_SVFIT_eta, tauH_SVFIT_phi ) != -1 ) m_plots["dR_hbb_sv"+ cat] -> Fill(getDeltaR( bH_eta, bH_phi, tauH_SVFIT_eta, tauH_SVFIT_phi )); 
-    if (getDeltaR( dau1_eta, dau1_phi, dau2_eta, dau2_phi ) != -1 && tauH_SVFIT_pt != -1 ) m_plots["dR_l1_l2_x_sv_pT"+ cat] -> Fill( getDeltaR( dau1_eta, dau1_phi, dau2_eta, dau2_phi) * tauH_SVFIT_pt );
-    if (tauH_SVFIT_pt != -1) m_plots["dphi_sv_met"+ cat] -> Fill ( tauHsvfitMet_deltaPhi );
+    if (getDeltaR( bH_eta, bH_phi, tauH_SVFIT_eta, tauH_SVFIT_phi ) != -1 ) m_plots["dR_hbb_sv"+ cat] -> Fill(getDeltaR( bH_eta, bH_phi, tauH_SVFIT_eta, tauH_SVFIT_phi ), myweight); 
+    if (getDeltaR( dau1_eta, dau1_phi, dau2_eta, dau2_phi ) != -1 && tauH_SVFIT_pt != -1 ) m_plots["dR_l1_l2_x_sv_pT"+ cat] -> Fill( getDeltaR( dau1_eta, dau1_phi, dau2_eta, dau2_phi) * tauH_SVFIT_pt, myweight);
+    if (tauH_SVFIT_pt != -1) m_plots["dphi_sv_met"+ cat] -> Fill (fabs(tauHsvfitMet_deltaPhi), myweight);
  
 
     TLorentzVector metT, tauH_SVFIT; 
@@ -510,10 +542,14 @@ void analysisCode::EndJob()
       cout << plot.first << "-> evt_den: " << evt_den_ << ", integral: " << plot.second->Integral() << endl;  
       if (plot.second->Integral() == 0 || evt_den_ == 0) plot.second->Scale(0.);
       else plot.second -> Scale ((double)lumi_ / (double)evt_den_ );
-
-
     }
   }
+
+  cout << "Event statistics for sample " << mySampleName << endl;  
+  for (auto & sel: stats ){
+    cout << sel.first << " " << sel.second << endl; 
+  }
+
   m_outFile.cd();
   m_outFile.Write();
   m_outFile.Close();
@@ -729,6 +765,9 @@ std::vector <std::pair<std::string, std::string>> analysisCode::addRegions (std:
   for (auto & selection : categories) {
     //cout << selection << endl; 
     bool SR          = (isOS != 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 ) 
+                    || (isOS != 0 && dau2_deepTauVsJet >= 4 && strcmp(selection.c_str(), "VBF_baseline" )==0 ) 
+                    || (isOS != 0 && dau2_deepTauVsJet >= 4 && strcmp(selection.c_str(), "VBFloose" )==0 ) 
+                    || (isOS != 0 && dau2_deepTauVsJet >= 4 && strcmp(selection.c_str(), "VBF_loose_baseline" )==0 ) 
                     || (isOS != 0 && dau1_iso < 0.1 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_etauh" )==0 )   
                     || (isOS != 0 && dau1_iso < 0.15 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_mutauh" )==0 );// signal region: opposite sign, isolated taus
     bool SStight     = (isOS == 0 && dau1_deepTauVsJet >= 5 && dau2_deepTauVsJet >= 5 && strcmp(selection.c_str(), "baseline_tauhtauh" )==0 )
@@ -797,7 +836,7 @@ std::vector <std::string> analysisCode::addCategories () {
    bool baselinemutauh   = pairType == 0 && dau1_pt > 22 && abs (dau1_eta) < 2.1 && dau2_pt > 20 && abs (dau2_eta) < 2.3 && nleps == 0 && nbjetscand > 1;
 
 
-   bool baseline55     = (baselinetauhtauh) && tauH_SVFIT_mass > 50;
+   bool baseline55     = (baselinetauhtauh || baselineetauh) && tauH_SVFIT_mass > 50;
    //bool baseline55     = (baselinetauhtauh || baselineetauh || baselinemutauh ) && tauH_SVFIT_mass > 50;
    //bool baselineVBFtight = pairType == 2 && dau1_pt > 25 && abs (dau1_eta) < 2.1 && dau2_pt > 25 && tauH_SVFIT_mass > 50 && abs (dau2_eta) < 2.1 && nleps == 0 && nbjetscand > 1 && isVBFtrigger == 1 && VBFjj_mass > 800 && VBFjet1_pt > 140 && VBFjet2_pt > 60;
    bool baselineVBFloose = baseline55 && isVBF == 1 && VBFjj_mass > 500 && VBFjj_deltaEta > 3;
@@ -826,7 +865,7 @@ std::vector <std::string> analysisCode::addCategories () {
    if (VBFloose) categories.push_back("VBFloose");
    if (baselineVBFloose) categories.push_back("VBF_loose_baseline");
    if (baselinetauhtauh) categories.push_back("baseline_tauhtauh");
-   if ((baselinetauhtauh) && isVBF == 1) categories.push_back("VBF_baseline");
+   if ((baselinetauhtauh || baselineetauh) && isVBF == 1) categories.push_back("VBF_baseline");
     //if ((baselinetauhtauh || baselineetauh || baselinemutauh) && isVBF == 1) categories.push_back("VBF_baseline");
    if (baselinemutauh) categories.push_back("baseline_mutauh");
    if (baselineetauh) categories.push_back("baseline_etauh");

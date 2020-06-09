@@ -19,7 +19,9 @@ files["2017_FC"] += ["DYJets_0j0b", "DYJets_1j0b", "DYJets_1j1b", "DYJets_2j0b",
 
 files["2017_may"] += ["DYJets_0j0b", "DYJets_1j0b", "DYJets_1j1b", "DYJets_2j0b", "DYJets_2j1b", "DYJets_2j2b", "DYJets_3j0b", "DYJets_3j1b", "DYJets_3j2b", "DYJets_3j3b", "DYJets_4j0b", "DYJets_4j1b", "DYJets_4j2b", "DYJets_4j3b", "DYJets_4j4b", "GGHHSM", "TTfullyHad", "TTfullyLep", "TTsemiLep", "VBFHHSM", "WJets_HT_0_70", "WJets_HT_70_100", "WJets_HT_100_200", "WJets_HT_1200_2500", "WJets_HT_200_400", "WJets_HT_2500_Inf", "WJets_HT_400_600", "WJets_HT_600_800", "WJets_HT_800_1200", "VBF_CV_1_C2V_1_C3_2", "VBF_CV_1_C2V_1_C3_0", "VBF_CV_1_5_C2V_1_C3_1", "VBF_CV_1_C2V_0_C3_2", "VBF_CV_1_C2V_2_C3_1", "GGHHNLO"]
 
-files["2017_vbf"] = ["GGHHSM", "GGHHNLO", 'VBFHHSM', 'VBF_CV_1_C2V_1_C3_0', 'VBF_CV_1_C2V_1_C3_2', 'VBF_CV_1_C2V_2_C3_1', 'VBF_CV_1_5_C2V_1_C3_1', 'VBF_CV_1_C2V_0_C3_2']
+files["2017_vbf"] = ["GGHHSM", "GGHHNLO", 'VBFHHSM', 'VBF_CV_1_C2V_1_C3_0', 'VBF_CV_1_C2V_1_C3_2', 'VBF_CV_1_C2V_2_C3_1', 'VBF_CV_1_5_C2V_1_C3_1', 'VBF_CV_1_C2V_0_C3_2', "GGHHNLO_AllJets", "GGHHNLO_1Jet", "GGHHNLO_2Jets"]
+
+files["2018_vbf"] = ["GGHHSM", "GGHHNLO", 'VBFHHSM', 'VBF_CV_1_C2V_1_C3_0', 'VBF_CV_1_C2V_1_C3_2', 'VBF_CV_1_C2V_2_C3_1', 'VBF_CV_1_5_C2V_1_C3_1', 'VBF_CV_1_C2V_0_C3_2', "GGHHNLO_AllJets", "GGHHNLO_1Jet", "GGHHNLO_2Jets", "DY", "DY_lowMass", "EWKWMinus2Jets_WToLNu", "EWKWPlus2Jets_WToLNu", "EWKZ2Jets_ZToLL", "ST_tW_antitop", "ST_tW_top", "ST_tchannel_antitop", "ST_tchannel_top", "SingleElectron2018A", "SingleElectron2018B", "SingleElectron2018C", "SingleElectron2018D", "SingleMuon2018A", "TTWH", "TTWJetsToLNu", "TTWJetsToQQ", "TTWW", "TTWZ", "TTZH", "TTZToLLNuNu", "TTZToQQ", "TTZZ", "TT_fullyHad", "TT_fullyLep", "TT_semiLep", "Tau2018A", "Tau2018B", "Tau2018C", "Tau2018D", "VBFHTauTau", "WJets_HT_0_100", "WJets_HT_100_200", "WJets_HT_1200_2500", "WJets_HT_200_400", "WJets_HT_2500_Inf", "WJets_HT_400_600", "WJets_HT_600_800", "WJets_HT_800_1200", "WWTo2L2Nu", "WWTo4Q", "WWToLNuQQ", "WWW", "WWZ", "WZTo1L1Nu2Q", "WZTo1L3Nu", "WZTo2L2Q", "WZTo3LNu", "WZZ", "WminusHTauTau", "WplusHTauTau", "ZH_HBB_ZLL", "ZH_HBB_ZQQ", "ZH_HTauTau", "ZZTo2L2Nu", "ZZTo2L2Q", "ZZTo2Q2Nu", "ZZTo4L", "ZZZ", "ggHTauTau", "ttHJetToBB", "ttHJetToTauTau", "ttHJetTononBB",]
 
   
   
@@ -42,6 +44,7 @@ mergingCategories["2017_may"]["TT"] = ["TTfullyHad", "TTsemiLep", "TTfullyLep"]
 mergingCategories["2017_may"]["DY+Jets"]= ["DYJets_0j0b", "DYJets_1j0b", "DYJets_1j1b", "DYJets_2j0b", "DYJets_2j1b", "DYJets_2j2b", "DYJets_3j0b", "DYJets_3j1b", "DYJets_3j2b", "DYJets_3j3b", "DYJets_4j0b", "DYJets_4j1b", "DYJets_4j2b", "DYJets_4j3b", "DYJets_4j4b"]
 
 mergingCategories["2017_vbf"] = OrderedDict()
+mergingCategories["2018_vbf"] = OrderedDict()
 
 
 
@@ -58,6 +61,7 @@ dataCategories["2017_may"] = {"tauhtauh":['Tau2017B','Tau2017C','Tau2017D','Tau2
 #                              "etauh":['SingleElectron2017B','SingleElectron2017C','SingleElectron2017D','SingleElectron2017E','SingleElectron2017F',],
                              }
 dataCategories["2017_vbf"] = OrderedDict()
+dataCategories["2018_vbf"] = OrderedDict()
 
 signal = {"2017":OrderedDict(), "2017_FC":OrderedDict(), "2017_may": OrderedDict(),}
 signal["2017"]['GGHHSM'] = ['GGHSM_xs']
@@ -79,4 +83,17 @@ signal["2017_vbf"] = OrderedDict()
 signal["2017_vbf"]['GGHHSM_LO'] = ['GGHHSM']
 signal["2017_vbf"]['GGHHSM_NLO'] = ['GGHHNLO']
 signal["2017_vbf"]['VBFHHSM'] = ['VBFHHSM']
-signal["2017_vbf"]['VBF'] = ['VBFHHSM', 'VBF_CV_1_C2V_1_C3_0', 'VBF_CV_1_C2V_1_C3_2', 'VBF_CV_1_C2V_2_C3_1', 'VBF_CV_1_5_C2V_1_C3_1', 'VBF_CV_1_C2V_0_C3_2']
+#signal["2017_vbf"]['VBF'] = ['VBFHHSM', 'VBF_CV_1_C2V_1_C3_0', 'VBF_CV_1_C2V_1_C3_2', 'VBF_CV_1_C2V_2_C3_1', 'VBF_CV_1_5_C2V_1_C3_1', 'VBF_CV_1_C2V_0_C3_2']
+#signal["2017_vbf"]['GGHHSM_NLO + 1Jet'] = ['GGHHNLO_1Jet']
+#signal["2017_vbf"]['GGHHSM_NLO + 2 Jets'] = ['GGHHNLO_2Jets']
+signal["2017_vbf"]['GGHHSM_NLO + 1,2 Jets'] = ['GGHHNLO_AllJets']
+
+signal["2018_vbf"] = OrderedDict()
+signal["2018_vbf"]['GGHHSM_LO'] = ['GGHHSM']
+signal["2018_vbf"]['GGHHSM_NLO'] = ['GGHHNLO']
+signal["2018_vbf"]['VBFHHSM'] = ['VBFHHSM']
+signal["2018_vbf"]['VBF'] = ['VBFHHSM', 'VBF_CV_1_C2V_1_C3_0', 'VBF_CV_1_C2V_1_C3_2', 'VBF_CV_1_C2V_2_C3_1', 'VBF_CV_1_5_C2V_1_C3_1', 'VBF_CV_1_C2V_0_C3_2']
+#signal["2018_vbf"]['GGHHSM_NLO + 1 Jet'] = ['GGHHNLO_1Jet']
+#signal["2018_vbf"]['GGHHSM_NLO + 2 Jets'] = ['GGHHNLO_2Jets']
+signal["2018_vbf"]["GGHHSM_LO #leq 2 Jets"] = ['GGHHNLO_AllJets']
+

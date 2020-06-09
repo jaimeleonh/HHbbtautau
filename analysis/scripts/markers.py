@@ -14,6 +14,10 @@ markerColorsMerge = {
     "GGHHSM":r.kRed,
     "GGHHSM_LO":r.kBlack,
     "GGHHSM_NLO":r.kBlue,
+    "GGHHSM_LO + 2 Jets":r.kRed,
+    "GGHHSM_LO + 1 Jet":r.kRed,
+    "GGHHSM_LO #leq 2 Jets":r.kRed,
+    "GGHHSM_LO + 1,2 Jets":r.kRed,
     #"VBFHHSM":r.kBlue,
     "VBFHHSM":r.kGreen+2, #  NADYA
     "TT":r.kYellow+2, 

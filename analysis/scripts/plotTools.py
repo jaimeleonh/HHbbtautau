@@ -13,6 +13,7 @@ import math
 #############################################################################################################################
 
 def makePlotReturn(path, files, plotscaffold, merge, normalize):
+    #print plotscaffold, files
     if not merge :
       res = files
       #res = r.TFile.Open(path + files)
@@ -40,7 +41,6 @@ def makePlotReturn(path, files, plotscaffold, merge, normalize):
     return resplot
 
 def makePlot(hlist, path, files, plotscaffold, merge, normalize):
-    
     if not merge :
       res = r.TFile.Open(path + files)
       resplot = res.Get(plotscaffold)
@@ -69,7 +69,11 @@ def makePlot(hlist, path, files, plotscaffold, merge, normalize):
     #res.Close(); del res, resplot
     return
 
-def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False, normalize=False): 
+def makeRatioPlot(hlist, histos):
+    hlist.append(deepcopy(hlist[1]/hlist[0]))
+
+
+def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False, normalize=False, lumi=1000.): 
     print "Combining list of plots"
     if len(hlist) == 0: raise RuntimeError("Empty list of plots")
     c = r.TCanvas("c", "c", 800, 800)
@@ -98,7 +102,7 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False,
           hlist[iplot].SetMarkerColor(markerColors[iplot % len(markerColors)])
           hlist[iplot].SetLineColor(markerColors[iplot % len(markerColors)])
         
-        #if legends[iplot]=="VBFHHSM" or legends[iplot]=="GGHHSM" : hlist[iplot].SetLineStyle(r.kDashed) 
+        if legends[iplot]=="VBFHHSM" or legends[iplot]=="GGHHSM_LO" : hlist[iplot].SetLineStyle(r.kDashed) 
         
         hlist[iplot].SetMarkerStyle(20)
         leg.AddEntry(hlist[iplot], legends[iplot], "PL")
@@ -134,7 +138,7 @@ def combinePlots (hlist, legends, plottingStuff, path, savescaffold, logy=False,
 
     secondtext = r.TLatex()
     toDisplay = r.TString()
-    toDisplay  = r.TString("41.6 fb^{-1} 13 TeV")
+    toDisplay  = r.TString("{:.1f}".format(lumi/1000.) + "fb^{-1}, 13 TeV")
     secondtext.SetTextSize(0.035)
     secondtext.SetTextAlign(31)
     secondtext.DrawLatexNDC(0.90, 0.91, toDisplay.Data())
@@ -214,7 +218,7 @@ def dataMCPlots (dataPlot, MClist, signalList, MClegends, plottingStuff, path, s
     preliminary.SetNDC();
     secondtext = r.TLatex()
     toDisplay = r.TString()
-    secondtext = r.TLatex(0.76, 0.91, "41.6 fb^{-1}, 13 TeV")
+    secondtext = r.TLatex(0.76, 0.91, "{:.1f}".format(lumi/1000.) + "fb^{-1}, 13 TeV")
     secondtext.SetTextSize(0.03)
     secondtext.SetNDC()
     #preliminary.SetTextFont(42);
@@ -333,6 +337,124 @@ def makeNonNegativeHistos (h):
    else:
      h.Scale(integral/integralNew) 
 
+def combinePlotsWithRatios (hlist, ratioDictList, legends, plottingStuff, path, savescaffold, logy=False, normalize=False, lumi=10000): 
+    print "Combining list of plots"
+    if len(hlist) == 0: raise RuntimeError("Empty list of plots")
+    c   = r.TCanvas("c","c",10,10,1000,1000);
+    #c.Divide(1,2,0,0)
+    pad1 = r.TPad("pad1", "The pad 70% of the height",0.0,0.3,1.0,1.0,31);
+    pad2 = r.TPad("pad2", "The pad 30% of the height",0.0,0.0,1.0,0.3,32);
 
+    pad1.SetFillColor(r.kWhite);
+    pad2.SetFillColor(r.kWhite);
+    pad1.Draw();
+    pad2.Draw("same");
+    pad1.cd();
+    pad1.SetBottomMargin(0.1);
+    #pad1.SetLeftMargin(0.2);
 
+    binWidth = hlist[0].GetBinWidth(1)
+    lowerEdge = hlist[0].GetBinCenter(1) - binWidth / 2
+    upperEdge = hlist[0].GetBinCenter(hlist[0].GetNbinsX()) + binWidth / 2
+   
+    maximum = 0
 
+    gStyle.SetOptStat(0)
+    gStyle.SetTitleFontSize(.05);
+    gStyle.SetLabelSize(.03, "XY");
+
+    leg = r.TLegend(plottingStuff['legxlow'], plottingStuff['legylow'], plottingStuff['legxhigh'], plottingStuff['legyhigh'])
+    for iplot in range(len(hlist)):
+        if hlist[iplot].Integral() > 0 :  hlist[iplot].Scale(1./ hlist[iplot].Integral())
+        if hlist[iplot].GetMaximum() > maximum: 
+          maximum = hlist[iplot].GetMaximum()
+        if legends[iplot] in markerColorsMerge : 
+          #hlist[iplot].SetFillColor(markerColorsMerge[legends[iplot]])
+          hlist[iplot].SetMarkerColor(markerColorsMerge[legends[iplot]])
+          hlist[iplot].SetLineColor(markerColorsMerge[legends[iplot]])
+        else: 
+          #hlist[iplot].SetFillColor(markerColors[iplot % len(markerColors)])
+          hlist[iplot].SetMarkerColor(markerColors[iplot % len(markerColors)])
+          hlist[iplot].SetLineColor(markerColors[iplot % len(markerColors)])
+        
+        #if legends[iplot]=="VBFHHSM" or legends[iplot]=="GGHHSM" : hlist[iplot].SetLineStyle(r.kDashed) 
+        
+        hlist[iplot].SetMarkerStyle(20)
+        leg.AddEntry(hlist[iplot], legends[iplot], "PL")
+
+    dummy_hist = r.TH1F("dummy", " ;" + hlist[0].GetXaxis().GetTitle() + "; Normalized entries / {:.2f}".format(binWidth), hlist[0].GetNbinsX(), lowerEdge, upperEdge)
+    dummy_hist.GetYaxis().SetRangeUser(0, 1.35 * maximum) if not logy else dummy_hist.GetYaxis().SetRangeUser(1E-3, 100 * maximum)
+    # if logy: dummy_hist.SetMinimum(1E-3)
+    dummy_hist.GetYaxis().SetTitleOffset(1.4)
+    dummy_hist.Draw()
+   
+    for iplot in range(len(hlist)):
+        hlist[iplot].Draw("histosame")
+    
+    leg.SetFillColor(4001)
+    leg.SetBorderSize(0)
+    leg.SetNColumns(2)
+    leg.Draw()
+    if logy: pad1.SetLogy()
+   
+    r.gPad.Update()
+    #hlist[0].GetYaxis().SetRangeUser(plottingStuff['lowlimityaxis'], plottingStuff['highlimityaxis'])
+    
+    firstLabel = "#scale[1.5]{CMS} private work"
+    otherStuff = ["channel", "selection", "region"]
+    for elem in otherStuff:
+        if elem in plottingStuff.keys():
+            firstLabel += "," + (elem != "#tau#tau") * " "
+            firstLabel += plottingStuff[elem]
+
+    firsttex = r.TLatex()
+    firsttex.SetTextSize(0.03)
+    firsttex.DrawLatexNDC(0.11,0.91,firstLabel)
+    firsttex.Draw("same");
+
+    secondtext = r.TLatex()
+    toDisplay = r.TString()
+    toDisplay  = r.TString("{:.1f}".format(lumi/1000.) + "fb^{-1}, 13 TeV")
+    secondtext.SetTextSize(0.035)
+    secondtext.SetTextAlign(31)
+    secondtext.DrawLatexNDC(0.90, 0.91, toDisplay.Data())
+    secondtext.Draw("same")
+    
+    r.gPad.SetTicks(1,1);
+    r.gPad.RedrawAxis();
+
+    
+    pad2.cd(); 
+    pad2.SetGrid()
+    legD = r.TLegend(0.2575 + 2 * 0.1975, plottingStuff['legylow'], plottingStuff['legxhigh'], plottingStuff['legyhigh'])
+    dummy_hist_D = r.TH1F("dummy_D", " ;" + hlist[0].GetXaxis().GetTitle() + "; Ratio", hlist[0].GetNbinsX(), lowerEdge, upperEdge)
+    dummy_hist_D.GetYaxis().SetRangeUser(0.5,2)
+    dummy_hist_D.GetYaxis().SetNdivisions(4)
+    dummy_hist_D.GetYaxis().SetTitleOffset(0.45);
+    dummy_hist_D.SetLabelSize(0.08, "xy")
+    dummy_hist_D.SetTitleSize(0.08, "xy")
+    dummy_hist_D.GetYaxis().SetNdivisions(4)
+    dummy_hist_D.Draw()
+
+    myRatios = []
+    for i,ratio in enumerate(ratioDictList):
+        aux = ratio['num'].Clone()
+        aux1 = ratio['den'].Clone()
+        aux.Divide(aux1)
+        aux.SetLineColor(ratio['color'])
+        aux.SetMarkerColor(ratio['color'])
+        legD.AddEntry(aux, ratio['legend'], "PL")
+        myRatios.append(aux)
+
+    for histo in myRatios: 
+        histo.Draw("P, same")
+    legD.Draw("same")
+
+    if not logy: 
+        c.SaveAs(path + savescaffold + ".png")
+        c.SaveAs(path + savescaffold + ".pdf")
+    else: 
+        c.SaveAs(path + savescaffold + "_logy.png")
+        c.SaveAs(path + savescaffold + "_logy.pdf")
+    
+    c.Close(); del c

@@ -43,6 +43,12 @@ else :
       if not fil[-4:] == '.log' : continue 
       else :
         totalJobs+=1
+        filler = "{}/filler_{}.sh".format(options.userCopyPath, totalJobs-1)
+        sample = ""
+        if os.path.isfile(filler):
+            with open(os.path.expandvars(filler)) as fillerFile:
+                lines = fillerFile.readlines()
+                sample = lines[-1].split(" ")[-4]
         inFile = options.userCopyPath + "/" + fil[0:-4]+'.0.out'
         found = False
         if os.path.isfile( inFile ) : 
@@ -52,7 +58,7 @@ else :
                 found = True 
                 break
         if found : 
-          print bcolors.green + "Job " + str(totalJobs-1) + " in cluster " + fil[0:-4] + " completed" + bcolors.reset
+          print bcolors.green + "Job " + str(totalJobs-1) + " in cluster " + fil[0:-4] + " completed (" + sample + ")" + bcolors.reset
           continue
 
         failed = False
@@ -61,7 +67,7 @@ else :
           with open( errorFile  ) as a : 
             for line in a : 
               if "Break" in line : 
-                print bcolors.yellow + "Crashed job " + str(totalJobs-1) +" in cluster " +  fil[0:-4] + bcolors.reset
+                print bcolors.yellow + "Crashed job " + str(totalJobs-1) +" in cluster " +  fil[0:-4] + "(" + sample + ")" + bcolors.reset
                 crashedJobs += 1
                 failed = True 
                 break
@@ -71,12 +77,12 @@ else :
         with open (  options.userCopyPath + '/' + fil  ) as b : 
           for lin in b :
             if "SYSTEM_PERIODIC_REMOVE" in lin : 
-              print bcolors.purple + "Failed job " + str(totalJobs-1) +" in cluster " +  fil[0:-4] + ". Finished w/o processing" + bcolors.reset
+              print bcolors.purple + "Failed job " + str(totalJobs-1) +" in cluster " +  fil[0:-4] + ". Finished w/o processing (" + sample + ")" + bcolors.reset
               failedJobs += 1
               failed = True
               break 
         if not failed :         
-          print bcolors.red + "Job " + str(totalJobs-1) + " in cluster " + fil[0:-4] + " not processed yet" + bcolors.reset
+          print bcolors.red + "Job " + str(totalJobs-1) + " in cluster " + fil[0:-4] + " not processed yet (" + sample + ")" + bcolors.reset
           missingJobs += 1
 
 

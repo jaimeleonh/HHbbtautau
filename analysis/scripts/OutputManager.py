@@ -78,6 +78,7 @@ class OutputManager:
         for channel in self.sel_def : 
           for reg in self.sel_regions : 
             cat = "baseline_"+channel+"_"+reg
+            if channel not in self.data: continue
             for i, (data) in enumerate(self.data[channel]):
               self.histos[data+"_"+cat+"_"+plot] = plotTools.makePlotReturn(self.path, self.dataFiles[channel][i] , plot+'_'+cat, False, -1)
         for cat in self.selections :

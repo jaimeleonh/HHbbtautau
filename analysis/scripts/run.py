@@ -24,9 +24,10 @@ parser.add_argument('-dmc','--dataMC', action='store_true', default = False)
 parser.add_argument('-d','--directory', dest='userCopyPath', default = '')
 parser.add_argument('-rew','--reweightVBF', action='store_true', default = False)
 parser.add_argument('-vbf','--VBFtask', action='store_true', default = False)
-my_namespace = parser.parse_args()
+parser.add_argument('-rat','--Ratios', action='store_true', default = False)
+options = parser.parse_args()
 
-if my_namespace.ntuples == True or my_namespace.runInCondor == True:
+if options.ntuples == True or options.runInCondor == True:
   print ("Starting ntuplizer for every sample in input")
   time.sleep(2)
 #    r.gInterpreter.ProcessLine(".x  ./scripts/loadExampleAnalysis.C")
@@ -44,23 +45,30 @@ path = '/eos/home-c/camendol/SKIMMED_Legacy2017_27mar2020_DNN' ## USELESS RIGHT 
 eosPath = '/eos/home-j/jleonhol/HHbbtautau/'
 plotPath = './plots/'
 
-selections = ["tauhtauh", "etauh","mutauh",]
+selections = ["tauhtauh"]
+#selections = ["tauhtauh", "etauh","mutauh",]
 regions = ["SR", "SStight", "OSrlx", "SSrlx", "OSinviso", "SSinviso"]
 myCategories = [x[0] + '_' + x[1] for x in list(itertools.product(selections, regions))]
 
 #########################################################################################
 #########################################################################################
-year = '2017_vbf'
+year = '2018_vbf'
 #########################################################################################
 #########################################################################################
 
-lumi = '41557' 
 
 allSelectionCfg = {}
 allSelectionCfg["2017"] = './config/selectionCfg_2017.cfg'
 allSelectionCfg["2017_FC"] = './config/selectionCfg_2017_new.cfg'
 allSelectionCfg["2017_may"] = './config/selectionCfg_2017_may.cfg'
 allSelectionCfg["2017_vbf"] = './config/selectionCfg_2017_may.cfg'
+allSelectionCfg["2018_vbf"] = './config/selectionCfg_2017_may.cfg'
+
+if "2017" in year: lumi = '41557' 
+elif "2018" in year: lumi = '59970'
+else: 
+    print "LUMI ERROR. Exiting"
+    sys.exit()
 
 selectionCfg = allSelectionCfg[year]
 
@@ -92,24 +100,27 @@ mergingCategories = allMergingCategories[year]
 data = dataCategories[year]
 ######################################################################
 
-selections = data.keys()
+selections = data.keys() if data.keys() else selections 
 
 categories = ["baseline_{}_".format(sel) for sel in selections]
 
-if my_namespace.VBFtask: categories = ["VBFloose", "VBF_baseline", "VBF_loose_baseline"]
+if options.VBFtask: 
+    categories = ["VBF_baseline", "VBF_loose_baseline"]
+    selections = ["tauhtauh"]
 
-if my_namespace.copy and my_namespace.userCopyPath == '' :
+if options.copy and options.userCopyPath == '' :
   print "If you want to copy sth, add a path!"
   sys.exit()
-elif my_namespace.copy:
+elif options.copy:
 
-  copyPath = '/eos/home-j/jleonhol/www/HHbbtautau/' + year + "/" + my_namespace.userCopyPath + '/'
+  copyPath = '/eos/home-j/jleonhol/www/HHbbtautau/' + year + "/" + options.userCopyPath + '/'
 
-if (my_namespace.copy == True) :
+if (options.copy == True) :
   rc = call('mkdir ' + copyPath, shell=True)
   rc = call('cp -r /eos/home-j/jleonhol/backup/index_HHbbtautau_php ' + copyPath +  '/index.php' , shell=True)
+  print categories
   for cat in categories : 
-    if my_namespace.dataMC or my_namespace.merge or my_namespace.reweightVBF:  
+    if options.dataMC or options.merge or options.reweightVBF:  
       rc = call('mkdir ' + copyPath +  '/' + cat + 'SR/' , shell=True)
       rc = call('cp -r /eos/home-j/jleonhol/backup/index_HHbbtautau_php ' + copyPath + '/' + cat + 'SR/index.php' , shell=True)
     else: 
@@ -117,7 +128,7 @@ if (my_namespace.copy == True) :
       rc = call('cp -r /eos/home-j/jleonhol/backup/index_HHbbtautau_php ' + copyPath + '/' + cat + '/index.php' , shell=True)
 
 
-if my_namespace.runInCondor :
+if options.runInCondor :
 
   outDir = datetime.datetime.now().strftime('%Y.%m.%d_%H.%M.%S')
   outDir = "jobs_"+outDir
@@ -142,13 +153,21 @@ if my_namespace.runInCondor :
     scriptFile.write ('eval `scram r -sh`\n')
     scriptFile.write ('source scripts/setup.sh\n')
     command = program + ' '
-    command += samples[year][fil] 
-    
 
-    command += ' ' + eosPath + year + '/' + fil + '.root ' + selectionCfg + ' ' + fil
+    sample = fil
+    njets = -1
+    if "GGHHNLO" in fil: 
+        if "Jet" in fil: 
+            sample = "GGHHSM_Jets"
+            if "1" in fil: njets = "1"
+            if "2" in fil: njets = "2"
+    command += samples[year][sample] 
+     
+
+    command += ' ' + eosPath + year + '/' + fil + '.root ' + selectionCfg + ' ' + sample
     if fil in files : command += ' 1 '
     else : command += ' 0 '
-    command += lumi
+    command += "{} {}".format(lumi, njets)
 
     scriptFile.write(command)
     scriptFile.close()
@@ -165,12 +184,12 @@ if my_namespace.runInCondor :
     f.write( "queue\n")
     f.close()
 
-    if my_namespace.launch : os.system ( 'condor_submit %s/submit_condor_%s.sub'%(outDir,str(nj)))
+    if options.launch : os.system ( 'condor_submit %s/submit_condor_%s.sub'%(outDir,str(nj)))
   sys.exit(0)
 
 
 for fil in files+dataFiles : #FIXME or better run -rc -l
-  if my_namespace.ntuples == True :
+  if options.ntuples == True :
     continue #FIXME
     print ('Obtaining plot ntuples for ' + fil)
     time.sleep(2) 
@@ -186,7 +205,7 @@ for fil in files+dataFiles : #FIXME or better run -rc -l
     os.system(command)
 
 
-if not my_namespace.plots : sys.exit(0)
+if not options.plots : sys.exit(0)
 
 
 
@@ -227,20 +246,22 @@ else :  #plots we obtained before looking at Chiara's thesis
   whatToPlot += ['VBFjb_deltaR', 'VBFjTau_deltaR']
 
 # VBF vs ggH task 
-if my_namespace.VBFtask:
-    whatToPlot = ["HH_pt", "HH_mass", "tauH_pt", "tauH_eta", "bH_pt", "bH_eta", "HH_costhetaCS", "HH_costhetaCS_rev", "HH_costhetaCS_svfit",
+if options.VBFtask or options.reweightVBF:
+    whatToPlot = ["additionalJet1_pt", "additionalJet1_eta", "additionalJet2_pt", "additionalJet2_eta", 
+                  "bjets_eta1eta2", "bjets_deltaEta", "VBFjj_eta1eta2", "additionalJets_deltaEta", "additionalJets_eta1eta2", "additionalJets_mass",
+                  "HH_pt", "HH_mass", "tauH_pt", "tauH_eta", "bH_pt", "bH_eta", "HH_costhetaCS", "HH_costhetaCS_rev", "HH_costhetaCS_svfit",
                   "costheta_b1_b2", "costheta_tau1_tau2", "VBFjj_mass", "VBFjj_mass_5000", "VBFjj_deltaEta", 
                   "VBFjet1_pt", "VBFjet2_pt", "VBFjet1_eta", "VBFjet2_eta", "centrality_bb", 
                   "centrality_tautau", "VBFjTau_deltaR", "VBFjb_deltaR", "btau_dr_min", "btau_dr_max", "HHKin_mass_raw", "HHkinsvfit_mass", 
-                  "VBFjj_deltaPhi", "VBFjj_deltaR", "deta_hbb_svfit"
-                ]
+                  "VBFjj_deltaPhi", "VBFjj_deltaR", "deta_hbb_svfit", "NGenJets", "prodgenjet1_pt", "dib_deltaPhi", "ditau_deltaPhi"
+                 ]
 
     #pt / mass
     whatToPlot += ["tau1_pt_m", "tau2_pt_m", "bjet1_pt_m", "bjet2_pt_m", "VBFjet1_pt_m", "VBFjet2_pt_m",
                    "bH_pt_m", "tauH_pt_m"]
 
     # centralities
-    whatToPlot += ["tau1_z", "tau2_z", "bjet1_z", "bjet2_z", "tauH_z", "bH_z", "HH_z"]
+    whatToPlot += ["tau1_z", "tau2_z", "bjet1_z", "bjet2_z", "tauH_z", "bH_z", "HH_z", "HH_z_nt"]
 
 
     mySignalFiles = {} 
@@ -279,7 +300,7 @@ plottingStuff = { 'lowlimityaxis' : 0,
 t0 = 0
 
 
-if my_namespace.merge == True or my_namespace.dataMC == True or my_namespace.reweightVBF == True:
+if options.merge == True or options.dataMC == True or options.reweightVBF == True:
   #BACKGROUND FILES
   myFiles = {}
   for merge in mergingCategories: 
@@ -321,7 +342,7 @@ if my_namespace.merge == True or my_namespace.dataMC == True or my_namespace.rew
 
   omngr.merge()
   
-  if my_namespace.merge == True or my_namespace.dataMC == True:
+  if options.merge == True or options.dataMC == True:
   
     SBtoSRforQCD = 1
     computeSBtoSRdyn = False
@@ -339,12 +360,14 @@ if my_namespace.merge == True or my_namespace.dataMC == True or my_namespace.rew
         computeSBtoSR = computeSBtoSRdyn
         )
 
-if my_namespace.reweightVBF:
+if options.reweightVBF:
     myVBFSamples = []
     target_kl  = [1]
+    #target_kl = [-2,-1,0,1,2]
     target_cv  = [1]
     #target_c2v = [1]
-    target_c2v = [-2,-1,0,1,2]
+    target_c2v = [1, 1.2, 1.4, 1.6, 1.8, 2]
+    #target_c2v = [-2,-1,0,1,2]
     target_xs = 1
     
     for t_kl in target_kl: 
@@ -355,7 +378,7 @@ if my_namespace.reweightVBF:
     omngr.makeVBFrew(signal["VBF"], target_kl, target_cv, target_c2v, target_xs) 
 
 
-if my_namespace.dataMC == True : 
+if options.dataMC == True : 
   for plot in whatToPlot :
     for cat in selections : 
       if "TauTau" in plot and "tauhtauh" not in cat : continue
@@ -380,7 +403,7 @@ if my_namespace.dataMC == True :
       
       legends = mergingCategories.keys()+["QCD"]+signal.keys()
       plotTools.dataMCPlots (listOfDataPlots, listOfPlots, signalList, legends, plottingStuff, plotPath, plot+'_'+fullCat, logy=False) 
-      if my_namespace.copy == True: 
+      if options.copy == True: 
         for ext in ['.png','.pdf'] : 
         #for ext in ['.png','.pdf','.root'] : 
           rc = call('cp ' + plotPath + plot + '_' + fullCat + ext + ' ' + copyPath + '/' + fullCat + '/', shell=True)
@@ -388,7 +411,7 @@ if my_namespace.dataMC == True :
       
   sys.exit()
 
-if my_namespace.merge == True : 
+if options.merge == True : 
   for plot in whatToPlot :
     for cat in selections : 
       if "TauTau" in plot and "tauhtauh" not in cat : continue
@@ -405,14 +428,14 @@ if my_namespace.merge == True :
 
 
       plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+fullCat, logy=False, normalize=True) 
-      if my_namespace.copy == True: 
+      if options.copy == True: 
         for ext in ['.png','.pdf'] : 
         #for ext in ['.png','.pdf','.root'] : 
           rc = call('cp ' + plotPath + plot + '_' + fullCat + ext + ' ' + copyPath + '/' + fullCat + '/', shell=True)
         print 'Copying ' +  plotPath + plot + '_' + fullCat + '.* to ' + copyPath + '/' + fullCat 
   sys.exit()
 
-if my_namespace.reweightVBF == True : 
+if options.reweightVBF == True : 
   for plot in whatToPlot :
     for cat in selections : 
       if "TauTau" in plot and "tauhtauh" not in cat : continue
@@ -422,45 +445,77 @@ if my_namespace.reweightVBF == True :
       listOfPlots = []
       for sig in myVBFSamples:
         listOfPlots.append(omngr.histos[sig + "_" +fullCat + "_" + plot ])
-      plotTools.makePlot(listOfPlots, eosPath + year + '/', mySignalFiles["GGHHSM"] , plot+'_'+fullCat, True, -1)
-      legends = myVBFSamples+["GGHHSM"]
+      plotTools.makePlot(listOfPlots, eosPath + year + '/', mySignalFiles["GGHHSM_LO"] , plot+'_'+fullCat, True, -1)
+      legends = myVBFSamples+["GGHHSM_LO"]
       plottingStuff['legxlow'] = 0.2575 + 1 * 0.1975
       plottingStuff['legylow'] = 0.75
       plottingStuff['legxhigh'] = 0.85
       plottingStuff['legyhigh'] = 0.85
-      plottingStuff["channel"] = cat
+      if cat == "tauhtauh":
+        plottingStuff["channel"] = r"#tau#tau"
+      elif cat == "etauh":
+        plottingStuff["channel"] = r"e#tau"
+      elif cat == "mutauh":
+        plottingStuff["channel"] = r"#mu#tau"
+
       plottingStuff["region"] = "SR"
       plottingStuff["selection"] = "Baseline"
       
-      plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+fullCat, logy=False, normalize=True) 
-      if my_namespace.copy == True: 
+      plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+fullCat, logy=False, normalize=True, lumi=int(lumi)) 
+      plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+fullCat, logy=True, normalize=True, lumi=int(lumi)) 
+      if options.copy == True: 
         for ext in ['.png','.pdf'] : 
         #for ext in ['.png','.pdf','.root'] : 
           rc = call('cp ' + plotPath + plot + '_' + fullCat + ext + ' ' + copyPath + '/' + fullCat + '/', shell=True)
+          rc = call('cp ' + plotPath + plot + '_' + fullCat + "_logy" + ext + ' ' + copyPath + '/' + fullCat + '/', shell=True)
         print 'Copying ' +  plotPath + plot + '_' + fullCat + '.* to ' + copyPath + '/' + fullCat 
   sys.exit()
 
-if my_namespace.VBFtask == True : 
+myRatios = []
+myRatios.append({"num": 'GGHHSM_LO', 
+                 "den": 'GGHHSM_NLO',
+                 "legend": 'GGHH LO/NLO', 
+                 "color": r.kBlack
+                })
+myRatios.append({ "num": 'GGHHSM_LO #leq 2 Jets' if "2018" in year else "GGHHSM_NLO + 1,2 Jets", 
+                  "den": 'GGHHSM_NLO',
+                  "legend": 'GGHH LO #leq 2 Jets/NLO' if "2018" in year else "GGHH NLO + 1,2 Jets/NLO",
+                  "color": r.kRed
+                })
+
+if options.VBFtask == True : 
   for plot in whatToPlot :
     for cat in categories : 
       listOfPlots = []
       legends = []
       for merge in signal : 
         if merge == "VBF" : continue
+        if plot == "NGenJets" and "Jets" not in merge: continue
         legends.append(merge)
-        plotTools.makePlot(listOfPlots, eosPath + year + '/', mySignalFiles[merge] , plot+'_'+cat+"_", True, -1)
+        plotTools.makePlot(listOfPlots, eosPath + year + '/', mySignalFiles[merge] , plot+'_'+cat+"_SR", True, -1)
       plottingStuff['legxlow'] = 0.2575 + 1 * 0.1975
-      plottingStuff['legylow'] = 0.75
-      plottingStuff['legxhigh'] = 0.85
+      plottingStuff['legylow'] = 0.70
+      plottingStuff['legxhigh'] = 0.89
       plottingStuff['legyhigh'] = 0.85
-      if cat == "VBFloose": plottingStuff["selection"] = "VBF loose"
-      elif cat == "VBF_loose_baseline": plottingStuff["selection"] = "VBF loose baseline"
+      if cat == "VBF_loose_baseline": plottingStuff["selection"] = "VBF enriched baseline"
       elif cat == "VBF_baseline": plottingStuff["selection"] = "VBF baseline"
-          
-      
-      plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False, normalize=True) 
-      plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=True, normalize=True) 
-      if my_namespace.copy == True: 
+         
+      if options.Ratios:
+          ratioPlots = []
+          for ratio in myRatios:
+              ratioPlots.append({
+                  "num": plotTools.makePlotReturn(eosPath + year + '/', mySignalFiles[ratio['num']] , plot+'_'+cat+'_SR', True, 1),
+                  "den": plotTools.makePlotReturn(eosPath + year + '/', mySignalFiles[ratio['den']] , plot+'_'+cat+'_SR', True, 1),
+                  "legend": ratio['legend'], 
+                  "color": ratio['color']
+                  })
+          plotTools.combinePlotsWithRatios (listOfPlots, ratioPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False, normalize=True, lumi = int(lumi)) 
+          plotTools.combinePlotsWithRatios (listOfPlots, ratioPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=True, normalize=True, lumi = int(lumi)) 
+
+      else:      
+          plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False, normalize=True) 
+          plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=True, normalize=True) 
+      if options.copy == True: 
         for ext in ['.png','.pdf'] : 
         #for ext in ['.png','.pdf','.root'] : 
           rc = call('cp ' + plotPath + plot + '_' + cat + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
@@ -478,14 +533,14 @@ for plot in whatToPlot :
     listOfPlots = []
     listOfDataPlots = []
 
-    if my_namespace.merge == True :
+    if options.merge == True :
       normalize = 1
 
       legends = mergingCategories.keys() 
       for merge in mergingCategories :
         plotTools.makePlot(listOfPlots, eosPath + year + '/', myFiles[merge] , plot+'_'+cat, True, normalize)
         #plotTools.makePlot(listOfPlots, eosPath + '2017/', mergingCategories[merge] , plot+'_'+cat, True, normalize)
-      if my_namespace.dataMC == True : 
+      if options.dataMC == True : 
         plotTools.makePlot(listOfDataPlots, eosPath + year + '/', dataFiles , plot+'_'+cat, True, -1)
         #plotTools.makePlot(listOfDataPlots, eosPath + '2017/', data , plot+'_'+cat, True, normalize)
 
@@ -496,7 +551,7 @@ for plot in whatToPlot :
     
     plotTools.combinePlots (listOfPlots, legends, plottingStuff, plotPath, plot+'_'+cat, logy=False) 
 
-    if my_namespace.copy == True: 
+    if options.copy == True: 
       for ext in ['.png','.pdf'] : 
       #for ext in ['.png','.pdf','.root'] : 
         rc = call('cp ' + plotPath + plot + '_' + cat + ext + ' ' + copyPath + '/' + cat + '/', shell=True)
